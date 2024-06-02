@@ -7,4 +7,16 @@
     <RootNamespace>Proyecto_Programado.UI</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Proyecto Programado.BL\Proyecto Programado.BL.csproj" />
+    <ProjectReference Include="..\Proyecto Programado.DA\Proyecto Programado.DA.csproj" />
+  </ItemGroup>
+
 </Project>

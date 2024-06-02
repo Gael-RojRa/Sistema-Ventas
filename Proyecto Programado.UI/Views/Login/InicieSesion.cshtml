@@ -1,0 +1,102 @@
+﻿@model Proyecto_Programado.UI.ViewModels.UsuarioLoginVM;
+@{
+    Layout = null;
+} 
+
+<html>
+<head>
+    <title>Registrarse</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+
+<body>
+    <div class="row mt-5 justify-content-center">
+
+        <div class="col-sm-4">
+
+            <div class="card">
+
+                <div class="card-header">
+                    Iniciar Sesion
+                </div>
+
+                <div class="card-body">
+
+                    <form asp-for="Login" asp-action="InicieSesion" method="post">
+                        <input class="form-control mb-3" type="text" placeholder="Nombre Comppleto" requred asp-for="Nombre" />
+                        <input class="form-control mb-3" type="password" placeholder="Clave" requred asp-for="Clave" />
+
+                        <div class="d-grid gap-2 mb-3">
+                            <button class="btn btn-primary" type="submit">Iniciar Sesion</button>
+                        </div>
+
+                        @if (ViewData["Mensaje"] != null)
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                @ViewData["Mensaje"]
+                            </div>
+                        }
+
+                        <div id="fb-root"></div>
+                        <fb:login-button scope="public_profile,email"
+                                         onlogin="checkLoginState();">
+                        </fb:login-button> <br>
+
+                        <br>
+
+                        ¿No tienes una cuenta? <a asp-controller="Login" asp-action="Registrarse">Registrate Ya!</a>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de Facebook SDK -->
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: '1177632110087968',
+                cookie: true,
+                xfbml: true,
+                version: 'v8.0'
+            });
+
+            FB.AppEvents.logPageView();
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) { return; }
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+        function checkLoginState() {
+            FB.getLoginStatus(function (response) {
+                statusChangeCallback(response);
+            });
+        }
+
+        function statusChangeCallback(response) {
+            console.log('statusChangeCallback');
+            console.log(response);
+            // El usuario está conectado a su cuenta de Facebook
+            if (response.status === 'connected') {
+                // Aquí puedes manejar la respuesta y extraer la información del usuario
+                FB.api('/me', function (response) {
+                    console.log('Successful login for: ' + response.name);
+                });
+            } else {
+                // El usuario no está autenticado
+                console.log('User not authenticated');
+            }
+        }
+    </script>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

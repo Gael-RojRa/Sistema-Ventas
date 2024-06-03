@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Authentication;
+using System.ComponentModel.DataAnnotations;
 
 namespace Proyecto_Programado.UI.ViewModels
 {
@@ -6,7 +7,7 @@ namespace Proyecto_Programado.UI.ViewModels
     {
 
         public string Nombre { get; set; }
-        
+
 
         [DataType(DataType.Password)]
         public string Clave { get; set; }
@@ -15,5 +16,7 @@ namespace Proyecto_Programado.UI.ViewModels
 
         [DataType(DataType.EmailAddress)]
         public string correoElectronico { get; set; }
+
+
     }
 }

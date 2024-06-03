@@ -5,7 +5,23 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.CodeAnalysis.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+///ACA INICIA LoginGoogle
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+    .AddCookie()
+    .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+    {
+        var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+        options.ClientId = googleAuthNSection["ClientId"];
+        options.ClientSecret = googleAuthNSection["ClientSecret"];
+        
+    });
+//Finaliza
 /*
+ * 
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;

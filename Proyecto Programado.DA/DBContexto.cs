@@ -13,7 +13,7 @@ namespace Proyecto_Programado.DA
         }
 
         public DbSet<Usuario> Usuario { get; set; }
-
+        public DbSet<Inventario> Inventarios { get; set; }
 
     }
 }

@@ -1,0 +1,104 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Proyecto_Programado.BL;
+using Proyecto_Programado.Model;
+
+namespace Proyecto_Programado.UI.Controllers
+{
+    public class InventarioController : Controller
+    {
+
+        public readonly IAdministradorDeInventarios ElAdministrador;
+
+        public InventarioController(IAdministradorDeInventarios administrador)
+        {
+            ElAdministrador = administrador; 
+        }
+        // GET: InventarioController
+        public ActionResult Index(string nombre)
+        {
+            List<Inventario> laListadeInventarios;
+            laListadeInventarios = ElAdministrador.ObtenLaListaDeInventarios();
+
+            if(nombre is null)
+            {
+                return View(laListadeInventarios);
+            } else
+            {
+                List<Inventario> laListadeInventariosFiltrada;
+                laListadeInventariosFiltrada = laListadeInventarios.Where(x => x.Nombre.Contains(nombre)).ToList();
+                return View(laListadeInventariosFiltrada);
+            }
+            
+        }
+
+        // GET: InventarioController/Details/5
+        public ActionResult Details(int id)
+        {
+            return View();
+        }
+
+        // GET: InventarioController/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: InventarioController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        // GET: InventarioController/Edit/5
+        public ActionResult Edit(int id)
+        {
+            return View();
+        }
+
+        // POST: InventarioController/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        // GET: InventarioController/Delete/5
+        public ActionResult Delete(int id)
+        {
+            return View();
+        }
+
+        // POST: InventarioController/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+    }
+}

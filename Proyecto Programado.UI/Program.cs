@@ -24,6 +24,8 @@ builder.Services.AddControllersWithViews();
 
 
 builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeUsuarios, Proyecto_Programado.BL.AdministradorDeUsuarios>();
+builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeInventarios, Proyecto_Programado.BL.AdministradorDeInventarios>();
+
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 

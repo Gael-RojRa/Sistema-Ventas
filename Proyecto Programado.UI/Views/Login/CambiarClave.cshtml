@@ -1,0 +1,48 @@
+﻿@model Proyecto_Programado.UI.ViewModels.CambioClaveVM
+
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <title>Cambiar Clave</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="row mt-5 justify-content-center">
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-header">
+                    Cambiar Clave
+                </div>
+                <div class="card-body">
+                    <form asp-for="CambioClaveVM" asp-action="CambiarClave" method="post">
+                        <input class="form-control mb-3" type="text" placeholder="Nombre Completo" required asp-for="Nombre" />
+                        <input class="form-control mb-3" type="password" placeholder="Clave Nueva" required asp-for="ClaveNueva" />
+                        <input class="form-control mb-3" type="password" placeholder="Confirmar Clave Nueva" required asp-for="ConfirmarClaveNueva" />
+
+                        <div class="d-grid gap-2 mb-3">
+                            <button class="btn btn-primary" type="submit">Cambiar Clave</button>
+                        </div>
+
+                        @if (ViewData["Mensaje"] != null)
+                        {
+                            <div class="alert alert-success" role="alert">
+                                @ViewData["Mensaje"]
+                            </div>
+                        }
+
+
+                        ¿Ya tiene una cuenta? <a asp-controller="Login" asp-action="InicieSesion">Iniciar Sesión</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

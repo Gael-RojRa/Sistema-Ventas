@@ -7,6 +7,7 @@
 <head>
     <title>Registrarse</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 </head>
 
 <body>
@@ -45,8 +46,14 @@
                         <br>
 
                         <div class="d-grid gap-2 mb-3">
-                            <a asp-controller="Login" asp-action="Login" class="btn btn-info">Iniciar sesión con Google</a>
-                       </div>
+                            <a asp-controller="Login" asp-action="Login" class="btn btn-outline-dark">
+                                <i class="bi bi-google"></i> Continuar con Google
+                            </a>
+                        </div>
+
+                        <div class="d-grid gap-2 mb-3">
+                            <a asp-controller="Login" asp-action="CambiarClave" class="btn btn-outline-secondary">Cambiar Clave</a>
+                        </div>
 
                         ¿No tienes una cuenta? <a asp-controller="Login" asp-action="Registrarse">Registrate Ya!</a>
                     </form>

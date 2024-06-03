@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Proyecto_Programado.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,5 +14,7 @@ namespace Proyecto_Programado.BL
         int RegistrarUsuario(string nombre, string correo, string clave);
         void EnvieCorreoElectronico(string destinatario, string asunto, string contenido);
         bool VerifiqueCredenciales(string nombre, string clave);
+        Usuario ObtenerUsuarioPorNombre(string nombre);
+        void CambiarClave(Usuario usuario, string claveNueva);
     }
 }

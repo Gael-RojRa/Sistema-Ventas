@@ -71,24 +71,70 @@ namespace Proyecto_Programado.BL
 
         public bool VerifiqueCredenciales(string nombre, string clave)
         {
-            bool CoincidenLasCredenciales;
+            var usuario = ElContexto.Usuario.FirstOrDefault(x => x.Nombre == nombre);
 
-            var resultado = ElContexto.Usuario.ToList();
+            if (usuario == null)
+                return false;
 
-            CoincidenLasCredenciales = resultado.Any(x => x.Nombre == nombre && x.Clave == clave);
+            if (usuario.EstaBloqueado && usuario.TiempoDesbloqueo > DateTime.Now)
+            {
+                string asunto = $"Intento de inicio de sesión del usuario {usuario.Nombre} bloqueado.";
+                string contenido = $"Le informamos que la cuenta del usuario {usuario.Nombre} se encuentra bloqueada por 10 minutos. Por favor ingrese el día {usuario.TiempoDesbloqueo?.ToString("dd/MM/yyyy")} a las {usuario.TiempoDesbloqueo?.ToString("HH:mm")}.";
+
+                EnvieCorreoElectronico(usuario.correoElectronico, asunto, contenido);
+
+                return false;
+            }
+
+            bool CoincidenLasCredenciales = usuario.Clave == clave;
 
             if (CoincidenLasCredenciales)
             {
-                var usuario = resultado.First(x => x.Nombre == nombre);
+                usuario.IntentosFallidos = 0;
+                usuario.EstaBloqueado = false;
+                usuario.TiempoDesbloqueo = null;
+
+                ElContexto.SaveChanges();
 
                 string destinatario = usuario.correoElectronico;
                 string elAsunto = "Inicio de sesión del usuario " + nombre;
-                string elCuerpo = "Usted inicio sesión el día " + DateTime.Now.ToString("dd/MM/yyyy") + " a las " + DateTime.Now.ToString("hh:mm");
+                string elCuerpo = "Usted inició sesión el día " + DateTime.Now.ToString("dd/MM/yyyy") + " a las " + DateTime.Now.ToString("HH:mm");
 
                 EnvieCorreoElectronico(destinatario, elAsunto, elCuerpo);
-            }
 
-            return CoincidenLasCredenciales;
+                return true;
+            }
+            else
+            {
+                usuario.IntentosFallidos++;
+
+                if (usuario.IntentosFallidos >= 3)
+                {
+                    usuario.EstaBloqueado = true;
+                    usuario.TiempoDesbloqueo = DateTime.Now.AddMinutes(10);
+
+                    string asunto = $"Usuario Bloqueado.";
+                    string contenido = $"Le informamos que la cuenta del usuario {usuario.Nombre} se encuentra bloqueada por 10 minutos. Por favor ingrese el día {usuario.TiempoDesbloqueo?.ToString("dd/MM/yyyy")} a las {usuario.TiempoDesbloqueo?.ToString("HH:mm")}.";
+
+                    EnvieCorreoElectronico(usuario.correoElectronico, asunto, contenido);
+                }
+
+                ElContexto.SaveChanges();
+
+                return false;
+            }
         }
+
+        public Usuario ObtenerUsuarioPorNombre(string nombre)
+        {
+            return ElContexto.Usuario.SingleOrDefault(u => u.Nombre == nombre);
+        }
+
+        public void CambiarClave(Usuario usuario, string claveNueva)
+        {
+            usuario.Clave = claveNueva;
+            ElContexto.SaveChanges();
+        }
+
     }
 }

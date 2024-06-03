@@ -13,5 +13,8 @@ namespace Proyecto_Programado.Model
         [DataType(DataType.EmailAddress)]
         public string correoElectronico { get; set; }
         public Rol rol { get; set; }
+        public int IntentosFallidos { get; set; }
+        public bool EstaBloqueado { get; set; }
+        public DateTime? TiempoDesbloqueo { get; set; }
     }
 }

@@ -4,8 +4,8 @@ namespace Proyecto_Programado.Model
 {
     public class Usuario
     {
+
         [Key]
-        public int IdUsuario { get; set; }
         public string Nombre { get; set; }
         [DataType(DataType.Password)]
         public string Clave { get; set; }

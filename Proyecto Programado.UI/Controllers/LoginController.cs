@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Proyecto_Programado.BL;
 using Proyecto_Programado.UI.ViewModels;
+using System.Security.Claims;
+
 
 namespace Proyecto_Programado.UI.Controllers
 {
@@ -33,8 +35,8 @@ namespace Proyecto_Programado.UI.Controllers
                 return View();
             }
 
-            int agregadoCorrecto = ElAdministrador.RegistrarUsuario(usuario.Nombre, usuario.correoElectronico, usuario.Clave);
-            if (agregadoCorrecto != 0)
+            bool agregadoCorrecto = ElAdministrador.RegistrarUsuario(usuario.Nombre, usuario.correoElectronico, usuario.Clave);
+            if (agregadoCorrecto != false)
             {
                 return RedirectToAction("InicieSesion", "Login");
             }
@@ -52,15 +54,32 @@ namespace Proyecto_Programado.UI.Controllers
         }
 
         [HttpPost]
-        public IActionResult InicieSesion(UsuarioLoginVM usuario)
+        public async Task<IActionResult> InicieSesionAsync(UsuarioLoginVM usuario)
         {
             bool lasCrendicalesSonCorrectas;
             lasCrendicalesSonCorrectas = ElAdministrador.VerifiqueCredenciales(usuario.Nombre, usuario.Clave);
 
             if (lasCrendicalesSonCorrectas)
             {
-                ViewData["Mensaje"] = "Inicio de sesion correcto";
-                return View();
+                List<Claim> claims = new List<Claim>();
+                {
+                    new Claim(ClaimTypes.Name, usuario.Nombre);
+                };
+
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                AuthenticationProperties properties = new AuthenticationProperties()
+                {
+                    AllowRefresh = true,
+                };
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    properties
+                    );
+
+                return RedirectToAction("Index", "Inventario");
+
             }
             else
             {
@@ -90,7 +109,7 @@ namespace Proyecto_Programado.UI.Controllers
                 claim.Value
             });
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Inventario");
         }
 
         // GET: LoginController/CambiarClave

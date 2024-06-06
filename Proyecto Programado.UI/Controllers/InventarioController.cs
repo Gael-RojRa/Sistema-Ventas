@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Proyecto_Programado.BL;
 using Proyecto_Programado.Model;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Proyecto_Programado.UI.Controllers
 {
@@ -99,6 +102,13 @@ namespace Proyecto_Programado.UI.Controllers
             {
                 return View();
             }
+        }
+
+        public async Task<IActionResult> Salir()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return RedirectToAction("InicieSesion", "Login");
         }
     }
 }

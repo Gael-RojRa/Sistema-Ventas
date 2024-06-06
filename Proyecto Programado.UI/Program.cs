@@ -1,72 +1,68 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.CodeAnalysis.Options;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.EntityFrameworkCore;
+using Proyecto_Programado.BL;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
-///ACA INICIA LoginGoogle
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-})
-    .AddCookie()
-    .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
-    {
-        var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
-        options.ClientId = googleAuthNSection["ClientId"];
-        options.ClientSecret = googleAuthNSection["ClientSecret"];
-        
-    });
-//Finaliza
-/*
- * 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-})
-    .AddCookie()
-    .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
-    {
-        options.ClientId = builder.Configuration.GetSection("GoogleKeys: ClientId").Value;
-        options.ClientSecret = builder.Configuration.GetSection("GoogleKeys: ClientSecret").Value;
-    }); */
 
-// Add services to the container.
+// Configuración de autenticación
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+.AddCookie(options =>
+{
+    options.LoginPath = "/Login/InicieSesion";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+})
+.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+{
+    var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+    options.ClientId = googleAuthNSection["ClientId"];
+    options.ClientSecret = googleAuthNSection["ClientSecret"];
+
+    options.Events = new Microsoft.AspNetCore.Authentication.OAuth.OAuthEvents
+    {
+        OnCreatingTicket = async context =>
+        {
+            var identity = (ClaimsIdentity)context.Principal.Identity;
+            var email = context.Principal.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                identity.AddClaim(new Claim(ClaimTypes.Name, email));
+            }
+        }
+    };
+});
+
+// Otros servicios
 builder.Services.AddControllersWithViews();
-
-
-
-builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeUsuarios, Proyecto_Programado.BL.AdministradorDeUsuarios>();
-builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeInventarios, Proyecto_Programado.BL.AdministradorDeInventarios>();
-
+builder.Services.AddScoped<IAdministradorDeUsuarios, AdministradorDeUsuarios>();
+builder.Services.AddScoped<IAdministradorDeInventarios, AdministradorDeInventarios>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-builder.Services.AddDbContext<Proyecto_Programado.DA.DBContexto>(x => x.UseSqlServer(connectionString));
-
+builder.Services.AddDbContext<Proyecto_Programado.DA.DBContexto>(options => options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configuración de la tubería HTTP
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Login}/{action=Registrarse}/{id?}");
+    pattern: "{controller=Login}/{action=InicieSesion}/{id?}");
 
 app.Run();

@@ -57,13 +57,13 @@ namespace Proyecto_Programado.UI.Controllers
         public async Task<IActionResult> InicieSesionAsync(UsuarioLoginVM usuario)
         {
             bool lasCrendicalesSonCorrectas;
-            lasCrendicalesSonCorrectas = ElAdministrador.VerifiqueCredenciales(usuario.Nombre, usuario.Clave);
+            lasCrendicalesSonCorrectas = ElAdministrador.VerifiqueCredenciales(usuario.NombreUsuario, usuario.Clave);
 
             if (lasCrendicalesSonCorrectas)
             {
                 List<Claim> claims = new List<Claim>();
                 {
-                    new Claim(ClaimTypes.Name, usuario.Nombre);
+                    new Claim(ClaimTypes.Name, usuario.NombreUsuario);
                 };
 
                 ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

@@ -5,7 +5,7 @@ namespace Proyecto_Programado.UI.ViewModels
     public class UsuarioLoginVM
     {
 
-        public string Nombre { get; set; }
+        public string NombreUsuario { get; set; }
 
 
         [DataType(DataType.Password)]

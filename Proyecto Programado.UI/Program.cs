@@ -42,7 +42,6 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IAdministradorDeUsuarios, AdministradorDeUsuarios>();
 builder.Services.AddScoped<IAdministradorDeInventarios, AdministradorDeInventarios>();
-
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<Proyecto_Programado.DA.DBContexto>(options => options.UseSqlServer(connectionString));
 

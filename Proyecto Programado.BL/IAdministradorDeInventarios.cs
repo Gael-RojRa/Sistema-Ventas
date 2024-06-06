@@ -11,6 +11,6 @@ namespace Proyecto_Programado.BL
     {
 
         List<Inventario> ObtenLaListaDeInventarios();
-
+        void AgregueelInventario(Model.Inventario inventario);
     }
 }

@@ -50,16 +50,14 @@ namespace Proyecto_Programado.UI.Controllers
         // POST: InventarioController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Inventario inventario)
         {
-            try
+            if (ModelState.IsValid)
             {
+                ElAdministrador.AgregueelInventario(inventario);
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View(inventario);
         }
 
         // GET: InventarioController/Edit/5

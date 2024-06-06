@@ -25,5 +25,12 @@ namespace Proyecto_Programado.BL
 
             return laListaDeInventarios;
         }
+        public void AgregueelInventario(Model.Inventario inventario)
+        {
+            inventario.Cantidad = 0;
+            ElContexto.Inventarios.Add(inventario);
+            ElContexto.SaveChanges();
+        }
+
     }
 }

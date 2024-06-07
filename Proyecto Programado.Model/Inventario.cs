@@ -22,5 +22,6 @@ namespace Proyecto_Programado.Model
         [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor que 0")]
         public decimal Precio { get; set; }
 
+       
     }
 }

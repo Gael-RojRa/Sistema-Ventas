@@ -31,6 +31,21 @@ namespace Proyecto_Programado.BL
             ElContexto.Inventarios.Add(inventario);
             ElContexto.SaveChanges();
         }
+        public Model.Inventario ObtengaElInventario(int id)
+        {
+            Model.Inventario resultado;
+            resultado = ElContexto.Inventarios.Find(id);
+            return resultado;
+        }
+        public void EditeElInventario(Model.Inventario inventario)
+        {
+            //Model.Inventario InventarioAEditar;
+            ////InventarioAEditar.ObtengaElInventario(inventario.Id);
+            //InventarioAEditar.Nombre = inventario.Nombre;
+            //InventarioAEditar.Categoria = inventario.Categoria;
+            //InventarioAEditar.Precio = inventario.Precio;
 
+
+        }
     }
 }

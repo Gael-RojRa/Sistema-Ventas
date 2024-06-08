@@ -63,9 +63,9 @@ namespace Proyecto_Programado.UI.Controllers
 
             if (lasCrendicalesSonCorrectas)
             {
-                List<Claim> claims = new List<Claim>();
+                List<Claim> claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, usuario.NombreUsuario);
+                    new Claim(ClaimTypes.Name, usuario.NombreUsuario)
                 };
 
                 ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 
 namespace Proyecto_Programado.UI.Controllers
 {
+
     [Authorize]
     public class InventarioController : Controller
     {

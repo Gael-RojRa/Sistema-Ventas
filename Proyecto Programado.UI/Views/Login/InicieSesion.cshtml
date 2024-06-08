@@ -49,9 +49,10 @@
                         }
 
                         <div class="d-grid gap-2 mb-3">
-                            <button class="btn btn-facebook" type="button" onclick="facebookLogin()">
+                            <!-- Botón de Facebook -->
+                            <a asp-controller="Login" asp-action="LoginWithFacebook" class="btn btn-outline-primary">
                                 <i class="bi bi-facebook"></i> Continuar con Facebook
-                            </button>
+                            </a>
                         </div>
 
                         <div class="d-grid gap-2 mb-3">
@@ -71,57 +72,6 @@
         </div>
     </div>
 
-    <!-- Script de Facebook SDK -->
-    <script>
-        window.fbAsyncInit = function () {
-            FB.init({
-                appId: '1177632110087968',
-                cookie: true,
-                xfbml: true,
-                version: 'v8.0'
-            });
-
-            FB.AppEvents.logPageView();
-        };
-
-        (function (d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) { return; }
-            js = d.createElement(s); js.id = id;
-            js.src = "https://connect.facebook.net/en_US/sdk.js";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-
-        function checkLoginState() {
-            FB.getLoginStatus(function (response) {
-                statusChangeCallback(response);
-            });
-        }
-
-        function statusChangeCallback(response) {
-            console.log('statusChangeCallback');
-            console.log(response);
-            if (response.status === 'connected') {
-                FB.api('/me', function (response) {
-                    console.log('Successful login for: ' + response.name);
-                    window.location.href = '/Inventario/Index';
-                    
-                });
-            } else {
-                console.log('User not authenticated');
-            }
-        }
-
-        function facebookLogin() {
-            FB.login(function (response) {
-                if (response.authResponse) {
-                    checkLoginState();
-                } else {
-                    console.log('User cancelled login or did not fully authorize.');
-                }
-            }, { scope: 'public_profile,email' });
-        }
-    </script>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

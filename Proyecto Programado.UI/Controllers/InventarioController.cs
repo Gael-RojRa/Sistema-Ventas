@@ -5,9 +5,11 @@ using Proyecto_Programado.BL;
 using Proyecto_Programado.Model;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace Proyecto_Programado.UI.Controllers
 {
+    [Authorize]
     public class InventarioController : Controller
     {
 
@@ -106,7 +108,14 @@ namespace Proyecto_Programado.UI.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
+            // Opcionalmente, elimina las cookies manualmente si es necesario
+            Response.Cookies.Delete(".AspNetCore.Cookies");
+            Response.Cookies.Delete(".AspNetCore.Google");
+            Response.Cookies.Delete(".AspNetCore.Facebook");
+
             return RedirectToAction("InicieSesion", "Login");
         }
+
+
     }
 }

@@ -1,20 +1,28 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Proyecto_Programado.BL;
-using System.Security.Claims;
-
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.CodeAnalysis.Options;
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuración de autenticación
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeUsuarios, Proyecto_Programado.BL.AdministradorDeUsuarios>();
+builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeInventarios, Proyecto_Programado.BL.AdministradorDeInventarios>();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<Proyecto_Programado.DA.DBContexto>(x => x.UseSqlServer(connectionString));
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    
 })
 .AddCookie(options =>
 {
     options.LoginPath = "/Login/InicieSesion";
+    options.AccessDeniedPath = "/Login/InicieSesion";
     options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
 })
 .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
@@ -23,41 +31,43 @@ builder.Services.AddAuthentication(options =>
     options.ClientId = googleAuthNSection["ClientId"];
     options.ClientSecret = googleAuthNSection["ClientSecret"];
 
-    options.Events = new Microsoft.AspNetCore.Authentication.OAuth.OAuthEvents
+    options.Events.OnRedirectToAuthorizationEndpoint = context =>
     {
-        OnCreatingTicket = async context =>
-        {
-            var identity = (ClaimsIdentity)context.Principal.Identity;
-            var email = context.Principal.FindFirst(ClaimTypes.Email)?.Value;
+        context.Response.Redirect(context.RedirectUri + "&prompt=select_account");
+        return Task.CompletedTask;
+    };
+})
 
-            if (!string.IsNullOrEmpty(email))
-            {
-                identity.AddClaim(new Claim(ClaimTypes.Name, email));
-            }
-        }
+.AddFacebook(options =>
+{
+    var facebookAuthNSection = builder.Configuration.GetSection("Authentication:Facebook");
+    options.AppId = facebookAuthNSection["AppId"];
+    options.AppSecret = facebookAuthNSection["AppSecret"];
+    options.Events.OnRedirectToAuthorizationEndpoint = context =>
+    {
+        context.Response.Redirect(context.RedirectUri + "&auth_type=rerequest");
+        return Task.CompletedTask;
     };
 });
 
-// Otros servicios
-builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IAdministradorDeUsuarios, AdministradorDeUsuarios>();
-builder.Services.AddScoped<IAdministradorDeInventarios, AdministradorDeInventarios>();
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<Proyecto_Programado.DA.DBContexto>(options => options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 
-// Configuración de la tubería HTTP
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
+
 app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllerRoute(

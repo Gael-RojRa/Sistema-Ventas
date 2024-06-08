@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 using Proyecto_Programado.BL;
 using Proyecto_Programado.UI.ViewModels;
 using System.Security.Claims;
@@ -67,9 +69,10 @@ namespace Proyecto_Programado.UI.Controllers
                 };
 
                 ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                AuthenticationProperties properties = new AuthenticationProperties()
+                AuthenticationProperties properties = new AuthenticationProperties
                 {
                     AllowRefresh = true,
+                    IsPersistent = true
                 };
 
                 await HttpContext.SignInAsync(
@@ -94,11 +97,14 @@ namespace Proyecto_Programado.UI.Controllers
         {
             await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme, new AuthenticationProperties
             {
-                RedirectUri = Url.Action("GoogleResponse")
+                
+                RedirectUri = Url.Action("GoogleResponse"),
+                
             });
         }
         public async Task<IActionResult> GoogleResponse()
         {
+            Prompt permiso = Prompt.Consent;
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.
                 AuthenticationScheme);
             var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(claim => new
@@ -109,7 +115,57 @@ namespace Proyecto_Programado.UI.Controllers
                 claim.Value
             });
 
+            
             return RedirectToAction("Index", "Inventario");
+        }
+
+        public async Task<IActionResult> LoginWithFacebook()
+        {
+            try
+            {
+                var redirectUrl = Url.Action("FacebookResponse", "Login");
+                var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+                return Challenge(properties, FacebookDefaults.AuthenticationScheme);
+            }
+            catch (Exception ex)
+            {
+                // Manejar excepciones de manera adecuada, como registrando o notificando el error.
+                return RedirectToAction("Error", "Home");
+            }
+        }
+
+        public async Task<IActionResult> FacebookResponse()
+        {
+            try
+            {
+                var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                // Verificar si el usuario tiene acceso antes de redirigirlo
+                if (!result.Succeeded)
+                {
+                    // El usuario no tiene acceso, redirigir a una página de acceso denegado o inicio de sesión.
+                    return RedirectToAction("AccessDenied", "Home");
+                }
+
+                // Obtener los detalles del usuario autenticado
+                var claims = result.Principal.Identities.FirstOrDefault()?.Claims.Select(claim => new
+                {
+                    claim.Issuer,
+                    claim.OriginalIssuer,
+                    claim.Type,
+                    claim.Value
+                });
+
+                // Registrar o procesar la información del usuario, si es necesario
+
+                // Redirigir al usuario a la página principal
+                return RedirectToAction("Index", "Inventario");
+            }
+            catch (Exception ex)
+            {
+                // Manejar excepciones de manera adecuada, como registrando o notificando el error.
+                return RedirectToAction("Error", "Home");
+            }
         }
 
         // GET: LoginController/CambiarClave

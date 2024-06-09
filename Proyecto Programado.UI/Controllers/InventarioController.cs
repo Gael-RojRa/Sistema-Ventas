@@ -43,7 +43,9 @@ namespace Proyecto_Programado.UI.Controllers
         // GET: InventarioController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            Model.Inventario inventario;
+            inventario=ElAdministrador.ObtengaElInventario(id);
+            return View(inventario);
         }
 
         // GET: InventarioController/Create

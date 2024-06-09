@@ -15,7 +15,7 @@ namespace Proyecto_Programado.DA
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<Inventario> Inventarios { get; set; }
         public DbSet<HistoricoInventario> HistoricoInventario { get; set; }
-
+        public DbSet<AjusteDeInventario> AjusteDeInventarios { get; set; }
 
 
     }

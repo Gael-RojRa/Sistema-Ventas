@@ -10,6 +10,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeUsuarios, Proyecto_Programado.BL.AdministradorDeUsuarios>();
 builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeInventarios, Proyecto_Programado.BL.AdministradorDeInventarios>();
+builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeAjustes, Proyecto_Programado.BL.AdministradorDeAjustes>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<Proyecto_Programado.DA.DBContexto>(x => x.UseSqlServer(connectionString));

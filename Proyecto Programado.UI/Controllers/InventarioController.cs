@@ -21,12 +21,14 @@ namespace Proyecto_Programado.UI.Controllers
             ElAdministrador = administrador; 
         }
         // GET: InventarioController
-        public ActionResult Index(string nombre)
+        public ActionResult Index(int id, string nombre)
         {
             List<Inventario> laListadeInventarios;
             laListadeInventarios = ElAdministrador.ObtenLaListaDeInventarios();
 
-            if(nombre is null)
+            TempData["Id_Inventario"] = id;
+
+            if (nombre is null)
             {
                 return View(laListadeInventarios);
             } else
@@ -57,7 +59,11 @@ namespace Proyecto_Programado.UI.Controllers
         {
             if (ModelState.IsValid)
             {
+<<<<<<< HEAD
                 ElAdministrador.AgregueelInventario(inventario, User.Identity.Name);
+=======
+                ElAdministrador.AgregueElInventario(inventario);
+>>>>>>> f69a59c15a79460f741b924b01beac7cec6da555
                 return RedirectToAction(nameof(Index));
             }
             return View(inventario);
@@ -66,17 +72,25 @@ namespace Proyecto_Programado.UI.Controllers
         // GET: InventarioController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Model.Inventario inventario;
+            inventario = ElAdministrador.ObtengaElInventario(id);
+
+            return View(inventario);
         }
 
         // POST: InventarioController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(Model.Inventario inventario)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                ElAdministrador.EditeElInventario(inventario);
+
+
+                int idInventario = (int)(TempData["Id_Inventario"]);
+
+                return RedirectToAction("Index", new { id = idInventario });
             }
             catch
             {

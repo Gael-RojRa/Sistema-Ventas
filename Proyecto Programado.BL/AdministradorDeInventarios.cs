@@ -26,9 +26,14 @@ namespace Proyecto_Programado.BL
 
             return laListaDeInventarios;
         }
+<<<<<<< HEAD
         public void AgregueelInventario(Model.Inventario inventario, string nombreUsuario)
+=======
+        public void AgregueElInventario(Model.Inventario inventario)
+>>>>>>> f69a59c15a79460f741b924b01beac7cec6da555
         {
             inventario.Cantidad = 0;
+            inventario.Precio = Convert.ToDecimal(inventario.Precio.ToString().Replace(',', '.'));
             ElContexto.Inventarios.Add(inventario);
             ElContexto.SaveChanges();
 
@@ -47,21 +52,23 @@ namespace Proyecto_Programado.BL
             
 
         }
-        public Model.Inventario ObtengaElInventario(int id)
+        public Model.Inventario ObtengaElInventario(int Id)
         {
             Model.Inventario resultado;
-            resultado = ElContexto.Inventarios.Find(id);
+            resultado = ElContexto.Inventarios.Find(Id);
             return resultado;
         }
         public void EditeElInventario(Model.Inventario inventario)
         {
-            //Model.Inventario InventarioAEditar;
-            ////InventarioAEditar.ObtengaElInventario(inventario.Id);
-            //InventarioAEditar.Nombre = inventario.Nombre;
-            //InventarioAEditar.Categoria = inventario.Categoria;
-            //InventarioAEditar.Precio = inventario.Precio;
+            Model.Inventario inventarioAEditar;
+            inventarioAEditar = ObtengaElInventario(inventario.Id);
+            
+            inventarioAEditar.Nombre = inventario.Nombre;
+            inventarioAEditar.Categoria = inventario.Categoria;
+            inventarioAEditar.Precio = inventario.Precio;
 
-
+            ElContexto.Inventarios.Update(inventarioAEditar);
+            ElContexto.SaveChanges();
         }
     }
 }

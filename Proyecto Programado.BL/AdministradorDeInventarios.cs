@@ -26,11 +26,8 @@ namespace Proyecto_Programado.BL
 
             return laListaDeInventarios;
         }
-<<<<<<< HEAD
+
         public void AgregueelInventario(Model.Inventario inventario, string nombreUsuario)
-=======
-        public void AgregueElInventario(Model.Inventario inventario)
->>>>>>> f69a59c15a79460f741b924b01beac7cec6da555
         {
             inventario.Cantidad = 0;
             inventario.Precio = Convert.ToDecimal(inventario.Precio.ToString().Replace(',', '.'));

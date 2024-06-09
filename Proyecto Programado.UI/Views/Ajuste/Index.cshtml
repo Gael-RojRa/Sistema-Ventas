@@ -4,11 +4,21 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Ajuste de Inventarios</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Crear uno nuevo</a>
 </p>
+
+<form asp-controller="Ajuste" asp-action="Index" method="get">
+
+    <p>
+        Nombre: <input type="text" name="nombre" />
+        <input type="submit" value="Filtrar" />
+    </p>
+
+</form>
+
 <table class="table">
     <thead>
         <tr>
@@ -45,3 +55,7 @@
 }
     </tbody>
 </table>
+
+<div>
+    <a asp-action="Index" asp-controller="Inventario">Volver al inventario general</a>
+</div>

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Proyecto_Programado.BL;
 using Proyecto_Programado.Model;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Proyecto_Programado.UI.Controllers
 {
@@ -15,12 +16,25 @@ namespace Proyecto_Programado.UI.Controllers
         }
 
         // GET: AjusteController
-        public ActionResult Index()
+        public ActionResult Index(int id, string nombre)
         {
             List<Inventario> laListaDeInventarios;
             laListaDeInventarios = ElAdministrador.ObtenLaListaDeInventarios();
 
-            return View(laListaDeInventarios);
+            TempData["Id_Inventario"] = id;
+
+            if (nombre is null)
+            {
+                return View(laListaDeInventarios);
+            }
+            else
+            {
+                List<Inventario> laListadeInventariosFiltrada;
+                laListadeInventariosFiltrada = laListaDeInventarios.Where(x => x.Nombre.Contains(nombre)).ToList();
+                return View(laListadeInventariosFiltrada);
+
+            }
+            
         }
 
         // GET: AjusteController/Details/5

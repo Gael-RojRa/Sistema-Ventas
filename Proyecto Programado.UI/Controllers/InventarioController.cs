@@ -82,7 +82,7 @@ namespace Proyecto_Programado.UI.Controllers
         {
             try
             {
-                ElAdministrador.EditeElInventario(inventario);
+                ElAdministrador.EditeElInventario(inventario, User.Identity.Name);
 
 
                 int idInventario = (int)(TempData["Id_Inventario"]);

@@ -30,7 +30,6 @@ namespace Proyecto_Programado.BL
         public void AgregueelInventario(Model.Inventario inventario, string nombreUsuario)
         {
             inventario.Cantidad = 0;
-            inventario.Precio = Convert.ToDecimal(inventario.Precio.ToString().Replace(',', '.'));
             ElContexto.Inventarios.Add(inventario);
             ElContexto.SaveChanges();
 
@@ -39,7 +38,7 @@ namespace Proyecto_Programado.BL
                 IdInventario = inventario.Id,
                 nombreUsuario = nombreUsuario,
                 fechaCreacion = DateTime.UtcNow,
-                TipoModificacion = 0,
+                TipoModificacion = TipoModificacion.Creacion,
                 
             };
 
@@ -55,7 +54,7 @@ namespace Proyecto_Programado.BL
             resultado = ElContexto.Inventarios.Find(Id);
             return resultado;
         }
-        public void EditeElInventario(Model.Inventario inventario)
+        public void EditeElInventario(Model.Inventario inventario, string nombreUsuario)
         {
             Model.Inventario inventarioAEditar;
             inventarioAEditar = ObtengaElInventario(inventario.Id);
@@ -66,6 +65,21 @@ namespace Proyecto_Programado.BL
 
             ElContexto.Inventarios.Update(inventarioAEditar);
             ElContexto.SaveChanges();
+
+            var historico = new HistoricoInventario
+            {
+                IdInventario = inventario.Id,
+                nombreUsuario = nombreUsuario,
+                fechaCreacion = DateTime.UtcNow,
+                TipoModificacion = TipoModificacion.Modificacion,
+
+
+            };
+
+
+            ElContexto.HistoricoInventario.Add(historico);
+            ElContexto.SaveChanges();
+
         }
     }
 }

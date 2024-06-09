@@ -17,7 +17,7 @@ namespace Proyecto_Programado.BL
 
         public Model.Inventario ObtengaElInventario(int id);
 
-        public void EditeElInventario(Model.Inventario inventario);
+        public void EditeElInventario(Model.Inventario inventario, string nombreUsuario);
 
     }
 }

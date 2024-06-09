@@ -51,9 +51,29 @@ namespace Proyecto_Programado.BL
         public Model.Inventario ObtengaElInventario(int Id)
         {
             Model.Inventario resultado;
+      
             resultado = ElContexto.Inventarios.Find(Id);
+          
+
+          
             return resultado;
         }
+
+        public (Inventario, List<HistoricoInventario>) ObtengaInventarioConHistorico(int id)
+        {
+            var inventario = ElContexto.Inventarios.Find(id);
+
+
+            var historicoInventarios = ElContexto.HistoricoInventario
+                                               .Where(h => h.IdInventario == id)
+                                               .ToList();
+
+            return (inventario, historicoInventarios);
+        }
+
+
+
+
         public void EditeElInventario(Model.Inventario inventario, string nombreUsuario)
         {
             Model.Inventario inventarioAEditar;

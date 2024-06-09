@@ -43,7 +43,11 @@ namespace Proyecto_Programado.UI.Controllers
         // GET: InventarioController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+          
+            var(inventario, historicoInventarios) = ElAdministrador.ObtengaInventarioConHistorico(id);
+            ViewBag.HistoricoInventarios = historicoInventarios;
+            return View(inventario);
+        
         }
 
         // GET: InventarioController/Create

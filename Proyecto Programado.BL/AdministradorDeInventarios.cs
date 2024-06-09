@@ -1,4 +1,5 @@
-﻿using Proyecto_Programado.DA;
+﻿using Microsoft.EntityFrameworkCore;
+using Proyecto_Programado.DA;
 using Proyecto_Programado.Model;
 using System;
 using System.Collections.Generic;
@@ -25,11 +26,26 @@ namespace Proyecto_Programado.BL
 
             return laListaDeInventarios;
         }
-        public void AgregueelInventario(Model.Inventario inventario)
+        public void AgregueelInventario(Model.Inventario inventario, string nombreUsuario)
         {
             inventario.Cantidad = 0;
             ElContexto.Inventarios.Add(inventario);
             ElContexto.SaveChanges();
+
+            var historico = new HistoricoInventario
+            {
+                IdInventario = inventario.Id,
+                nombreUsuario = nombreUsuario,
+                fechaCreacion = DateTime.UtcNow,
+                TipoModificacion = 0,
+                
+            };
+
+
+            ElContexto.HistoricoInventario.Add(historico);
+            ElContexto.SaveChanges();
+            
+
         }
         public Model.Inventario ObtengaElInventario(int id)
         {

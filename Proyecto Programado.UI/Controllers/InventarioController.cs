@@ -57,7 +57,7 @@ namespace Proyecto_Programado.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                ElAdministrador.AgregueelInventario(inventario);
+                ElAdministrador.AgregueelInventario(inventario, User.Identity.Name);
                 return RedirectToAction(nameof(Index));
             }
             return View(inventario);

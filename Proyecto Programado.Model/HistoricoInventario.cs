@@ -12,7 +12,7 @@ namespace Proyecto_Programado.Model
         public int IdInventario {  get; set; }
         public String nombreUsuario { get; set; }
         public DateTime fechaCreacion { get; set; }
-        public bool EsCreacion { get; set; }
+        public TipoModificacion TipoModificacion { get; set; }
 
-    }
+}
 }

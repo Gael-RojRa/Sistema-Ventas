@@ -15,6 +15,7 @@ namespace Proyecto_Programado.BL
         void EnvieCorreoElectronico(string destinatario, string asunto, string contenido);
         bool VerifiqueCredenciales(string nombre, string clave);
         Usuario ObtenerUsuarioPorNombre(string nombre);
+        Rol ObtengaElRolDelUsuario(string nombre);
         void CambiarClave(Usuario usuario, string claveNueva);
     }
 }

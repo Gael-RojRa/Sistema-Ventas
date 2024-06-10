@@ -2,6 +2,7 @@
 using Proyecto_Programado.Model;
 using System.Net.Mail;
 using System.Net;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Proyecto_Programado.BL
 {
@@ -137,6 +138,12 @@ namespace Proyecto_Programado.BL
         public Usuario ObtenerUsuarioPorNombre(string nombre)
         {
             return ElContexto.Usuario.SingleOrDefault(u => u.Nombre == nombre);
+        }
+
+        public Rol ObtengaElRolDelUsuario(string nombre)
+        {
+            var ElUsuario = ElContexto.Usuario.SingleOrDefault(u => u.Nombre == nombre);
+            return ElUsuario.rol;
         }
 
         public void CambiarClave(Usuario usuario, string claveNueva)

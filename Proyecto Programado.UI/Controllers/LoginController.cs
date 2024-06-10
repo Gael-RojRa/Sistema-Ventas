@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using Proyecto_Programado.BL;
+using Proyecto_Programado.Model;
 using Proyecto_Programado.UI.ViewModels;
 using System.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace Proyecto_Programado.UI.Controllers
@@ -65,7 +67,8 @@ namespace Proyecto_Programado.UI.Controllers
             {
                 List<Claim> claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, usuario.NombreUsuario)
+                    new Claim(ClaimTypes.Name, usuario.NombreUsuario),
+                    new Claim(ClaimTypes.Role, ElAdministrador.ObtengaElRolDelUsuario(usuario.NombreUsuario).ToString())
                 };
 
                 ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -81,7 +84,15 @@ namespace Proyecto_Programado.UI.Controllers
                     properties
                     );
 
-                return RedirectToAction("Index", "Inventario");
+                var roleClaim = claimsIdentity.FindFirst(claimsIdentity.RoleClaimType);
+                if (roleClaim.Value == "AdministradorDelSistema")
+                {
+                    return RedirectToAction("Index", "Inventario");
+                } else
+                {
+                    return RedirectToAction("DeBienvenida", "Login", new { usuario = claimsIdentity.Name});
+                }
+                
 
             }
             else
@@ -109,14 +120,15 @@ namespace Proyecto_Programado.UI.Controllers
                 AuthenticationScheme);
             var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(claim => new
             {
+
                 claim.Issuer,
                 claim.OriginalIssuer,
                 claim.Type,
                 claim.Value
             });
 
-            
-            return RedirectToAction("Index", "Inventario");
+
+            return RedirectToAction("DeBienvenida", "Login", new { usuario = result.Principal.FindFirst(ClaimTypes.Name).Value });
         }
 
         public async Task<IActionResult> LoginWithFacebook()
@@ -159,7 +171,7 @@ namespace Proyecto_Programado.UI.Controllers
                 // Registrar o procesar la información del usuario, si es necesario
 
                 // Redirigir al usuario a la página principal
-                return RedirectToAction("Index", "Inventario");
+                return RedirectToAction("DeBienvenida", "Login", new { usuario = result.Principal.FindFirst(ClaimTypes.Name).Value });
             }
             catch (Exception ex)
             {
@@ -199,6 +211,13 @@ namespace Proyecto_Programado.UI.Controllers
 
             ViewData["Mensaje"] = "Cambio de clave realizado correctamente.";
             return View(modelo);
+        }
+
+        [HttpGet]
+        public IActionResult DeBienvenida(string usuario)
+        {
+            TempData["Usuario"] = usuario;
+            return View();
         }
 
     }

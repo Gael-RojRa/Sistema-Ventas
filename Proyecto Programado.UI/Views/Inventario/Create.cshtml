@@ -36,8 +36,7 @@
             </div> 
             <div class="form-group">
                 <label asp-for="Precio" class="control-label"></label>
-                <input type="text" id="PrecioDisplay" class="form-control" />
-                <input type="hidden" asp-for="Precio" id="PrecioReal" />
+                <input type="number" asp-for="Precio" class="form-control"  />
                 <span asp-validation-for="Precio" class="text-danger"></span>
             </div>
 

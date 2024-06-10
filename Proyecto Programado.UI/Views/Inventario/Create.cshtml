@@ -29,17 +29,18 @@
                 </select>
                 <span asp-validation-for="Categoria" class="text-danger"></span>
             </div>
-          @*   <div class="form-group">  aca lo comente porque dice que el usuario no agrega cantidad, y si lo
-              dejaba da conflictos, cualquier cosa lo verifican.
+             <div class="form-group">
                 <label asp-for="Cantidad" class="control-label"></label>
                 <input asp-for="Cantidad" class="form-control" readonly="readonly" />
                 <span asp-validation-for="Cantidad" class="text-danger"></span>
-            </div> *@
+            </div> 
             <div class="form-group">
                 <label asp-for="Precio" class="control-label"></label>
-                <input type="number" asp-for="Precio" class="form-control" />
+                <input type="text" id="PrecioDisplay" class="form-control" />
+                <input type="hidden" asp-for="Precio" id="PrecioReal" />
                 <span asp-validation-for="Precio" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -54,3 +55,32 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script>
+    // Obtener el campo de cantidad
+    var cantidadInput = document.getElementById('Cantidad');
+
+    // Si el valor es vacío, establecerlo en 0
+    if (cantidadInput.value.trim() === '') {
+        cantidadInput.value = '0';
+    }
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Función para formatear el número
+        function formatNumber(input) {
+            var number = input.value.replace(/\s/g, "").replace(",", ".");
+            var parts = number.split(".");
+            parts[0] = parseFloat(parts[0]).toLocaleString('fr-FR');
+            input.value = parts.join(".");
+        }
+
+        // Aplicar el formato en tiempo real
+        $('#PrecioDisplay').on('input', function () {
+            formatNumber(this);
+            $('#PrecioReal').val(this.value.replace(/\s/g, "").replace(",", "."));
+        });
+    });
+</script>
+

@@ -33,7 +33,7 @@ namespace Proyecto_Programado.BL
                 string asunto = "Solicitud de creación de usuario.";
                 string contenido = "Cuenta de usuario creada satisfactoriamente para el usuario " + usuarioNuevo.Nombre;
 
-                EnvieCorreoElectronico(usuarioNuevo.correoElectronico, asunto, contenido);
+                //EnvieCorreoElectronico(usuarioNuevo.correoElectronico, asunto, contenido);
 
                 CredencialesCorrectas = true;
 
@@ -110,7 +110,7 @@ namespace Proyecto_Programado.BL
                 string elAsunto = "Inicio de sesión del usuario " + nombre;
                 string elCuerpo = "Usted inició sesión el día " + DateTime.Now.ToString("dd/MM/yyyy") + " a las " + DateTime.Now.ToString("HH:mm");
 
-                EnvieCorreoElectronico(destinatario, elAsunto, elCuerpo);
+                //EnvieCorreoElectronico(destinatario, elAsunto, elCuerpo);
 
                 return true;
             }

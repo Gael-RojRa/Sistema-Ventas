@@ -1,11 +1,10 @@
-﻿
-@{
-    ViewData["Title"] = "DeBienvenida";
+﻿@{
+    Layout = null; // Esto excluye el layout para esta vista
+
+    ViewData["Title"] = "Bienvenida";
 
     var usuario = TempData["Usuario"];
 }
-
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -44,17 +43,33 @@
             color: #666666;
         }
 
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            color: #fff;
+            background-color: #e74c3c;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
 
+            .btn:hover {
+                background-color: #c0392b;
+            }
     </style>
 </head>
 <body>
-    
+    <div class="container">
         <h1>¡Bienvenido, @usuario!</h1>
         <p>Nos alegra verte por aquí. Esperamos que disfrutes tu estancia.</p>
-        
-   
+
+        <form asp-area="" asp-controller="Inventario" asp-action="Salir" method="post" class="d-inline">
+            <button type="submit" class="btn">Cerrar Sesión</button>
+        </form>
+    </div>
+
+
 </body>
 </html>
-
-
-

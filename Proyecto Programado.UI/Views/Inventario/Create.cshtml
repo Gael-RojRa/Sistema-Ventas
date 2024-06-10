@@ -57,10 +57,8 @@
 }
 
 <script>
-    // Obtener el campo de cantidad
     var cantidadInput = document.getElementById('Cantidad');
 
-    // Si el valor es vacío, establecerlo en 0
     if (cantidadInput.value.trim() === '') {
         cantidadInput.value = '0';
     }
@@ -68,7 +66,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
-        // Función para formatear el número
         function formatNumber(input) {
             var number = input.value.replace(/\s/g, "").replace(",", ".");
             var parts = number.split(".");
@@ -76,7 +73,6 @@
             input.value = parts.join(".");
         }
 
-        // Aplicar el formato en tiempo real
         $('#PrecioDisplay').on('input', function () {
             formatNumber(this);
             $('#PrecioReal').val(this.value.replace(/\s/g, "").replace(",", "."));

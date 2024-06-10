@@ -76,13 +76,10 @@ namespace Proyecto_Programado.BL
 
         public void EditeElInventario(Model.Inventario inventario, string nombreUsuario)
         {
-            // Obtener el inventario original de la base de datos
             Model.Inventario inventarioOriginal = ObtengaElInventario(inventario.Id);
 
-            // Crear una lista para almacenar las modificaciones
             List<string> modificaciones = new List<string>();
 
-            // Comparar cada propiedad y registrar las modificaciones
             if (inventarioOriginal.Nombre != inventario.Nombre)
             {
                 modificaciones.Add($"Nombre: {inventarioOriginal.Nombre} -> {inventario.Nombre}");
@@ -98,7 +95,6 @@ namespace Proyecto_Programado.BL
                 modificaciones.Add($"Precio: {inventarioOriginal.Precio} -> {inventario.Precio}");
             }
 
-            // Actualizar el inventario en la base de datos
             inventarioOriginal.Nombre = inventario.Nombre;
             inventarioOriginal.Categoria = inventario.Categoria;
             inventarioOriginal.Precio = inventario.Precio;
@@ -106,14 +102,13 @@ namespace Proyecto_Programado.BL
             ElContexto.Inventarios.Update(inventarioOriginal);
             ElContexto.SaveChanges();
 
-            // Registrar la modificación en el historial
             var historico = new HistoricoInventario
             {
                 IdInventario = inventario.Id,
                 nombreUsuario = nombreUsuario,
                 fechaCreacion = DateTime.UtcNow,
                 TipoModificacion = TipoModificacion.Modificacion,
-                Modificacion = string.Join(" | ", modificaciones) // Concatenar todas las modificaciones en una sola cadena
+                Modificacion = string.Join(" | ", modificaciones) 
             };
 
             ElContexto.HistoricoInventario.Add(historico);

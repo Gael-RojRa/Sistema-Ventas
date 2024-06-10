@@ -54,7 +54,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
-        // Función para formatear el número
         function formatNumber(input) {
             var number = input.value.replace(/\s/g, "").replace(",", ".");
             var parts = number.split(".");
@@ -62,10 +61,8 @@
             input.value = parts.join(".");
         }
 
-        // Aplicar el formato al cargar la página
         formatNumber($('#PrecioDisplay')[0]);
 
-        // Aplicar el formato en tiempo real
         $('#PrecioDisplay').on('input', function () {
             formatNumber(this);
             $('#PrecioReal').val(this.value.replace(/\s/g, "").replace(",", "."));

@@ -21,7 +21,6 @@ namespace Proyecto_Programado.UI.Controllers
             List<Inventario> laListaDeInventarios;
             laListaDeInventarios = ElAdministrador.ObtenLaListaDeInventarios();
 
-            TempData["Id_Inventario"] = id;
 
             if (nombre is null)
             {
@@ -44,20 +43,29 @@ namespace Proyecto_Programado.UI.Controllers
         }
 
         // GET: AjusteController/Create
-        public ActionResult Create()
+        public ActionResult Create(int Id)
         {
+            var cantidad = ElAdministrador.ObtengaLaCantidadActual(Id);
 
+            Model.AjusteDeInventario cantidadActual = new Model.AjusteDeInventario
+            {
+                CantidadActual = cantidad,
+                Id_Inventario = Id             
+            };
 
-            return View();
+            return View(cantidadActual);
         }
 
         // POST: AjusteController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(AjusteDeInventario ajuste)
         {
             try
             {
+
+                ElAdministrador.AgregueUnAjuste(ajuste, User.Identity.Name);
+
                 return RedirectToAction(nameof(Index));
             }
             catch

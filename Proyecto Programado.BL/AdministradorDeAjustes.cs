@@ -24,8 +24,10 @@ namespace Proyecto_Programado.BL
             return laListaDeInventarios;
         }
 
-        public void AgregueUnAjuste(Model.AjusteDeInventario ajuste)
+        public void AgregueUnAjuste(Model.AjusteDeInventario ajuste, string nombreUsuario)
         {
+            ajuste.UserId = nombreUsuario;
+            ajuste.Fecha = DateTime.Now;
             ElContexto.AjusteDeInventarios.Add(ajuste);
             ElContexto.SaveChanges();
 
@@ -33,9 +35,9 @@ namespace Proyecto_Programado.BL
 
         public int ObtengaLaCantidadActual(int Id)
         {
-            var resultado = ElContexto.AjusteDeInventarios.Find(Id);
+            var resultado = ElContexto.Inventarios.Find(Id);
 
-           return resultado.CantidadActual; 
+           return resultado.Cantidad; 
         }
 
     }

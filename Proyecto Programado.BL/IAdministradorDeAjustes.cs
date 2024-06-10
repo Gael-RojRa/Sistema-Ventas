@@ -11,7 +11,9 @@ namespace Proyecto_Programado.BL
     {
         public List<Inventario> ObtenLaListaDeInventarios();
 
-        public void AgregueUnAjuste(Model.AjusteDeInventario ajuste);
+        public void AgregueUnAjuste(Model.AjusteDeInventario ajuste, string nombreUsuario);
+
+        public int ObtengaLaCantidadActual(int Id);
 
     }
 }

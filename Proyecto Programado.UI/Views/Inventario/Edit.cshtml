@@ -32,7 +32,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="Precio" class="control-label"></label>
-                <input type="number" asp-for="Precio" class="form-control" />
+                <input type="text" id="PrecioDisplay" class="form-control" value="@Model.Precio.ToString("N2").Replace(",", " ")" />
+                <input type="hidden" asp-for="Precio" id="PrecioReal" value="@Model.Precio" />
                 <span asp-validation-for="Precio" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -49,3 +50,29 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Función para formatear el número
+        function formatNumber(input) {
+            var number = input.value.replace(/\s/g, "").replace(",", ".");
+            var parts = number.split(".");
+            parts[0] = parseFloat(parts[0]).toLocaleString('fr-FR');
+            input.value = parts.join(".");
+        }
+
+        // Aplicar el formato al cargar la página
+        formatNumber($('#PrecioDisplay')[0]);
+
+        // Aplicar el formato en tiempo real
+        $('#PrecioDisplay').on('input', function () {
+            formatNumber(this);
+            $('#PrecioReal').val(this.value.replace(/\s/g, "").replace(",", "."));
+        });
+    });
+</script>
+
+
+
+

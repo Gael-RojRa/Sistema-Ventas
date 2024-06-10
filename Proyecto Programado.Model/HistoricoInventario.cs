@@ -14,5 +14,7 @@ namespace Proyecto_Programado.Model
         public DateTime fechaCreacion { get; set; }
         public TipoModificacion TipoModificacion { get; set; }
 
+        public String? Modificacion { get; set; }
+
 }
 }

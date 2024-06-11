@@ -14,7 +14,7 @@ namespace Proyecto_Programado.Model
         public int CantidadActual { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "El valor debe ser un número positivo.")]
-        public int Ajuste { get; set; }
+        public int? Ajuste { get; set; }
         public TipoAjuste Tipo { get; set; }
         public string Observaciones { get; set; }
         public string UserId { get; set; }

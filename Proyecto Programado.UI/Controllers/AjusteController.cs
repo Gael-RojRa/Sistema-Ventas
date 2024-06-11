@@ -50,7 +50,8 @@ namespace Proyecto_Programado.UI.Controllers
             Model.AjusteDeInventario cantidadActual = new Model.AjusteDeInventario
             {
                 CantidadActual = cantidad,
-                Id_Inventario = id_inventario
+                Id_Inventario = id_inventario,
+                Ajuste = null
             };
 
             return View(cantidadActual);

@@ -47,7 +47,7 @@
                 @Html.DisplayFor(modelItem => item.Precio)
             </td>
             <td>
-                @Html.ActionLink("Agregar", "Create", new { id = item.Id}) |
+                    @Html.ActionLink("Agregar", "AgregarAjuste", new { id_inventario = item.Id }) |
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>

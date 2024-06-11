@@ -43,14 +43,14 @@ namespace Proyecto_Programado.UI.Controllers
         }
 
         // GET: AjusteController/Create
-        public ActionResult Create(int Id)
+        public ActionResult AgregarAjuste(int id_inventario)
         {
-            var cantidad = ElAdministrador.ObtengaLaCantidadActual(Id);
+            var cantidad = ElAdministrador.ObtengaLaCantidadActual(id_inventario);
 
             Model.AjusteDeInventario cantidadActual = new Model.AjusteDeInventario
             {
                 CantidadActual = cantidad,
-                Id_Inventario = Id             
+                Id_Inventario = id_inventario
             };
 
             return View(cantidadActual);
@@ -59,12 +59,12 @@ namespace Proyecto_Programado.UI.Controllers
         // POST: AjusteController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(AjusteDeInventario ajuste)
+        public ActionResult AgregarAjuste(AjusteDeInventario nuevoAjuste)
         {
             try
             {
 
-                ElAdministrador.AgregueUnAjuste(ajuste, User.Identity.Name);
+                ElAdministrador.AgregueUnAjuste(nuevoAjuste, User.Identity.Name);
 
                 return RedirectToAction(nameof(Index));
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ namespace Proyecto_Programado.Model
     {
         public int Id { get; set; }
         public int Id_Inventario { get; set; }
+        [DisplayName("Cantidad Actual")]
         public int CantidadActual { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "El valor debe ser un número positivo.")]

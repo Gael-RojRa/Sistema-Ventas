@@ -4,58 +4,92 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Ajuste de Inventarios</h1>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Ajuste de Inventarios</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Ajuste de Inventarios</h1>
 
-<p>
-    <a asp-action="Create">Crear uno nuevo</a>
-</p>
+        <div class="mb-3">
+            <a class="btn btn-primary btn-custom" asp-action="Create">Crear uno nuevo</a>
+        </div>
 
-<form asp-controller="Ajuste" asp-action="Index" method="get">
+        <form class="form-inline mb-3" asp-controller="Ajuste" asp-action="Index" method="get">
+            <div class="form-group">
+                <label for="nombre" class="mr-2">Nombre:</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" />
+            </div>
+            <button type="submit" class="btn btn-secondary">Filtrar</button>
+        </form>
 
-    <p>
-        Nombre: <input type="text" name="nombre" />
-        <input type="submit" value="Filtrar" />
-    </p>
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Nombre)</th>
+                    <th>@Html.DisplayNameFor(model => model.Cantidad)</th>
+                    <th>@Html.DisplayNameFor(model => model.Precio)</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Cantidad)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Precio)</td>
+                        <td>
+                            @Html.ActionLink("Agregar", "AgregarAjuste", new { id_inventario = item.Id }, new { @class = "btn btn-sm btn-success btn-custom" })
+                            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }, new { @class = "btn btn-sm btn-info btn-custom" })
+                            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ }, new { @class = "btn btn-sm btn-danger btn-custom" })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
-</form>
+        <div>
+            <a class="btn btn-secondary" asp-action="Index" asp-controller="Inventario">Volver al inventario general</a>
+        </div>
+    </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cantidad)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Precio)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cantidad)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Precio)
-            </td>
-            <td>
-                    @Html.ActionLink("Agregar", "AgregarAjuste", new { id_inventario = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
 
-<div>
-    <a asp-action="Index" asp-controller="Inventario">Volver al inventario general</a>
-</div>
+        h1 {
+            color: #343a40;
+        }
+
+        .table {
+            margin-top: 20px;
+            background-color: #fff;
+        }
+
+        .btn-custom {
+            margin-right: 5px;
+        }
+
+        .form-inline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .form-inline .form-group {
+                margin-bottom: 10px;
+            }
+    </style>
+</body>
+</html>

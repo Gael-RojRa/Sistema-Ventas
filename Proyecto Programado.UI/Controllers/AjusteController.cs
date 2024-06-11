@@ -51,7 +51,7 @@ namespace Proyecto_Programado.UI.Controllers
             {
                 CantidadActual = cantidad,
                 Id_Inventario = id_inventario,
-                Ajuste = null
+                Ajuste = 0
             };
 
             return View(cantidadActual);

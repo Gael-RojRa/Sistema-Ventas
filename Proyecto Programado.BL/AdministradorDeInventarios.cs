@@ -54,8 +54,6 @@ namespace Proyecto_Programado.BL
       
             resultado = ElContexto.Inventarios.Find(Id);
           
-
-          
             return resultado;
         }
 

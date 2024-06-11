@@ -31,6 +31,18 @@ namespace Proyecto_Programado.BL
             ElContexto.AjusteDeInventarios.Add(ajuste);
             ElContexto.SaveChanges();
 
+            Model.Inventario inventario = ObtengaElInventarioAModifircarLaCantidad(ajuste.Id_Inventario);
+
+            if (ajuste.Tipo == Model.TipoAjuste.Aumento)
+            {
+                inventario.Cantidad = inventario.Cantidad + ajuste.Ajuste;
+            }
+            else
+            {
+                inventario.Cantidad = inventario.Cantidad - ajuste.Ajuste;
+            }
+            ElContexto.Inventarios.Update(inventario);
+            ElContexto.SaveChanges();
         }
 
         public int ObtengaLaCantidadActual(int Id)
@@ -38,6 +50,15 @@ namespace Proyecto_Programado.BL
             var resultado = ElContexto.Inventarios.Find(Id);
 
            return resultado.Cantidad; 
+        }
+
+        public Model.Inventario ObtengaElInventarioAModifircarLaCantidad(int Id)
+        {
+            Model.Inventario resultado;
+
+            resultado = ElContexto.Inventarios.Find(Id);
+
+            return resultado;
         }
 
     }

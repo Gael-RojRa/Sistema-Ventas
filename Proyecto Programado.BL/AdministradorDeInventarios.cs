@@ -106,7 +106,7 @@ namespace Proyecto_Programado.BL
                 nombreUsuario = nombreUsuario,
                 fechaCreacion = DateTime.UtcNow,
                 TipoModificacion = TipoModificacion.Modificacion,
-                Modificacion = string.Join(" | ", modificaciones) 
+                Modificacion = string.Join("\n", modificaciones) 
             };
 
             ElContexto.HistoricoInventario.Add(historico);

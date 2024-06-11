@@ -31,18 +31,36 @@ namespace Proyecto_Programado.BL
             ElContexto.AjusteDeInventarios.Add(ajuste);
             ElContexto.SaveChanges();
 
-            Model.Inventario inventario = ObtengaElInventarioAModifircarLaCantidad(ajuste.Id_Inventario);
+            List<string> laModificacion = new List<string>(); ;
+            
+            Model.Inventario inventario = ObtengaElInventarioAModificarLaCantidad(ajuste.Id_Inventario);
 
             if (ajuste.Tipo == Model.TipoAjuste.Aumento)
             {
+                laModificacion.Add($"Cantidad: {inventario.Cantidad} -> {inventario.Cantidad + ajuste.Ajuste}");
                 inventario.Cantidad = inventario.Cantidad + ajuste.Ajuste;
+                
             }
             else
             {
+                laModificacion.Add($"Cantidad: {inventario.Cantidad} -> {inventario.Cantidad - ajuste.Ajuste}");
                 inventario.Cantidad = inventario.Cantidad - ajuste.Ajuste;
             }
             ElContexto.Inventarios.Update(inventario);
             ElContexto.SaveChanges();
+
+            var historico = new HistoricoInventario
+            {
+                IdInventario = inventario.Id,
+                nombreUsuario = nombreUsuario,
+                fechaCreacion = DateTime.UtcNow,
+                TipoModificacion = TipoModificacion.Modificacion,
+                Modificacion = string.Join("\n", laModificacion)
+            };
+            ElContexto.HistoricoInventario.Add(historico);
+            ElContexto.SaveChanges();
+
+
         }
 
         public int ObtengaLaCantidadActual(int Id)
@@ -52,7 +70,7 @@ namespace Proyecto_Programado.BL
            return resultado.Cantidad; 
         }
 
-        public Model.Inventario ObtengaElInventarioAModifircarLaCantidad(int Id)
+        public Model.Inventario ObtengaElInventarioAModificarLaCantidad(int Id)
         {
             Model.Inventario resultado;
 

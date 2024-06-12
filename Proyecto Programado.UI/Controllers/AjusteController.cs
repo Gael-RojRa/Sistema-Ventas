@@ -39,8 +39,17 @@ namespace Proyecto_Programado.UI.Controllers
         // GET: AjusteController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+
+            List<Model.AjusteDeInventario> ajustesInventario;
+            ajustesInventario = ElAdministrador.ObtengaLosAjustesDeInventario(id);
+
+            return View(ajustesInventario);
+        
         }
+
+       
+
+
 
         // GET: AjusteController/Create
         public ActionResult AgregarAjuste(int id_inventario)

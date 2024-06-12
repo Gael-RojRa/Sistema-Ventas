@@ -16,5 +16,10 @@ namespace Proyecto_Programado.BL
         public int ObtengaLaCantidadActual(int Id);
 
         public Model.Inventario ObtengaElInventarioAModificarLaCantidad(int Id);
+
+        public List<Model.AjusteDeInventario> ObtengaLosAjustesDeInventario(int id);
+
+
+
     }
 }

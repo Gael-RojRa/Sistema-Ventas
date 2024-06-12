@@ -16,10 +16,6 @@
     <div class="container mt-5">
         <h1 class="mb-4">Ajuste de Inventarios</h1>
 
-        <div class="mb-3">
-            <a class="btn btn-primary btn-custom" asp-action="Create">Crear uno nuevo</a>
-        </div>
-
         <form class="form-inline mb-3" asp-controller="Ajuste" asp-action="Index" method="get">
             <div class="form-group">
                 <label for="nombre" class="mr-2">Nombre:</label>
@@ -46,8 +42,9 @@
                         <td>@Html.DisplayFor(modelItem => item.Precio)</td>
                         <td>
                             @Html.ActionLink("Agregar", "AgregarAjuste", new { id_inventario = item.Id }, new { @class = "btn btn-sm btn-success btn-custom" })
-                            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }, new { @class = "btn btn-sm btn-info btn-custom" })
-                            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ }, new { @class = "btn btn-sm btn-danger btn-custom" })
+                            @Html.ActionLink("Detalles", "Details", new { id = item.Id }, new { @class = "btn btn-sm btn-info btn-custom" })
+                           
+
                         </td>
                     </tr>
                 }

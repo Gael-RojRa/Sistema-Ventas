@@ -1,10 +1,5 @@
 ﻿using Proyecto_Programado.DA;
 using Proyecto_Programado.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Proyecto_Programado.BL
 {
@@ -24,6 +19,40 @@ namespace Proyecto_Programado.BL
             return laListaDeInventarios;
         }
 
+        public List<AjusteDeInventario> ObtenLaListaDeAjuste()
+        {
+            var laListaDeAjusteInventario = ElContexto.AjusteDeInventarios.ToList();
+
+            return laListaDeAjusteInventario;
+        }
+
+  
+
+       
+
+        public List<Model.AjusteDeInventario> ObtengaLosAjustesDeInventario(int id)
+        {
+            List<Model.AjusteDeInventario> losAjustesEncontrados = new List<Model.AjusteDeInventario>();
+
+           
+            List<Model.AjusteDeInventario> lista = ObtenLaListaDeAjuste();
+
+         
+            foreach (var ajusteInventario in lista)
+            {
+                if (ajusteInventario.Id_Inventario == id)
+                {
+                    losAjustesEncontrados.Add(ajusteInventario); 
+                }
+            }
+
+           
+            return losAjustesEncontrados;
+        }
+
+
+
+
         public void AgregueUnAjuste(Model.AjusteDeInventario ajuste, string nombreUsuario)
         {
             ajuste.UserId = nombreUsuario;
@@ -32,14 +61,14 @@ namespace Proyecto_Programado.BL
             ElContexto.SaveChanges();
 
             List<string> laModificacion = new List<string>(); ;
-            
+
             Model.Inventario inventario = ObtengaElInventarioAModificarLaCantidad(ajuste.Id_Inventario);
 
             if (ajuste.Tipo == Model.TipoAjuste.Aumento)
             {
                 laModificacion.Add($"Cantidad: {inventario.Cantidad} -> {inventario.Cantidad + ajuste.Ajuste}");
                 inventario.Cantidad = inventario.Cantidad + ajuste.Ajuste;
-                
+
             }
             else
             {
@@ -67,7 +96,7 @@ namespace Proyecto_Programado.BL
         {
             var resultado = ElContexto.Inventarios.Find(Id);
 
-           return resultado.Cantidad; 
+            return resultado.Cantidad;
         }
 
         public Model.Inventario ObtengaElInventarioAModificarLaCantidad(int Id)

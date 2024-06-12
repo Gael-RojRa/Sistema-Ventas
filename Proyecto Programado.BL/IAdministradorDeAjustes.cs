@@ -11,13 +11,19 @@ namespace Proyecto_Programado.BL
     {
         public List<Inventario> ObtenLaListaDeInventarios();
 
+        public List<AjusteDeInventario> ObtenLaListaDeAjuste();
+
         public void AgregueUnAjuste(Model.AjusteDeInventario ajuste, string nombreUsuario);
 
         public int ObtengaLaCantidadActual(int Id);
 
         public Model.Inventario ObtengaElInventarioAModificarLaCantidad(int Id);
 
-        public List<Model.AjusteDeInventario> ObtengaLosAjustesDeInventario(int id);
+        public Model.AjusteDeInventario ObtengaLosAjustesDeInventario(int id);
+        public List<Model.AjusteDeInventario> ObtengaLosAjustes(int id);
+
+
+
 
 
 

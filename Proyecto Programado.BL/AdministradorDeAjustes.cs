@@ -26,29 +26,37 @@ namespace Proyecto_Programado.BL
             return laListaDeAjusteInventario;
         }
 
-  
 
-       
+        public Model.AjusteDeInventario ObtengaLosAjustesDeInventario(int id)
+        {
+            var resultado = ElContexto.AjusteDeInventarios.Find(id);
 
-        public List<Model.AjusteDeInventario> ObtengaLosAjustesDeInventario(int id)
+            return resultado;
+
+        }
+
+
+        public List<Model.AjusteDeInventario> ObtengaLosAjustes(int id)
         {
             List<Model.AjusteDeInventario> losAjustesEncontrados = new List<Model.AjusteDeInventario>();
 
-           
+
             List<Model.AjusteDeInventario> lista = ObtenLaListaDeAjuste();
 
-         
+
             foreach (var ajusteInventario in lista)
             {
                 if (ajusteInventario.Id_Inventario == id)
                 {
-                    losAjustesEncontrados.Add(ajusteInventario); 
+                    losAjustesEncontrados.Add(ajusteInventario);
                 }
             }
 
-           
+
             return losAjustesEncontrados;
         }
+
+
 
 
 

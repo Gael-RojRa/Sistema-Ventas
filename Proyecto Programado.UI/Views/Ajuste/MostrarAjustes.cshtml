@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Proyecto_Programado.Model.AjusteDeInventario>
+
+@{
+    ViewData["Title"] = "MostrarAjustes";
+}
+
+<h1>MostrarAjustes</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+         
+            <th>
+                @Html.DisplayNameFor(model => model.CantidadActual)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ajuste)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tipo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fecha)
+            </th>
+         
+            <th>
+                @Html.DisplayNameFor(model => model.UserId)
+            </th>
+           
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+        
+            <td>
+                @Html.DisplayFor(modelItem => item.CantidadActual)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ajuste)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tipo)
+            </td>
+           <td>
+                @Html.DisplayFor(modelItem => item.Fecha)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserId)
+            </td>
+           
+            <td>
+                    @Html.ActionLink("Detalles", "Details", new { id = item.Id }, new { @class = "btn btn-sm btn-info btn-custom" })
+
+            </td>
+        </tr>
+
+}
+    </tbody>
+</table>
+<a asp-action="Index" class="btn btn-primary btn-lg">Regresar</a>

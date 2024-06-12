@@ -9,7 +9,10 @@ namespace Proyecto_Programado.BL
 {
     public interface IAdministradorDeCaja
     {
-        //AperturaDeCaja ObtenerApertura();
-        void AbrirCaja();
+        AperturaDeCaja ObtenerApertura();
+        void AbrirCaja(string Userid);
+
+        //void CerrarCaja();
+
     }
 }

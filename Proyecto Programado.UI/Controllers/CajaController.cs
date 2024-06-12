@@ -16,16 +16,29 @@ namespace Proyecto_Programado.UI.Controllers
 
         public IActionResult Index()
         {
-
+            
+           /* var apertura = ElAdministrador.ObtenerApertura();
+            if (apertura != null)
+            {
+                ViewBag.FechaInicio = apertura.FechaDeInicio;
+            }
+                    */
             return View();
         }
 
         [HttpPost]
         public IActionResult Abrir()
         {
-            ElAdministrador.AbrirCaja();
+            ElAdministrador.AbrirCaja(User.Identity.Name);
             return RedirectToAction("Index");
         }
+
+        /* [HttpPost]
+        public IActionResult Cerrar()
+        {
+            ElAdministrador.CerrarCaja();
+            return RedirectToAction("Index");
+        } */
     }
 }
 

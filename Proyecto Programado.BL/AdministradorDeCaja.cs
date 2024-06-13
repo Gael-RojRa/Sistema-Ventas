@@ -22,7 +22,7 @@ namespace Proyecto_Programado.BL
            public AperturaDeCaja ObtenerApertura()
             {
 
-                var apertura = ElContexto.AperturasDeCaja.FirstOrDefault(a => a.Estado == 1);
+                var apertura = ElContexto.AperturasDeCaja.FirstOrDefault(a => a.Estado== EstadoCajas.CajaAbierta);
                 if (apertura != null)
                 {
                     if (apertura.FechaDeCierre.HasValue)
@@ -39,7 +39,7 @@ namespace Proyecto_Programado.BL
             {
                 UserId = UserId,
                 FechaDeInicio = DateTime.Now,
-                Estado = 1
+                Estado = (EstadoCajas.CajaAbierta)
             };
             ElContexto.AperturasDeCaja.Add(apertura);
             ElContexto.SaveChanges();

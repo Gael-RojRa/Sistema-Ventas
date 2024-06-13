@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Proyecto_Programado.Model
 {
-    public enum Estado
+    public enum EstadoCajas
     {
-        EnProceso = 1,
-        Terminada = 2
+        CajaAbierta = 1,
+        CajaCerrada = 2
     }
 }

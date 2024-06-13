@@ -14,6 +14,6 @@ namespace Proyecto_Programado.Model
         public DateTime FechaDeInicio { get; set; }
         public DateTime? FechaDeCierre { get; set; }
         public string Observaciones { get; set; }
-        public int Estado { get; set; }
+        public EstadoCajas Estado { get; set; }
     }
 }

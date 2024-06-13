@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -7,13 +8,15 @@ using System.Threading.Tasks;
 
 namespace Proyecto_Programado.Model
 {
-    public class Ventas
+    public class Venta
     {
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength]
+       
+       
+        [DisplayName("Nombre Cliente")]
+        [Required(ErrorMessage = "El nombre es requerido")]
         public string NombreCliente { get; set; }
 
         [Required]
@@ -35,10 +38,12 @@ namespace Proyecto_Programado.Model
         public decimal MontoDescuento { get; set; }
 
         [Required]
-        public Estado Estado { get; set; }
+        public EstadoVenta Estado { get; set; }
 
         [Required]
         public int IdAperturaDeCaja { get; set; }
+
+        public int UsuarioId { get; set; } // Se obtiene automáticamente
 
     }
 }

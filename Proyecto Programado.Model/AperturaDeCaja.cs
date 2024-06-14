@@ -13,7 +13,7 @@ namespace Proyecto_Programado.Model
         public string UserId { get; set; }
         public DateTime FechaDeInicio { get; set; }
         public DateTime? FechaDeCierre { get; set; }
-        public string Observaciones { get; set; }
+        public string? Observaciones { get; set; }
         public EstadoCajas Estado { get; set; }
     }
 }

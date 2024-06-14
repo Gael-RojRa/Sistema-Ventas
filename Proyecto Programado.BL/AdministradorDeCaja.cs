@@ -23,7 +23,7 @@ namespace Proyecto_Programado.BL
         {
             caja.UserId = nombreUsuario;
             caja.FechaDeInicio = DateTime.Now;
-            caja.Estado = 1;
+            caja.Estado = EstadoCajas.CajaAbierta;
 
             ElContexto.AperturasDeCaja.Add(caja);
             ElContexto.SaveChanges();
@@ -34,7 +34,7 @@ namespace Proyecto_Programado.BL
 
 
             caja.FechaDeCierre = DateTime.Now;
-            caja.Estado = 2;
+            caja.Estado = EstadoCajas.CajaCerrada;
 
 
             ElContexto.SaveChanges();
@@ -49,7 +49,7 @@ namespace Proyecto_Programado.BL
         public AperturaDeCaja ObtenerCajaAbierta(string nombreUsuario)
         {
 
-            return ElContexto.AperturasDeCaja.FirstOrDefault(c => c.UserId == nombreUsuario && c.Estado == 1);
+            return ElContexto.AperturasDeCaja.FirstOrDefault(c => c.UserId == nombreUsuario && c.Estado == EstadoCajas.CajaAbierta);
         }
     }
 

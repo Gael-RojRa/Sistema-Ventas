@@ -12,7 +12,7 @@ builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeUsuarios, Proy
 builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeInventarios, Proyecto_Programado.BL.AdministradorDeInventarios>();
 builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeAjustes, Proyecto_Programado.BL.AdministradorDeAjustes>();
 builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeCaja, Proyecto_Programado.BL.AdministradorDeCaja>();
-
+builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeVentas, Proyecto_Programado.BL.AdministradorDeVenta>();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<Proyecto_Programado.DA.DBContexto>(x => x.UseSqlServer(connectionString));
 

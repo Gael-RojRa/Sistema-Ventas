@@ -1,45 +1,45 @@
 ﻿@model Proyecto_Programado.Model.AperturaDeCaja
 
 @{
-    ViewData["Title"] = "Gestión de Caja";
+    ViewData["Title"] = "Index";
 }
 
-<h2>Gestión de Caja</h2>
+<h1>Apertura de cajas</h1>
 
 @if (Model != null)
 {
-    <p><strong>Fecha de Inicio:</strong> @Model.FechaDeInicio</p>
-    <h3>Ventas por Tipo de Pago</h3>
-    <table>
+    <h2>Información de la caja abierta</h2>
+    <table class="table">
         <thead>
             <tr>
-                <th>Tipo de Pago</th>
-                <th>Monto Acumulado</th>
+              
+                <th>
+                    @Html.DisplayNameFor(model => model.FechaDeInicio)
+                </th>
+
+                
+                <th></th>
             </tr>
         </thead>
         <tbody>
-            @if (ViewBag.VentasPorTipoPago != null)
-            {
-                @foreach (var venta in ViewBag.VentasPorTipoPago)
-                {
-                    <tr>
-                        <td>@venta.TipoPago</td>
-                        <td>@venta.Monto</td>
-                    </tr>
-                }
-            }
+            <tr>
+               
+                <td>
+                    @Html.DisplayFor(model => model.FechaDeInicio)
+                </td>
+               
+                <td>
+                    <a asp-action="CerrarCaja" asp-route-id="@Model.Id" class="btn btn-danger">Cerrar caja</a>
+
+                </td>
+            </tr>
         </tbody>
     </table>
-    <form asp-action="Cerrar" method="post">
-        <button type="submit" class="btn btn-danger">Cerrar Caja</button>
-    </form>
 }
 else
 {
-    <form asp-action="Abrir" method="post">
-        <button type="submit" class="btn btn-primary">Abrir Caja</button>
-    </form>
+    <p>No hay caja abierta.</p>
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Abrir Caja</a>
+    </p>
 }
-
-<p>@ViewData["Mensaje"]</p>
-

@@ -19,42 +19,40 @@ namespace Proyecto_Programado.BL
             ElContexto = contexto;
         }
 
-           public AperturaDeCaja ObtenerApertura()
-            {
-
-                var apertura = ElContexto.AperturasDeCaja.FirstOrDefault(a => a.Estado == 1);
-                if (apertura != null)
-                {
-                    if (apertura.FechaDeCierre.HasValue)
-                    {
-                        
-                    }
-                }
-                return apertura; 
-            }
-    
-        public void AbrirCaja(string UserId)
+        public void AbrirCaja(Model.AperturaDeCaja caja, string nombreUsuario)
         {
-            var apertura = new AperturaDeCaja
-            {
-                UserId = UserId,
-                FechaDeInicio = DateTime.Now,
-                Estado = 1
-            };
-            ElContexto.AperturasDeCaja.Add(apertura);
+            caja.UserId = nombreUsuario;
+            caja.FechaDeInicio = DateTime.Now;
+            caja.Estado = 1;
+
+            ElContexto.AperturasDeCaja.Add(caja);
             ElContexto.SaveChanges();
         }
-
-        /* public void CerrarCaja()
+        public void CerrarCaja(int id)
         {
-            var apertura = ElContexto.AperturasDeCaja.FirstOrDefault(a => a.Estado == 1);
-            if (apertura != null)
-            {
-                apertura.FechaDeCierre = DateTime.Now;
-                apertura.Estado = 0;
-                ElContexto.SaveChanges();
-            }
-        } */
+            var caja = ElContexto.AperturasDeCaja.FirstOrDefault(c => c.Id == id);
+
+
+            caja.FechaDeCierre = DateTime.Now;
+            caja.Estado = 2;
+
+
+            ElContexto.SaveChanges();
+
+        }
+
+
+
+
+
+
+        public AperturaDeCaja ObtenerCajaAbierta(string nombreUsuario)
+        {
+
+            return ElContexto.AperturasDeCaja.FirstOrDefault(c => c.UserId == nombreUsuario && c.Estado == 1);
+        }
     }
+
+
 }
 

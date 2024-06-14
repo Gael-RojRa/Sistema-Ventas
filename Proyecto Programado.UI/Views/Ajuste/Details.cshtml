@@ -4,11 +4,10 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Detalles de un ajuste</h1>
 
 <div>
-    <h4>AjusteDeInventario</h4>
-    <hr />
+    
     <dl class="row">
       
         <dt class = "col-sm-2">
@@ -50,5 +49,5 @@
     </dl>
 </div>
 <div>
-    <a asp-action="MostrarAjustes" class="btn btn-primary btn-lg">Regresar</a>
+    <a asp-action="MostrarAjustes" asp-route-id="@Model.Id_Inventario" class="btn btn-primary btn-lg">Regresar</a>
 </div>

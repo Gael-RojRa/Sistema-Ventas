@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Proyecto_Programado.BL;
+using Proyecto_Programado.Model;
 using System.Xml.Linq;
 
 namespace Proyecto_Programado.UI.Controllers
@@ -14,31 +15,31 @@ namespace Proyecto_Programado.UI.Controllers
             ElAdministrador = administrador;
         }
 
-        public IActionResult Index()
+        // GET: CajaController
+        public ActionResult Index()
         {
-            
-           /* var apertura = ElAdministrador.ObtenerApertura();
-            if (apertura != null)
-            {
-                ViewBag.FechaInicio = apertura.FechaDeInicio;
-            }
-                    */
-            return View();
+            var cajaAbierta = ElAdministrador.ObtenerCajaAbierta(User.Identity.Name);
+            return View(cajaAbierta);
         }
 
-        [HttpPost]
-        public IActionResult Abrir()
+
+
+        // GET: CajaController/Create
+        public ActionResult Create(AperturaDeCaja caja)
         {
-            ElAdministrador.AbrirCaja(User.Identity.Name);
-            return RedirectToAction("Index");
+            ElAdministrador.AbrirCaja(caja, User.Identity.Name);
+            return RedirectToAction(nameof(Index));
+
         }
 
-        /* [HttpPost]
-        public IActionResult Cerrar()
+        // GET: CajaController
+        public ActionResult CerrarCaja(int id)
         {
-            ElAdministrador.CerrarCaja();
-            return RedirectToAction("Index");
-        } */
+            ElAdministrador.CerrarCaja(id);
+            return RedirectToAction(nameof(Index));
+
+        }
+
     }
 }
 

@@ -157,6 +157,17 @@ namespace Proyecto_Programado.BL
                 ElContexto.SaveChanges();
             }
         }
+
+        public void RestaureLaCantidadDelItemEliminado(int cantidadDevuelta, int idInventario)
+        {
+            Inventario inventario = ElContexto.Inventarios.Find(idInventario);
+            if (inventario != null)
+            {
+                inventario.Cantidad += cantidadDevuelta;
+                ElContexto.Inventarios.Update(inventario);
+                ElContexto.SaveChanges();
+            }
+        }
         public Venta ObtengaVentaPorId(int idVenta)
         {
             return ElContexto.Ventas.Find(idVenta);
@@ -169,6 +180,11 @@ namespace Proyecto_Programado.BL
             ElContexto.VentaDetalles.Remove(itemAEliminar);
             ElContexto.SaveChanges();
 
+        }
+
+        public VentaDetalles ObtengaVentaDetallePorId(int idVentaDetalle)
+        {
+            return ElContexto.VentaDetalles.Find(idVentaDetalle);
         }
 
     }

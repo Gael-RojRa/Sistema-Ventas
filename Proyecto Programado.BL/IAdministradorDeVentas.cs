@@ -37,6 +37,10 @@ namespace Proyecto_Programado.BL
 
         Venta ObtengaVentaPorId(int idVenta);
 
+        VentaDetalles ObtengaVentaDetallePorId(int idVentaDetalle);
+
+        void RestaureLaCantidadDelItemEliminado(int cantidadDevuelta, int idInventario);
+
         void EliminarVenta(int id);
     }
 }

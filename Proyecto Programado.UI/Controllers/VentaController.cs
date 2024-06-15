@@ -183,15 +183,36 @@ namespace Proyecto_Programado.UI.Controllers
             try
             {
                 Venta laVenta = ElAdministrador.ObtengaVentaPorId(id);
-                laVenta.TipoDePago = tipoDePago;
-                laVenta.Estado = EstadoVenta.Terminada;
-
-                ElAdministrador.ActualiceVenta(id, laVenta);
-
                 List<VentaDetalles> detallesDeLaVenta = ElAdministrador.ObtengaLosItemsDeUnaVenta(id);
+
+                bool inventarioSuficiente = true; 
+
                 foreach (var detalle in detallesDeLaVenta)
                 {
-                    ElAdministrador.ActualiceLaCantidadDeInventario(detalle.Cantidad, detalle.Id_Inventario);
+                    if (detalle.Cantidad > ElAdministrador.ObtengaElInventario(detalle.Id_Inventario).Cantidad)
+                    {
+                        string nombreInventario = ElAdministrador.ObtengaElInventario(detalle.Id_Inventario).Nombre;
+                        ViewData["Cantidad"] = "La cantidad a comprar es mayor a la cantidad disponible del inventario: " + nombreInventario + ", por favor verifique su carrito";
+                        inventarioSuficiente = false;  
+                        break;  
+                    }
+                }
+
+                if (!inventarioSuficiente)
+                {
+                    
+                    return View();
+                }
+                else
+                {
+                    foreach (var detalle in detallesDeLaVenta)
+                    {
+                        ElAdministrador.ActualiceLaCantidadDeInventario(detalle.Cantidad, detalle.Id_Inventario);
+                    }
+
+                    laVenta.TipoDePago = tipoDePago;
+                    laVenta.Estado = EstadoVenta.Terminada;
+                    ElAdministrador.ActualiceVenta(id, laVenta);
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -201,6 +222,8 @@ namespace Proyecto_Programado.UI.Controllers
                 return View();
             }
         }
+
+
 
 
 

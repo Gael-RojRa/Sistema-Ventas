@@ -84,14 +84,10 @@ namespace Proyecto_Programado.UI.Controllers
                     properties
                     );
 
-                var roleClaim = claimsIdentity.FindFirst(claimsIdentity.RoleClaimType);
-                if (roleClaim.Value == "AdministradorDelSistema")
-                {
+
+                
                     return RedirectToAction("Index", "Inventario");
-                } else
-                {
-                    return RedirectToAction("DeBienvenida", "Login", new { usuario = claimsIdentity.Name});
-                }
+
                 
 
             }
@@ -103,7 +99,7 @@ namespace Proyecto_Programado.UI.Controllers
 
 
         }
-        ///METODOS DE  LOGIN GOOGLE
+        
         public async Task Login()
         {
             await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme, new AuthenticationProperties
@@ -115,21 +111,28 @@ namespace Proyecto_Programado.UI.Controllers
         }
         public async Task<IActionResult> GoogleResponse()
         {
-            Prompt permiso = Prompt.Consent;
-            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.
-                AuthenticationScheme);
-            var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(claim => new
+
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            if (!result.Succeeded)
             {
+                return Unauthorized();
+            }
 
-                claim.Issuer,
-                claim.OriginalIssuer,
-                claim.Type,
-                claim.Value
-            });
+            var claimsPrincipal = result.Principal;
 
+            var nameClaim = claimsPrincipal.FindFirst(ClaimTypes.Name);
 
-            return RedirectToAction("DeBienvenida", "Login", new { usuario = result.Principal.FindFirst(ClaimTypes.Name).Value });
+            if (nameClaim == null)
+            {
+                return BadRequest("Claim de Name no encontrado");
+            }
+
+            var usuarioName = nameClaim.Value;
+
+            return RedirectToAction("Index", "Inventario");
         }
+
 
         public async Task<IActionResult> LoginWithFacebook()
         {
@@ -141,7 +144,7 @@ namespace Proyecto_Programado.UI.Controllers
             }
             catch (Exception ex)
             {
-                // Manejar excepciones de manera adecuada, como registrando o notificando el error.
+                
                 return RedirectToAction("Error", "Home");
             }
         }
@@ -152,14 +155,11 @@ namespace Proyecto_Programado.UI.Controllers
             {
                 var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-                // Verificar si el usuario tiene acceso antes de redirigirlo
                 if (!result.Succeeded)
                 {
-                    // El usuario no tiene acceso, redirigir a una página de acceso denegado o inicio de sesión.
                     return RedirectToAction("AccessDenied", "Home");
                 }
 
-                // Obtener los detalles del usuario autenticado
                 var claims = result.Principal.Identities.FirstOrDefault()?.Claims.Select(claim => new
                 {
                     claim.Issuer,
@@ -168,14 +168,11 @@ namespace Proyecto_Programado.UI.Controllers
                     claim.Value
                 });
 
-                // Registrar o procesar la información del usuario, si es necesario
-
-                // Redirigir al usuario a la página principal
-                return RedirectToAction("DeBienvenida", "Login", new { usuario = result.Principal.FindFirst(ClaimTypes.Name).Value });
+                return RedirectToAction("Index", "Inventario");
             }
             catch (Exception ex)
             {
-                // Manejar excepciones de manera adecuada, como registrando o notificando el error.
+
                 return RedirectToAction("Error", "Home");
             }
         }

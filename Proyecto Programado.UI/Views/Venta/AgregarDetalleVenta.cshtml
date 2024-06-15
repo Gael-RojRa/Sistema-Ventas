@@ -66,20 +66,23 @@
 </div>
 
 @section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script>
         function toggleCantidad(index, maxCantidad) {
-
             var cantidadGroups = document.querySelectorAll('.cantidad-group');
             cantidadGroups.forEach(group => group.style.display = 'none');
-
 
             var cantidadGroup = document.getElementById('cantidadGroup_' + index);
             cantidadGroup.style.display = 'block';
 
-            document.getElementById('cantidad_' + index).value = 1;
+            var cantidadInput = document.getElementById('cantidad_' + index);
+            cantidadInput.value = 1;  // Ajustar el valor al deseado al seleccionar el ítem
+            validarCantidad(index, maxCantidad);  // Validar inicialmente la cantidad al cambiar de ítem
             document.getElementById('errorCantidad_' + index).style.display = 'none';
             document.getElementById('submitButton').disabled = false;
         }
+
 
         function validarCantidad(index, maxCantidad) {
             var cantidadInput = document.getElementById('cantidad_' + index);
@@ -94,6 +97,35 @@
                 submitButton.disabled = false;
             }
         }
+
+
+
+        function validarFormulario(event) {
+            var nombreCliente = document.getElementById('NombreCliente').value.trim();
+            var errorNombreCliente = document.getElementById('errorNombreCliente');
+            var cantidadInputs = document.querySelectorAll('input[name^="Cantidad_"]');
+            var cantidadValida = true;
+
+            cantidadInputs.forEach(function (input) {
+                var index = input.id.split('_')[1];
+                if (parseInt(input.value) > parseInt(input.getAttribute('max'))) {
+                    document.getElementById('errorCantidad_' + index).style.display = 'block';
+                    cantidadValida = false;
+                } else {
+                    document.getElementById('errorCantidad_' + index).style.display = 'none';
+                }
+            });
+
+            if (nombreCliente === "" || !cantidadValida) {
+                errorNombreCliente.style.display = 'block';
+                event.preventDefault();
+            } else {
+                errorNombreCliente.style.display = 'none';
+            }
+        }
+
+
+        document.getElementById('ventaForm').addEventListener('submit', validarFormulario);
     </script>
 }
 

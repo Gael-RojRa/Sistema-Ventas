@@ -1,80 +1,72 @@
-﻿    @model Proyecto_Programado.UI.ViewModels.Venta_VentaDetalleVM
+﻿@model Proyecto_Programado.UI.ViewModels.Venta_VentaDetalleVM
 
-    @{
-        ViewData["Title"] = "Agregar Venta";
-    }
-    @if (ViewBag.CajaAbierta == true)
-    {
+@{
+    ViewData["Title"] = "Agregar Venta";
+}
 
+<h1 class="text-center mt-4">Agregar Venta</h1>
 
-    <h1 class="text-center mt-4">Agregar Venta</h1>
-
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <form id="ventaForm" asp-action="AgregarVenta" method="post" class="bg-light p-4 rounded shadow-sm">
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <form id="ventaForm" asp-action="AgregarVenta" method="post" class="bg-light p-4 rounded shadow-sm">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
 
-                <div class="form-group mb-4">
-                    <label asp-for="NombreCliente" class="form-label">Nombre del Cliente</label>
-                    <input asp-for="NombreCliente" class="form-control" placeholder="Ingrese el nombre del cliente" />
-                    <span asp-validation-for="NombreCliente" class="text-danger"></span>
+            <div class="form-group mb-4">
+                <label asp-for="NombreCliente" class="form-label">Nombre del Cliente</label>
+                <input asp-for="NombreCliente" class="form-control" placeholder="Ingrese el nombre del cliente" />
+                <span asp-validation-for="NombreCliente" class="text-danger"></span>
 
-                </div>
+            </div>
 
 
-                <h4 class="mb-3">Seleccione un artículo y especifique la cantidad:</h4>
-                <div class="row">
-                    @for (int i = 0; i < Model.ItemsInventario.Count; i++)
-                    {
-                        <div class="col-md-6 mb-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="form-check">
-                                        <input type="radio" class="form-check-input" id="itemRadio_@i"
-                                               name="IdItemSeleccionado" value="@Model.ItemsInventario[i].Id"
-                                               onclick="toggleCantidad(@i, @Model.ItemsInventario[i].Cantidad)" />
-                                        <label class="form-check-label" for="itemRadio_@i">
-                                            <strong>@Model.ItemsInventario[i].Nombre</strong>
-                                            <br />
-                                            <small>Cantidad disponible: <span class="text-primary">@Model.ItemsInventario[i].Cantidad</span></small>
-                                        </label>
-                                    </div>
-                                    <div class="form-group mt-2 cantidad-group" id="cantidadGroup_@i" style="display: none;">
-                                        <label for="cantidad_@i" class="form-label">Cantidad</label>
-                                        <input type="number" class="form-control" id="cantidad_@i"
-                                               name="Cantidad" min="1" value="1"
-                                               max="@Model.ItemsInventario[i].Cantidad"
-                                               onchange="validarCantidad(@i, @Model.ItemsInventario[i].Cantidad)"
-                                               data-max-cantidad="@Model.ItemsInventario[i].Cantidad" />
-                                        <div class="text-danger" id="errorCantidad_@i" style="display: none;">
-                                            La cantidad no puede exceder la cantidad disponible.
-                                        </div>
+            <h4 class="mb-3">Seleccione un artículo y especifique la cantidad:</h4>
+            <div class="row">
+                @for (int i = 0; i < Model.ItemsInventario.Count; i++)
+                {
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="itemRadio_@i"
+                                           name="IdItemSeleccionado" value="@Model.ItemsInventario[i].Id"
+                                           onclick="toggleCantidad(@i, @Model.ItemsInventario[i].Cantidad)" />
+                                    <label class="form-check-label" for="itemRadio_@i">
+                                        <strong>@Model.ItemsInventario[i].Nombre</strong>
+                                        <br />
+                                        <small>Cantidad disponible: <span class="text-primary">@Model.ItemsInventario[i].Cantidad</span></small>
+                                    </label>
+                                </div>
+                                <div class="form-group mt-2 cantidad-group" id="cantidadGroup_@i" style="display: none;">
+                                    <label for="cantidad_@i" class="form-label">Cantidad</label>
+                                    <input type="number" class="form-control" id="cantidad_@i"
+                                           name="Cantidad" min="1" value="1"
+                                           max="@Model.ItemsInventario[i].Cantidad"
+                                           onchange="validarCantidad(@i, @Model.ItemsInventario[i].Cantidad)"
+                                           data-max-cantidad="@Model.ItemsInventario[i].Cantidad" />
+
+
+
+                                    <div class="text-danger" id="errorCantidad_@i" style="display: none;">
+                                        La cantidad no puede exceder la cantidad disponible.
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    }
-                </div>
+                    </div>
+                }
+            </div>
 
-                <div class="form-group text-center mt-4">
-                    <input type="submit" value="Guardar Venta" class="btn btn-primary btn-lg" id="submitButton" />
-                </div>
-            </form>
-        </div>
+            <div class="form-group text-center mt-4">
+                <input type="submit" value="Guardar Venta" class="btn btn-primary btn-lg" id="submitButton" />
+            </div>
+        </form>
     </div>
+</div>
 
-    <div class="text-center mt-4">
-        <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
-        </div>
-    }
-    else
-    {
-        <p>La caja está cerrada actualmente. No se pueden realizar ventas.</p>
-       <div>
-            <a asp-action="Index" class="btn btn-primary btn-lg">Regresar</a>
-        </div>
-    }
+<div class="text-center mt-4">
+    <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+</div>
 
 @section Scripts {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
@@ -87,10 +79,13 @@
             var cantidadGroup = document.getElementById('cantidadGroup_' + index);
             cantidadGroup.style.display = 'block';
 
-            document.getElementById('cantidad_' + index).value = 1;
+            var cantidadInput = document.getElementById('cantidad_' + index);
+            cantidadInput.value = 1;  // Ajustar el valor al deseado al seleccionar el ítem
+            validarCantidad(index, maxCantidad);  // Validar inicialmente la cantidad al cambiar de ítem
             document.getElementById('errorCantidad_' + index).style.display = 'none';
             document.getElementById('submitButton').disabled = false;
         }
+
 
         function validarCantidad(index, maxCantidad) {
             var cantidadInput = document.getElementById('cantidad_' + index);
@@ -106,18 +101,31 @@
             }
         }
 
-        function validarFormulario(event) {
-            var nombreCliente = document.getElementById('NombreCliente').value.trim();
-            var errorNombreCliente = document.getElementById('errorNombreCliente');
 
-            if (nombreCliente === "") {
-                errorNombreCliente.style.display = 'block';
-                event.preventDefault(); 
-            } else {
-                errorNombreCliente.style.display = 'none';
-            }
+
+function validarFormulario(event) {
+    var nombreCliente = document.getElementById('NombreCliente').value.trim();
+    var errorNombreCliente = document.getElementById('errorNombreCliente');
+    var cantidadInputs = document.querySelectorAll('input[name^="Cantidad_"]');
+    var cantidadValida = true;
+
+    cantidadInputs.forEach(function(input) {
+        var index = input.id.split('_')[1];
+        if (parseInt(input.value) > parseInt(input.getAttribute('max'))) {
+            document.getElementById('errorCantidad_' + index).style.display = 'block';
+            cantidadValida = false;
+        } else {
+            document.getElementById('errorCantidad_' + index).style.display = 'none';
         }
+    });
 
+    if (nombreCliente === "" || !cantidadValida) {
+        errorNombreCliente.style.display = 'block';
+        event.preventDefault(); 
+    } else {
+        errorNombreCliente.style.display = 'none';
+    }
+}
 
 
         document.getElementById('ventaForm').addEventListener('submit', validarFormulario);

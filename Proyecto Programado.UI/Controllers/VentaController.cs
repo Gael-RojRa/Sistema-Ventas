@@ -157,8 +157,9 @@ namespace Proyecto_Programado.UI.Controllers
         // POST: VentaController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AgregarDetalleVenta(Venta_VentaDetalleVM laVenta)
+        public ActionResult AgregarDetalleVenta(Venta_VentaDetalleVM laVenta, int cantidadSeleccionada)
         {
+            laVenta.Cantidad = cantidadSeleccionada;
             VentaDetalles nuevoDetalle = new VentaDetalles
             {
                 Cantidad = laVenta.Cantidad,

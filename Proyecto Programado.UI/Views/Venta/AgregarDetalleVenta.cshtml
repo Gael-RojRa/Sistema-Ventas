@@ -3,70 +3,66 @@
 @{
     ViewData["Title"] = "Agregar Venta";
 }
-@if (ViewBag.CajaAbierta == true)
-{
-    <h1 class="text-center mt-4">Agregar Venta</h1>
 
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <form id="ventaForm" asp-action="AgregarVenta" method="post" class="bg-light p-4 rounded shadow-sm">
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<h1 class="text-center mt-4">Agregar Venta</h1>
 
-                <div class="form-group mb-4">
-                    <label asp-for="NombreCliente" class="form-label">Nombre del Cliente</label>
-                    <input asp-for="NombreCliente" class="form-control" placeholder="Ingrese el nombre del cliente" />
-                    <span asp-validation-for="NombreCliente" class="text-danger"></span>
-                </div>
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <form id="ventaForm" asp-action="AgregarDetalleVenta" method="post" class="bg-light p-4 rounded shadow-sm">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                <h4 class="mb-3">Seleccione un artículo y especifique la cantidad:</h4>
-                <div class="row">
-                    @for (int i = 0; i < Model.ItemsInventario.Count; i++)
-                    {
-                        <div class="col-md-6 mb-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="form-check">
-                                        <input type="radio" class="form-check-input" id="itemRadio_@i"
-                                               name="IdItemSeleccionado" value="@Model.ItemsInventario[i].Id"
-                                               onclick="toggleCantidad(@i, @Model.ItemsInventario[i].Cantidad)" />
-                                        <label class="form-check-label" for="itemRadio_@i">
-                                            <strong>@Model.ItemsInventario[i].Nombre</strong>
-                                            <br />
-                                            <small>Cantidad disponible: <span class="text-primary">@Model.ItemsInventario[i].Cantidad</span></small>
-                                        </label>
-                                    </div>
-                                    <div class="form-group mt-2 cantidad-group" id="cantidadGroup_@i" style="display: none;">
-                                        <label for="cantidad_@i" class="form-label">Cantidad</label>
-                                        <input type="number" class="form-control" id="cantidad_@i"
-                                               name="Cantidad" min="1" value="1"
-                                               max="@Model.ItemsInventario[i].Cantidad"
-                                               onchange="validarCantidad(@i, @Model.ItemsInventario[i].Cantidad)"
-                                               data-max-cantidad="@Model.ItemsInventario[i].Cantidad" />
+            <input type="hidden" asp-for="idVenta" />
 
-                                        <div class="text-danger" id="errorCantidad_@i" style="display: none;">
-                                            La cantidad no puede exceder la cantidad disponible.
-                                        </div>
+
+            <div class="form-group mb-4">
+                <label asp-for="NombreCliente" class="form-label">Nombre del Cliente</label>
+                <input asp-for="NombreCliente" class="form-control" value=@Model.NombreCliente readonly />
+                <span asp-validation-for="NombreCliente" class="text-danger"></span>
+            </div>
+
+            <h4 class="mb-3">Seleccione un artículo y especifique la cantidad:</h4>
+            <div class="row">
+                @for (int i = 0; i < Model.ItemsInventario.Count; i++)
+                {
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="itemRadio_@i"
+                                           name="IdItemSeleccionado" value="@Model.ItemsInventario[i].Id"
+                                           onclick="toggleCantidad(@i, @Model.ItemsInventario[i].Cantidad)" />
+                                    <label class="form-check-label" for="itemRadio_@i">
+                                        <strong>@Model.ItemsInventario[i].Nombre</strong>
+                                        <br />
+                                        <small>Cantidad disponible: <span class="text-primary">@Model.ItemsInventario[i].Cantidad</span></small>
+                                    </label>
+                                </div>
+                                <div class="form-group mt-2 cantidad-group" id="cantidadGroup_@i" style="display: none;">
+                                    <label for="cantidad_@i" class="form-label">Cantidad</label>
+                                    <input type="number" class="form-control" id="cantidad_@i"
+                                           name="Cantidad" min="1" value="1"
+                                           max="@Model.ItemsInventario[i].Cantidad"
+                                           onchange="validarCantidad(@i, @Model.ItemsInventario[i].Cantidad)"
+                                           data-max-cantidad="@Model.ItemsInventario[i].Cantidad" />
+
+                                    <div class="text-danger" id="errorCantidad_@i" style="display: none;">
+                                        La cantidad no puede exceder la cantidad disponible.
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    }
-                </div>
+                    </div>
+                }
+            </div>
 
-                <!-- Campo oculto para la cantidad seleccionada -->
-                <input type="hidden" id="cantidadSeleccionada" name="CantidadSeleccionada" value="0" />
+            <input type="hidden" id="cantidadSeleccionada" name="CantidadSeleccionada" value="0" />
 
-                <div class="form-group text-center mt-4">
-                    <input type="submit" value="Guardar Venta" class="btn btn-primary btn-lg" id="submitButton" />
-                </div>
-            </form>
-        </div>
+            <div class="form-group text-center mt-4">
+                <input type="submit" value="Guardar Venta" class="btn btn-primary btn-lg" id="submitButton" />
+            </div>
+        </form>
     </div>
-}
-else
-{
-    <p>La caja está cerrada actualmente. No se pueden realizar ventas.</p>
-}
+</div>
 
 <div class="text-center mt-4">
     <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
@@ -158,3 +154,4 @@ else
         box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 </style>
+

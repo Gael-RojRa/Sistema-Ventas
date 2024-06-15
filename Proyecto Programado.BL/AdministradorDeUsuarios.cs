@@ -33,7 +33,7 @@ namespace Proyecto_Programado.BL
                 string elAsunto = "Solicitud de creación de usuario.";
                 string elContenido = "Cuenta de usuario creada satisfactoriamente para el usuario " + elUsuarioNuevo.Nombre;
 
-                //EnvieCorreoElectronico(usuarioNuevo.correoElectronico, asunto, contenido);
+                EnvieElCorreoElectronico(elUsuarioNuevo.correoElectronico, elAsunto, elContenido);
 
                 lasCredencialesCorrectas = true;
 
@@ -53,7 +53,7 @@ namespace Proyecto_Programado.BL
                 var elSmtpClient = new SmtpClient("smtp.gmail.com")
                 {
                     Port = 587,
-                    Credentials = new NetworkCredential("comercionoreply@gmail.com", "ogobqqzaxkvpriic"),
+                    Credentials = new NetworkCredential("comercionoreply@gmail.com", "mbry uqen cudv mmxn"),
                     EnableSsl = true,
                 };
 
@@ -105,7 +105,7 @@ namespace Proyecto_Programado.BL
                 string elAsunto = "Inicio de sesión del usuario " + elNombre;
                 string elCuerpo = "Usted inició sesión el día " + DateTime.Now.ToString("dd/MM/yyyy") + " a las " + DateTime.Now.ToString("HH:mm");
 
-                //EnvieCorreoElectronico(destinatario, elAsunto, elCuerpo);
+                EnvieElCorreoElectronico(elDestinatario, elAsunto, elCuerpo);
 
                 return true;
             }

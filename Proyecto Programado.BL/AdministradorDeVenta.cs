@@ -105,5 +105,25 @@ namespace Proyecto_Programado.BL
             ElContexto.Ventas.Update(ventaOriginal);
             ElContexto.SaveChanges();
         }
+
+        public void ActualiceElTotalEnElIndexDeVentas(int id, VentaDetalles nuevoDetalle)
+        {
+            decimal sumatoriaDelMontoDeDetalles = 0;
+            VentaDetalles detalleActual = ElContexto.VentaDetalles.Find(id);
+
+            if (detalleActual != null)
+            {
+                sumatoriaDelMontoDeDetalles = ElContexto.VentaDetalles
+                    .Where(d => d.Id_Venta == detalleActual.Id_Venta)
+                    .Sum(d => d.Monto);
+            }
+
+            Venta ventaAModificar = ElContexto.Ventas.Find(id);
+            ventaAModificar.SubTotal = sumatoriaDelMontoDeDetalles;
+            ventaAModificar.Total = sumatoriaDelMontoDeDetalles;
+
+            ElContexto.Ventas.Update(ventaAModificar);
+            ElContexto.SaveChanges();
+        }
     }
 }

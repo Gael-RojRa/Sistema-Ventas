@@ -29,5 +29,6 @@ namespace Proyecto_Programado.BL
 
         string ObtengaNombreDeVenta(int idVenta);
 
+        void ActualiceElTotalEnElIndexDeVentas(int id, VentaDetalles nuevoDetalle);
     }
 }

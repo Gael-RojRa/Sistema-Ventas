@@ -28,10 +28,20 @@ namespace Proyecto_Programado.UI.Controllers
         public ActionResult Carrito(int id)
         {
             List<VentaDetalles> laListaDeDetalles = ElAdministrador.ObtengaLosItemsDeUnaVenta(id);
+            var detallesConNombre = laListaDeDetalles.Select(detalle => new VentaDetalleVM
+            {
+                Id = detalle.Id,
+                Id_Venta = detalle.Id_Venta,
+                Id_Inventario = detalle.Id_Inventario,
+                Cantidad = detalle.Cantidad,
+                Precio = detalle.Precio,
+                Monto = detalle.Monto,
+                MontoDescuento = detalle.MontoDescuento,
+                NombreInventario = ElAdministrador.ObtengaElInventario(detalle.Id_Inventario).Nombre
+            }).ToList();
 
             ViewBag.IdVenta = id;
-
-            return View(laListaDeDetalles);
+            return View(detallesConNombre);
         }
 
 
@@ -136,7 +146,7 @@ namespace Proyecto_Programado.UI.Controllers
             
             ViewBag.IdVenta = laVenta.idVenta;
 
-
+            ElAdministrador.ActualiceElTotalEnElIndexDeVentas(laVenta.idVenta, nuevoDetalle);
 
             return RedirectToAction("Carrito", new { id = laVenta.idVenta });
         }

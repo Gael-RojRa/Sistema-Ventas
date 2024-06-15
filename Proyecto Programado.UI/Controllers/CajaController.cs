@@ -19,7 +19,7 @@ namespace Proyecto_Programado.UI.Controllers
         // GET: CajaController
         public ActionResult Index()
         {
-            var cajaAbierta = ElAdministrador.ObtenerCajaAbierta(User.Identity.Name);
+            var cajaAbierta = ElAdministrador.ObtengaLaCajaAbierta(User.Identity.Name);
             return View(cajaAbierta);
         }
 
@@ -28,7 +28,7 @@ namespace Proyecto_Programado.UI.Controllers
         // GET: CajaController/Create
         public ActionResult Create(AperturaDeCaja caja)
         {
-            ElAdministrador.AbrirCaja(caja, User.Identity.Name);
+            ElAdministrador.AbraLaCaja(caja, User.Identity.Name);
             return RedirectToAction(nameof(Index));
 
         }
@@ -36,7 +36,7 @@ namespace Proyecto_Programado.UI.Controllers
         // GET: CajaController
         public ActionResult CerrarCaja(int id)
         {
-            ElAdministrador.CerrarCaja(id);
+            ElAdministrador.CierreLaCaja(id);
             return RedirectToAction(nameof(Index));
 
         }

@@ -10,16 +10,16 @@ namespace Proyecto_Programado.BL
     public interface IAdministradorDeInventarios
     {
 
-        List<Inventario> ObtenLaListaDeInventarios();
+        List<Inventario> ObtengaLaListaDeInventarios();
 
-        void AgregueelInventario(Model.Inventario inventario,string nombreUsuario);
+        void AgregueElInventario(Model.Inventario elInventario,string elNombreDeUsuario);
 
 
-        public Model.Inventario ObtengaElInventario(int id);
+        public Model.Inventario ObtengaElInventario(int elId);
 
-        public void EditeElInventario(Model.Inventario inventario, string nombreUsuario);
+        public void EditeElInventario(Model.Inventario elInventario, string elNombreDeUsuario);
 
-        public (Inventario, List<HistoricoInventario>) ObtengaInventarioConHistorico(int id);
+        public (Inventario, List<HistoricoInventario>) ObtengaInventarioConHistorico(int elId);
        
 
     }

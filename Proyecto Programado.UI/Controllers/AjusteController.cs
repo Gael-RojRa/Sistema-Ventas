@@ -21,7 +21,7 @@ namespace Proyecto_Programado.UI.Controllers
         public ActionResult Index(int id, string nombre)
         {
             List<Inventario> laListaDeInventarios;
-            laListaDeInventarios = ElAdministrador.ObtenLaListaDeInventarios();
+            laListaDeInventarios = ElAdministrador.ObtengaLaListaDeInventarios();
 
 
             if (nombre is null)

@@ -24,7 +24,7 @@ namespace Proyecto_Programado.UI.Controllers
         public ActionResult Index(int id, string nombre)
         {
             List<Inventario> laListadeInventarios;
-            laListadeInventarios = ElAdministrador.ObtenLaListaDeInventarios();
+            laListadeInventarios = ElAdministrador.ObtengaLaListaDeInventarios();
 
             TempData["Id_Inventario"] = id;
 
@@ -63,7 +63,7 @@ namespace Proyecto_Programado.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                ElAdministrador.AgregueelInventario(inventario, User.Identity.Name);
+                ElAdministrador.AgregueElInventario(inventario, User.Identity.Name);
 
                 return RedirectToAction(nameof(Index));
             }

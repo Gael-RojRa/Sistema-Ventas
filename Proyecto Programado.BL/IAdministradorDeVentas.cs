@@ -10,39 +10,39 @@ namespace Proyecto_Programado.BL
 {
     public interface IAdministradorDeVentas
     {
-        List<Inventario> ObtenLaListaDeInventarios();
+        List<Inventario> ObtengaLaListaDeInventarios();
 
-        List<Venta> ObtenLaListaDeVentas();
-        Inventario ObtengaElInventario(int id);
+        List<Venta> ObtengaLaListaDeVentas();
+        Inventario ObtengaElInventario(int elId);
 
-        int AgregueVenta(Venta laNuevaVenta);
-        void AgregueDetalleVenta(VentaDetalles nuevoDetalleVenta);
+        int AgregueLaVenta(Venta laNuevaVenta);
+        void AgregueDetalleVenta(VentaDetalles elNuevoDetalleDeVenta);
 
-        List<VentaDetalles> ObtengaLosItemsDeUnaVenta(int idVenta);
+        List<VentaDetalles> ObtengaLosItemsDeUnaVenta(int elIdVenta);
 
-        int ObtenerIdCajaAbierta(string nombreUsuario);
+        int ObtengaElIdDeLaCajaAbierta(string elNombreUsuario);
 
-        decimal ObtengaElPrecioDelInventario(int id);
+        decimal ObtengaElPrecioDelInventario(int elId);
 
-        void ActualiceVenta(int id, Venta ventaActualizada);
+        void ActualiceLaVenta(int elId, Venta laVentaActualizada);
 
-        string ObtengaNombreDeVenta(int idVenta);
+        string ObtengaElNombreDeVenta(int elIdDeVenta);
 
-        void ActualiceElTotalEnElIndexDeVentas(int id);
+        void ActualiceElTotalEnElIndexDeVentas(int elId);
 
-        void ApliqueElDescuento(int porcentajeDescuento, int id);
+        void ApliqueElDescuento(int elPorcentajeDescuento, int elId);
 
-        void ActualiceLaCantidadDeInventario(int cantidadVendida, int idInventario);
+        void ActualiceLaCantidadDeInventario(int laCantidadVendida, int elIdInventario);
 
-        Venta ObtengaVentaPorId(int idVenta);
+        Venta ObtengaVentaPorId(int elIdVenta);
 
-        VentaDetalles ObtengaVentaDetallePorId(int idVentaDetalle);
+        VentaDetalles ObtengaVentaDetallePorId(int elIdVentaDeDetalle);
 
-        void RestaureLaCantidadDelItemEliminado(int cantidadDevuelta, int idInventario);
+        void RestaureLaCantidadDelItemEliminado(int laCantidadDevuelta, int elIdInventario);
 
-        void EliminarVenta(int id);
+        void ElimineLaVenta(int elId);
 
-        public bool VerificarCajaAbierta(string nombreUsuario);
+        public bool VerifiqueLaCajaAbierta(string elNombreUsuario);
     }
 
 }

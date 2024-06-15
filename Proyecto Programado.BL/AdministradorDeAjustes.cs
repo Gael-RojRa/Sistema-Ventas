@@ -7,19 +7,19 @@ namespace Proyecto_Programado.BL
     {
         public DBContexto ElContexto;
 
-        public AdministradorDeAjustes(DBContexto contexto)
+        public AdministradorDeAjustes(DBContexto elContexto)
         {
-            ElContexto = contexto;
+            ElContexto = elContexto;
         }
 
-        public List<Inventario> ObtenLaListaDeInventarios()
+        public List<Inventario> ObtengaLaListaDeInventarios()
         {
             var laListaDeInventarios = ElContexto.Inventarios.ToList();
 
             return laListaDeInventarios;
         }
 
-        public List<AjusteDeInventario> ObtenLaListaDeAjuste()
+        public List<AjusteDeInventario> ObtengaLaListaDeAjuste()
         {
             var laListaDeAjusteInventario = ElContexto.AjusteDeInventarios.ToList();
 
@@ -27,28 +27,28 @@ namespace Proyecto_Programado.BL
         }
 
 
-        public Model.AjusteDeInventario ObtengaLosAjustesDeInventario(int id)
+        public Model.AjusteDeInventario ObtengaLosAjustesDeInventario(int elId)
         {
-            var resultado = ElContexto.AjusteDeInventarios.Find(id);
+            var elResultado = ElContexto.AjusteDeInventarios.Find(elId);
 
-            return resultado;
+            return elResultado;
 
         }
 
 
-        public List<Model.AjusteDeInventario> ObtengaLosAjustes(int id)
+        public List<Model.AjusteDeInventario> ObtengaLosAjustes(int elId)
         {
             List<Model.AjusteDeInventario> losAjustesEncontrados = new List<Model.AjusteDeInventario>();
 
 
-            List<Model.AjusteDeInventario> lista = ObtenLaListaDeAjuste();
+            List<Model.AjusteDeInventario> laLista = ObtengaLaListaDeAjuste();
 
 
-            foreach (var ajusteInventario in lista)
+            foreach (var elAjusteDeInventario in laLista)
             {
-                if (ajusteInventario.Id_Inventario == id)
+                if (elAjusteDeInventario.Id_Inventario == elId)
                 {
-                    losAjustesEncontrados.Add(ajusteInventario);
+                    losAjustesEncontrados.Add(elAjusteDeInventario);
                 }
             }
 
@@ -61,40 +61,40 @@ namespace Proyecto_Programado.BL
 
 
 
-        public void AgregueUnAjuste(Model.AjusteDeInventario ajuste, string nombreUsuario)
+        public void AgregueUnAjuste(Model.AjusteDeInventario elAjuste, string elNombreDeUsuario)
         {
-            ajuste.UserId = nombreUsuario;
-            ajuste.Fecha = DateTime.Now;
-            ElContexto.AjusteDeInventarios.Add(ajuste);
+            elAjuste.UserId = elNombreDeUsuario;
+            elAjuste.Fecha = DateTime.Now;
+            ElContexto.AjusteDeInventarios.Add(elAjuste);
             ElContexto.SaveChanges();
 
             List<string> laModificacion = new List<string>(); ;
 
-            Model.Inventario inventario = ObtengaElInventarioAModificarLaCantidad(ajuste.Id_Inventario);
+            Model.Inventario elInventario = ObtengaElInventarioAModificarLaCantidad(elAjuste.Id_Inventario);
 
-            if (ajuste.Tipo == Model.TipoAjuste.Aumento)
+            if (elAjuste.Tipo == Model.TipoAjuste.Aumento)
             {
-                laModificacion.Add($"Cantidad: {inventario.Cantidad} -> {inventario.Cantidad + ajuste.Ajuste}");
-                inventario.Cantidad = inventario.Cantidad + ajuste.Ajuste;
+                laModificacion.Add($"Cantidad: {elInventario.Cantidad} -> {elInventario.Cantidad + elAjuste.Ajuste}");
+                elInventario.Cantidad = elInventario.Cantidad + elAjuste.Ajuste;
 
             }
             else
             {
-                laModificacion.Add($"Cantidad: {inventario.Cantidad} -> {inventario.Cantidad - ajuste.Ajuste}");
-                inventario.Cantidad = inventario.Cantidad - ajuste.Ajuste;
+                laModificacion.Add($"Cantidad: {elInventario.Cantidad} -> {elInventario.Cantidad - elAjuste.Ajuste}");
+                elInventario.Cantidad = elInventario.Cantidad - elAjuste.Ajuste;
             }
-            ElContexto.Inventarios.Update(inventario);
+            ElContexto.Inventarios.Update(elInventario);
             ElContexto.SaveChanges();
 
-            var historico = new HistoricoInventario
+            var elHistorico = new HistoricoInventario
             {
-                IdInventario = inventario.Id,
-                nombreUsuario = nombreUsuario,
+                IdInventario = elInventario.Id,
+                nombreUsuario = elNombreDeUsuario,
                 fechaCreacion = DateTime.UtcNow,
                 TipoModificacion = TipoModificacion.Modificacion,
                 Modificacion = string.Join("\n", laModificacion)
             };
-            ElContexto.HistoricoInventario.Add(historico);
+            ElContexto.HistoricoInventario.Add(elHistorico);
             ElContexto.SaveChanges();
 
 

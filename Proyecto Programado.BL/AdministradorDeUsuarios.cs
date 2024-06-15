@@ -10,104 +10,99 @@ namespace Proyecto_Programado.BL
     {
         public DBContexto ElContexto;
 
-        public AdministradorDeUsuarios(DBContexto contexto)
+        public AdministradorDeUsuarios(DBContexto elContexto)
         {
-            ElContexto = contexto;
+            ElContexto = elContexto;
         }
 
-        public bool RegistrarUsuario(string nombre, string correo, string clave)
+        public bool RegistreElUsuario(string elNombre, string elCorreo, string laClave)
         {
-            bool CredencialesCorrectas = false;
+            bool lasCredencialesCorrectas = false;
             try
             {
-                Usuario usuarioNuevo = new Usuario();
+                Usuario elUsuarioNuevo = new Usuario();
 
-                usuarioNuevo.Nombre = nombre;
-                usuarioNuevo.correoElectronico = correo;
-                usuarioNuevo.Clave = clave;
-                usuarioNuevo.rol = Rol.UsuarioNormal;
+                elUsuarioNuevo.Nombre = elNombre;
+                elUsuarioNuevo.correoElectronico = elCorreo;
+                elUsuarioNuevo.Clave = laClave;
+                elUsuarioNuevo.rol = Rol.UsuarioNormal;
 
-                ElContexto.Usuario.Add(usuarioNuevo);
+                ElContexto.Usuario.Add(elUsuarioNuevo);
                 ElContexto.SaveChanges();
 
-                string asunto = "Solicitud de creación de usuario.";
-                string contenido = "Cuenta de usuario creada satisfactoriamente para el usuario " + usuarioNuevo.Nombre;
+                string elAsunto = "Solicitud de creación de usuario.";
+                string elContenido = "Cuenta de usuario creada satisfactoriamente para el usuario " + elUsuarioNuevo.Nombre;
 
                 //EnvieCorreoElectronico(usuarioNuevo.correoElectronico, asunto, contenido);
 
-                CredencialesCorrectas = true;
+                lasCredencialesCorrectas = true;
 
-                return CredencialesCorrectas;
+                return lasCredencialesCorrectas;
             }
 
-            catch (Exception ex)
+            catch (Exception laExcepcion)
             {
-                return CredencialesCorrectas;
+                return lasCredencialesCorrectas;
             }
         }
 
-        public void EnvieCorreoElectronico(string destinatario, string asunto, string contenido)
+        public void EnvieElCorreoElectronico(string elDestinatario, string elAsunto, string elContenido)
         {
             try
             {
-                // Configura el cliente SMTP de Gmail
-                var smtpClient = new SmtpClient("smtp.gmail.com")
+                var elSmtpClient = new SmtpClient("smtp.gmail.com")
                 {
                     Port = 587,
                     Credentials = new NetworkCredential("comercionoreply@gmail.com", "ogobqqzaxkvpriic"),
                     EnableSsl = true,
                 };
 
-                // Crea el correo electrónico
-                var mailMessage = new MailMessage
+                var elMensajeDeCorreo = new MailMessage
                 {
                     From = new MailAddress("comercionoreply@gmail.com"),
-                    Subject = asunto,
-                    Body = contenido
+                    Subject = elAsunto,
+                    Body = elContenido
                 };
 
-                // Agrega el destinatario
-                mailMessage.To.Add(destinatario);
+                elMensajeDeCorreo.To.Add(elDestinatario);
 
-                // Envía el correo electrónico
-                smtpClient.Send(mailMessage);
+                elSmtpClient.Send(elMensajeDeCorreo);
             }
-            catch (Exception ex)
+            catch (Exception laExcepcion)
             {
-                // Puedes manejar el error aquí o lanzarlo para que sea manejado por el código que llama a este método.
-                throw new Exception($"Error al enviar el correo electrónico: {ex.Message}", ex);
+                throw new Exception($"Error al enviar el correo electrónico: {laExcepcion.Message}", laExcepcion);
             }
         }
 
-        public bool VerifiqueCredenciales(string nombre, string clave)
+        public bool VerifiqueCredenciales(string elNombre, string laClave)
         {
-            var usuario = ElContexto.Usuario.FirstOrDefault(x => x.Nombre == nombre);
+            var elUsuario = ElContexto.Usuario.FirstOrDefault(elElemento => elElemento.Nombre == elNombre);
 
-            if (usuario == null)
+            if (elUsuario == null)
                 return false;
 
-            if (usuario.EstaBloqueado && usuario.TiempoDesbloqueo > DateTime.Now)
+            if (elUsuario.EstaBloqueado && elUsuario.TiempoDesbloqueo > DateTime.Now)
             {
-                string asunto = $"Intento de inicio de sesión del usuario {usuario.Nombre} bloqueado.";
-                string contenido = $"Le informamos que la cuenta del usuario {usuario.Nombre} se encuentra bloqueada por 10 minutos. Por favor ingrese el día {usuario.TiempoDesbloqueo?.ToString("dd/MM/yyyy")} a las {usuario.TiempoDesbloqueo?.ToString("HH:mm")}.";
+                string elAsunto = $"Intento de inicio de sesión del usuario {elUsuario.Nombre} bloqueado.";
+                string elContenido = $"Le informamos que la cuenta del usuario {elUsuario.Nombre} se encuentra bloqueada por 10 minutos. Por favor ingrese el día {elUsuario.TiempoDesbloqueo?.ToString("dd/MM/yyyy")} a las {elUsuario.TiempoDesbloqueo?.ToString("HH:mm")}.";
 
-                EnvieCorreoElectronico(usuario.correoElectronico, asunto, contenido);
+                EnvieElCorreoElectronico(elUsuario.correoElectronico, elAsunto, elContenido);
 
                 return false;
             }
 
-            bool CoincidenLasCredenciales = usuario.Clave == clave;
+            bool laCoincidenciaDeCredenciales = elUsuario.Clave == laClave;
 
-            if (CoincidenLasCredenciales)
+            if (laCoincidenciaDeCredenciales)
             {
-                usuario.IntentosFallidos = 0;
-                usuario.EstaBloqueado = false;
-                usuario.TiempoDesbloqueo = null;
+                elUsuario.IntentosFallidos = 0;
+                elUsuario.EstaBloqueado = false;
+                elUsuario.TiempoDesbloqueo = null;
 
                 ElContexto.SaveChanges();
 
-                string destinatario = usuario.correoElectronico;
-                string elAsunto = "Inicio de sesión del usuario " + nombre;
+                string elDestinatario = elUsuario.correoElectronico;
+                string elAsunto = "Inicio de sesión del usuario " + elNombre;
                 string elCuerpo = "Usted inició sesión el día " + DateTime.Now.ToString("dd/MM/yyyy") + " a las " + DateTime.Now.ToString("HH:mm");
 
                 //EnvieCorreoElectronico(destinatario, elAsunto, elCuerpo);
@@ -116,17 +111,17 @@ namespace Proyecto_Programado.BL
             }
             else
             {
-                usuario.IntentosFallidos++;
+                elUsuario.IntentosFallidos++;
 
-                if (usuario.IntentosFallidos >= 3)
+                if (elUsuario.IntentosFallidos >= 3)
                 {
-                    usuario.EstaBloqueado = true;
-                    usuario.TiempoDesbloqueo = DateTime.Now.AddMinutes(10);
+                    elUsuario.EstaBloqueado = true;
+                    elUsuario.TiempoDesbloqueo = DateTime.Now.AddMinutes(10);
 
-                    string asunto = $"Usuario Bloqueado.";
-                    string contenido = $"Le informamos que la cuenta del usuario {usuario.Nombre} se encuentra bloqueada por 10 minutos. Por favor ingrese el día {usuario.TiempoDesbloqueo?.ToString("dd/MM/yyyy")} a las {usuario.TiempoDesbloqueo?.ToString("HH:mm")}.";
+                    string elAsunto = $"Usuario Bloqueado.";
+                    string elContenido = $"Le informamos que la cuenta del usuario {elUsuario.Nombre} se encuentra bloqueada por 10 minutos. Por favor ingrese el día {elUsuario.TiempoDesbloqueo?.ToString("dd/MM/yyyy")} a las {elUsuario.TiempoDesbloqueo?.ToString("HH:mm")}.";
 
-                    EnvieCorreoElectronico(usuario.correoElectronico, asunto, contenido);
+                    EnvieElCorreoElectronico(elUsuario.correoElectronico, elAsunto, elContenido);
                 }
 
                 ElContexto.SaveChanges();
@@ -135,20 +130,20 @@ namespace Proyecto_Programado.BL
             }
         }
 
-        public Usuario ObtenerUsuarioPorNombre(string nombre)
+        public Usuario ObtengaElUsuarioPorNombre(string elNombre)
         {
-            return ElContexto.Usuario.SingleOrDefault(u => u.Nombre == nombre);
+            return ElContexto.Usuario.SingleOrDefault(elElemento => elElemento.Nombre == elNombre);
         }
 
-        public Rol ObtengaElRolDelUsuario(string nombre)
+        public Rol ObtengaElRolDelUsuario(string elNombre)
         {
-            var ElUsuario = ElContexto.Usuario.SingleOrDefault(u => u.Nombre == nombre);
-            return ElUsuario.rol;
+            var elUsuario = ElContexto.Usuario.SingleOrDefault(elElemento => elElemento.Nombre == elNombre);
+            return elUsuario.rol;
         }
 
-        public void CambiarClave(Usuario usuario, string claveNueva)
+        public void CambieLaClave(Usuario elUsuario, string laClaveNueva)
         {
-            usuario.Clave = claveNueva;
+            elUsuario.Clave = laClaveNueva;
             ElContexto.SaveChanges();
         }
 

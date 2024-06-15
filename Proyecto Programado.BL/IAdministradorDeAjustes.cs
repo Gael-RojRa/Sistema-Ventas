@@ -9,18 +9,18 @@ namespace Proyecto_Programado.BL
 {
     public interface IAdministradorDeAjustes
     {
-        public List<Inventario> ObtenLaListaDeInventarios();
+        public List<Inventario> ObtengaLaListaDeInventarios();
 
-        public List<AjusteDeInventario> ObtenLaListaDeAjuste();
+        public List<AjusteDeInventario> ObtengaLaListaDeAjuste();
 
-        public void AgregueUnAjuste(Model.AjusteDeInventario ajuste, string nombreUsuario);
+        public void AgregueUnAjuste(Model.AjusteDeInventario elAjuste, string elNombreDeUsuario);
 
-        public int ObtengaLaCantidadActual(int Id);
+        public int ObtengaLaCantidadActual(int elId);
 
-        public Model.Inventario ObtengaElInventarioAModificarLaCantidad(int Id);
+        public Model.Inventario ObtengaElInventarioAModificarLaCantidad(int elId);
 
-        public Model.AjusteDeInventario ObtengaLosAjustesDeInventario(int id);
-        public List<Model.AjusteDeInventario> ObtengaLosAjustes(int id);
+        public Model.AjusteDeInventario ObtengaLosAjustesDeInventario(int elId);
+        public List<Model.AjusteDeInventario> ObtengaLosAjustes(int elId);
 
 
 

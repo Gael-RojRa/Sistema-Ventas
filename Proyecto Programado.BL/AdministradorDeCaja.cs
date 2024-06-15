@@ -14,31 +14,31 @@ namespace Proyecto_Programado.BL
     {
         private readonly DBContexto ElContexto;
 
-        public AdministradorDeCaja(DBContexto contexto)
+        public AdministradorDeCaja(DBContexto elContexto)
         {
-            ElContexto = contexto;
+            ElContexto = elContexto;
         }
 
-        public void AbrirCaja(Model.AperturaDeCaja caja, string nombreUsuario)
+        public void AbraLaCaja(Model.AperturaDeCaja laCaja, string elNombreDeUsuario)
         {
-            caja.UserId = nombreUsuario;
-            caja.FechaDeInicio = DateTime.Now;
-            caja.Estado = EstadoCajas.Abierta;
+            laCaja.UserId = elNombreDeUsuario;
+            laCaja.FechaDeInicio = DateTime.Now;
+            laCaja.Estado = EstadoCajas.Abierta;
             //ESTO
-            caja.Efectivo = 0;
-            caja.Tarjeta = 0;
-            caja.SinpeMovil = 0;
+            laCaja.Efectivo = 0;
+            laCaja.Tarjeta = 0;
+            laCaja.SinpeMovil = 0;
 
-            ElContexto.AperturasDeCaja.Add(caja);
+            ElContexto.AperturasDeCaja.Add(laCaja);
             ElContexto.SaveChanges();
         }
-        public void CerrarCaja(int id)
+        public void CierreLaCaja(int elId)
         {
-            var caja = ElContexto.AperturasDeCaja.FirstOrDefault(c => c.Id == id);
+            var laCaja = ElContexto.AperturasDeCaja.FirstOrDefault(elElemento => elElemento.Id == elId);
 
 
-            caja.FechaDeCierre = DateTime.Now;
-            caja.Estado = EstadoCajas.Cerrada;
+            laCaja.FechaDeCierre = DateTime.Now;
+            laCaja.Estado = EstadoCajas.Cerrada;
 
 
             ElContexto.SaveChanges();
@@ -50,10 +50,10 @@ namespace Proyecto_Programado.BL
 
 
 
-        public AperturaDeCaja ObtenerCajaAbierta(string nombreUsuario)
+        public AperturaDeCaja ObtengaLaCajaAbierta(string elNombreDeUsuario)
         {
 
-            return ElContexto.AperturasDeCaja.FirstOrDefault(c => c.UserId == nombreUsuario && c.Estado == EstadoCajas.Abierta);
+            return ElContexto.AperturasDeCaja.FirstOrDefault(elElemento => elElemento.UserId == elNombreDeUsuario && elElemento.Estado == EstadoCajas.Abierta);
         }
     }
 

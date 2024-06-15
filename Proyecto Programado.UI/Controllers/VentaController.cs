@@ -23,7 +23,7 @@ namespace Proyecto_Programado.UI.Controllers
         public ActionResult Index()
         {
             List<Venta> lasVentas;
-            lasVentas = ElAdministrador.ObtenLaListaDeVentas();
+            lasVentas = ElAdministrador.ObtengaLaListaDeVentas();
             
             return View(lasVentas);
         }
@@ -78,13 +78,13 @@ namespace Proyecto_Programado.UI.Controllers
         public ActionResult AgregarVenta()
         {
             List<Inventario> laListaDeInventarios;
-            laListaDeInventarios = ElAdministrador.ObtenLaListaDeInventarios();
+            laListaDeInventarios = ElAdministrador.ObtengaLaListaDeInventarios();
 
             Venta_VentaDetalleVM elModeloAuxiliarDeVenta = new Venta_VentaDetalleVM
             {
                 ItemsInventario = laListaDeInventarios
             };
-            bool cajaAbierta = ElAdministrador.VerificarCajaAbierta(User.Identity.Name); 
+            bool cajaAbierta = ElAdministrador.VerifiqueLaCajaAbierta(User.Identity.Name); 
             ViewBag.CajaAbierta = cajaAbierta;
             return View(elModeloAuxiliarDeVenta);
         }
@@ -105,11 +105,11 @@ namespace Proyecto_Programado.UI.Controllers
                 PorcentajeDescuento = 0,
                 MontoDescuento = 0,
                 Estado = EstadoVenta.EnProceso,
-                IdAperturaDeCaja = ElAdministrador.ObtenerIdCajaAbierta(User.Identity.Name)
+                IdAperturaDeCaja = ElAdministrador.ObtengaElIdDeLaCajaAbierta(User.Identity.Name)
 
             };
 
-            int idNuevaVenta = ElAdministrador.AgregueVenta(nuevaVenta);
+            int idNuevaVenta = ElAdministrador.AgregueLaVenta(nuevaVenta);
 
             VentaDetalles nuevoDetalle = new VentaDetalles
             {
@@ -126,7 +126,7 @@ namespace Proyecto_Programado.UI.Controllers
             nuevaVenta.MontoDescuento = nuevoDetalle.MontoDescuento;
             nuevaVenta.Total = nuevaVenta.SubTotal - nuevoDetalle.MontoDescuento;
 
-            ElAdministrador.ActualiceVenta(idNuevaVenta, nuevaVenta);
+            ElAdministrador.ActualiceLaVenta(idNuevaVenta, nuevaVenta);
 
             ElAdministrador.AgregueDetalleVenta(nuevoDetalle);
 
@@ -135,13 +135,13 @@ namespace Proyecto_Programado.UI.Controllers
 
         public ActionResult AgregarDetalleVenta(int idVenta)
         {
-            List<Inventario> laListaDeInventarios = ElAdministrador.ObtenLaListaDeInventarios();
+            List<Inventario> laListaDeInventarios = ElAdministrador.ObtengaLaListaDeInventarios();
             List<VentaDetalles> listaDeInventariosYaAniadidos = ElAdministrador.ObtengaLosItemsDeUnaVenta(idVenta);
             var idsInventariosYaAniadidos = listaDeInventariosYaAniadidos.Select(d => d.Id_Inventario).ToList();
             List<Inventario> laListaDeInventarioActualesDisponibles = laListaDeInventarios
                 .Where(inv => !idsInventariosYaAniadidos.Contains(inv.Id))
                 .ToList();
-            string elNombre = ElAdministrador.ObtengaNombreDeVenta(idVenta);
+            string elNombre = ElAdministrador.ObtengaElNombreDeVenta(idVenta);
             Venta_VentaDetalleVM elModeloAuxiliarDeVenta = new Venta_VentaDetalleVM
             {
                 ItemsInventario = laListaDeInventarioActualesDisponibles,
@@ -232,7 +232,7 @@ namespace Proyecto_Programado.UI.Controllers
 
                     laVenta.TipoDePago = tipoDePago;
                     laVenta.Estado = EstadoVenta.Terminada;
-                    ElAdministrador.ActualiceVenta(id, laVenta);
+                    ElAdministrador.ActualiceLaVenta(id, laVenta);
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -272,7 +272,7 @@ namespace Proyecto_Programado.UI.Controllers
         public ActionResult Delete(int id)
         {
 
-            ElAdministrador.EliminarVenta(id);
+            ElAdministrador.ElimineLaVenta(id);
 
 
             return RedirectToAction("Index");

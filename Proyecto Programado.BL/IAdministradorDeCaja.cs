@@ -9,9 +9,9 @@ namespace Proyecto_Programado.BL
 {
     public interface IAdministradorDeCaja
     {
-        public void AbrirCaja(Model.AperturaDeCaja caja, string nombreUsuario);
-        public void CerrarCaja(int id);
-        public AperturaDeCaja ObtenerCajaAbierta(string nombreUsuario);
+        public void AbraLaCaja(Model.AperturaDeCaja laCaja, string elNombreDeUsuario);
+        public void CierreLaCaja(int elId);
+        public AperturaDeCaja ObtengaLaCajaAbierta(string elNombreDeUsuario);
 
     }
 }

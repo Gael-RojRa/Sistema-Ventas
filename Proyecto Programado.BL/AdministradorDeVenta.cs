@@ -14,52 +14,53 @@ namespace Proyecto_Programado.BL
     {
         public DBContexto ElContexto;
 
-        public AdministradorDeVenta(DBContexto contexto)
+        public AdministradorDeVenta(DBContexto elContexto)
         {
-            ElContexto = contexto;
+            ElContexto = elContexto;
         }
 
-        public void AgregueDetalleVenta(VentaDetalles nuevoDetalleVenta)
+        public void AgregueDetalleVenta(VentaDetalles elNuevoDetalleDeVenta)
         {
-            ElContexto.VentaDetalles.Add(nuevoDetalleVenta);
+            ElContexto.VentaDetalles.Add(elNuevoDetalleDeVenta);
             ElContexto.SaveChanges();   
         }
 
-        public string ObtengaNombreDeVenta(int idVenta)
+        public string ObtengaElNombreDeVenta(int elIdDeVenta)
         {
             Venta laVenta;
-            laVenta = ElContexto.Ventas.Find(idVenta);
-            string nombre;
-            nombre = laVenta.NombreCliente;
+            laVenta = ElContexto.Ventas.Find(elIdDeVenta);
+            
+            string elNombre;
+            elNombre = laVenta.NombreCliente;
 
-            return nombre;
+            return elNombre;
         }
 
-        public int AgregueVenta(Venta laNuevaVenta)
+        public int AgregueLaVenta(Venta laNuevaVenta)
         {
             ElContexto.Ventas.Add(laNuevaVenta);
             ElContexto.SaveChanges();
 
-            int idAsignado = laNuevaVenta.Id;
+            int elIdAsignado = laNuevaVenta.Id;
 
-            return idAsignado;
+            return elIdAsignado;
         }
 
-        public Inventario ObtengaElInventario(int id)
+        public Inventario ObtengaElInventario(int elId)
         {
-            Inventario elInventario = ElContexto.Inventarios.Find(id);
+            Inventario elInventario = ElContexto.Inventarios.Find(elId);
 
             return elInventario;
         }
 
-        public List<VentaDetalles> ObtengaLosItemsDeUnaVenta(int idVenta)
+        public List<VentaDetalles> ObtengaLosItemsDeUnaVenta(int elIdDeVenta)
         {
-            var listaDeDetalles = ElContexto.VentaDetalles.Where(d => d.Id_Venta == idVenta).ToList();
+            var laListaDeDetalles = ElContexto.VentaDetalles.Where(elElemento => elElemento.Id_Venta == elIdDeVenta).ToList();
 
-            return listaDeDetalles;
+            return laListaDeDetalles;
         }
 
-        public List<Inventario> ObtenLaListaDeInventarios()
+        public List<Inventario> ObtengaLaListaDeInventarios()
         {
 
             var laListaDeInventarios = ElContexto.Inventarios.ToList();
@@ -67,7 +68,7 @@ namespace Proyecto_Programado.BL
             return laListaDeInventarios;
         }
 
-        public List<Venta> ObtenLaListaDeVentas()
+        public List<Venta> ObtengaLaListaDeVentas()
         {
 
             var laListaDeVentas = ElContexto.Ventas.ToList();
@@ -76,62 +77,62 @@ namespace Proyecto_Programado.BL
         }
 
 
-        public int ObtenerIdCajaAbierta(string nombreUsuario)
+        public int ObtengaElIdDeLaCajaAbierta(string elNombreUsuario)
         {
 
-            AperturaDeCaja laCaja =  ElContexto.AperturasDeCaja.FirstOrDefault(c => c.UserId == nombreUsuario && c.Estado == EstadoCajas.Abierta);
-            int idCaja = laCaja.Id;
-            return idCaja;
+            AperturaDeCaja laCaja =  ElContexto.AperturasDeCaja.FirstOrDefault(elElemento => elElemento.UserId == elNombreUsuario && elElemento.Estado == EstadoCajas.Abierta);
+            int elIdCaja = laCaja.Id;
+            return elIdCaja;
         }
 
         public decimal ObtengaElPrecioDelInventario(int id)
         {
             Inventario elInventario = ElContexto.Inventarios.Find(id);
-            decimal precio = elInventario.Precio;
-            return precio;
+            decimal elPrecio = elInventario.Precio;
+            return elPrecio;
         }
 
-        public void ActualiceVenta(int id, Venta ventaActualizada)
+        public void ActualiceLaVenta(int elId, Venta laVentaActualizada)
         {
-            Venta ventaOriginal = ElContexto.Ventas.Find(id);
-            ventaOriginal.SubTotal = ventaActualizada.SubTotal;
-            ventaOriginal.Total = ventaActualizada.Total;
-            ventaOriginal.MontoDescuento = ventaActualizada.MontoDescuento;
-            ventaOriginal.PorcentajeDescuento = ventaActualizada.PorcentajeDescuento;
+            Venta laVentaOriginal = ElContexto.Ventas.Find(elId);
+            laVentaOriginal.SubTotal = laVentaActualizada.SubTotal;
+            laVentaOriginal.Total = laVentaActualizada.Total;
+            laVentaOriginal.MontoDescuento = laVentaActualizada.MontoDescuento;
+            laVentaOriginal.PorcentajeDescuento = laVentaActualizada.PorcentajeDescuento;
 
-            ElContexto.Ventas.Update(ventaOriginal);
+            ElContexto.Ventas.Update(laVentaOriginal);
             ElContexto.SaveChanges();
         }
 
-       public void ActualiceElTotalEnElIndexDeVentas(int id)
+       public void ActualiceElTotalEnElIndexDeVentas(int elId)
         {
-            decimal sumatoriaDelMontoDeDetalles = 0;
-            VentaDetalles detalleActual = ElContexto.VentaDetalles.Find(id);
+            decimal laSumatoriaDelMontoDeDetalles = 0;
+            VentaDetalles elDetalleActual = ElContexto.VentaDetalles.Find(elId);
             
-                sumatoriaDelMontoDeDetalles = ElContexto.VentaDetalles
-                    .Where(d => d.Id_Venta == detalleActual.Id_Venta)
-                    .Sum(d => d.Monto);
+                laSumatoriaDelMontoDeDetalles = ElContexto.VentaDetalles
+                    .Where(elElemento => elElemento.Id_Venta == elDetalleActual.Id_Venta)
+                    .Sum(elElemento => elElemento.Monto);
             
 
-            Venta ventaAModificar = ElContexto.Ventas.Find(detalleActual.Id_Venta);
-            ventaAModificar.SubTotal = sumatoriaDelMontoDeDetalles;
-            ventaAModificar.Total = sumatoriaDelMontoDeDetalles;
+            Venta laVentaAModificar = ElContexto.Ventas.Find(elDetalleActual.Id_Venta);
+            laVentaAModificar.SubTotal = laSumatoriaDelMontoDeDetalles;
+            laVentaAModificar.Total = laSumatoriaDelMontoDeDetalles;
 
-            ElContexto.Ventas.Update(ventaAModificar);
+            ElContexto.Ventas.Update(laVentaAModificar);
             ElContexto.SaveChanges();
         }
 
 
-        public void ApliqueElDescuento(int porcentajeDescuento, int id)
+        public void ApliqueElDescuento(int elPorcentajeDescuento, int elId)
         {
-            decimal porcentajeDecimal = porcentajeDescuento / 100.0m;
+            decimal elPorcentajeDecimal = elPorcentajeDescuento / 100.0m;
 
             ElContexto.Database.ExecuteSqlRaw(
                 "UPDATE VentaDetalles " +
                 "SET MontoDescuento = Monto * {0}, " +
                 "MontoFinal = Monto - (Monto * {0}) " +
                 "WHERE Id_Venta = {1}",
-                porcentajeDecimal, id);
+                elPorcentajeDecimal, elId);
 
             ElContexto.Database.ExecuteSqlRaw(
                 "UPDATE Ventas " +
@@ -139,77 +140,77 @@ namespace Proyecto_Programado.BL
                 "MontoDescuento = SubTotal * {0}, " +
                 "Total = SubTotal - (SubTotal * {0}) " +
                 "WHERE Id = {1}",
-                porcentajeDecimal, id, porcentajeDescuento);
+                elPorcentajeDecimal, elId, elPorcentajeDescuento);
         }
-        public void ActualiceLaCantidadDeInventario(int cantidadVendida, int idInventario)
+        public void ActualiceLaCantidadDeInventario(int laCantidadVendida, int elIdInventario)
         {
-            Inventario inventario = ElContexto.Inventarios.Find(idInventario);
-            if (inventario != null)
+            Inventario elInventario = ElContexto.Inventarios.Find(elIdInventario);
+            if (elInventario != null)
             {
-                inventario.Cantidad -= cantidadVendida;
-                ElContexto.Inventarios.Update(inventario);
+                elInventario.Cantidad -= laCantidadVendida;
+                ElContexto.Inventarios.Update(elInventario);
                 ElContexto.SaveChanges();
             }
         }
 
-        public void RestaureLaCantidadDelItemEliminado(int cantidadDevuelta, int idInventario)
+        public void RestaureLaCantidadDelItemEliminado(int laCantidadDevuelta, int elIdInventario)
         {
-            Inventario inventario = ElContexto.Inventarios.Find(idInventario);
-            if (inventario != null)
+            Inventario elInventario = ElContexto.Inventarios.Find(elIdInventario);
+            if (elInventario != null)
             {
-                inventario.Cantidad += cantidadDevuelta;
-                ElContexto.Inventarios.Update(inventario);
+                elInventario.Cantidad += laCantidadDevuelta;
+                ElContexto.Inventarios.Update(elInventario);
                 ElContexto.SaveChanges();
             }
         }
-        public Venta ObtengaVentaPorId(int idVenta)
+        public Venta ObtengaVentaPorId(int elIdVenta)
         {
-            return ElContexto.Ventas.Find(idVenta);
+            return ElContexto.Ventas.Find(elIdVenta);
         }
 
-        public void EliminarVenta(int id)
+        public void ElimineLaVenta(int elId)
         {
-            decimal sumatoriaDelMontoDeDetalles = 0;
-            VentaDetalles itemAEliminar = ElContexto.VentaDetalles.Find(id);
+            decimal laSumatoriaDelMontoDeDetalles = 0;
+            VentaDetalles elItemAEliminar = ElContexto.VentaDetalles.Find(elId);
 
-            ElContexto.VentaDetalles.Remove(itemAEliminar);
+            ElContexto.VentaDetalles.Remove(elItemAEliminar);
 
             ElContexto.SaveChanges();
 
-            int idDeLaVentaDelDetalles = itemAEliminar.Id_Venta;
+            int idDeLaVentaDelDetalles = elItemAEliminar.Id_Venta;
 
-            Venta ventaParaActualizar = ElContexto.Ventas.Find(idDeLaVentaDelDetalles);
+            Venta laVentaParaActualizar = ElContexto.Ventas.Find(idDeLaVentaDelDetalles);
 
-            sumatoriaDelMontoDeDetalles = ElContexto.VentaDetalles
-                .Where(d => d.Id_Venta == ventaParaActualizar.Id)
-                .Sum(d => d.Monto);
+            laSumatoriaDelMontoDeDetalles = ElContexto.VentaDetalles
+                .Where(elElemento => elElemento.Id_Venta == laVentaParaActualizar.Id)
+                .Sum(elElemento => elElemento.Monto);
 
-            ventaParaActualizar.SubTotal = sumatoriaDelMontoDeDetalles;
-            ventaParaActualizar.Total = sumatoriaDelMontoDeDetalles;
+            laVentaParaActualizar.SubTotal = laSumatoriaDelMontoDeDetalles;
+            laVentaParaActualizar.Total = laSumatoriaDelMontoDeDetalles;
 
-            ElContexto.Ventas.Update(ventaParaActualizar);
+            ElContexto.Ventas.Update(laVentaParaActualizar);
             ElContexto.SaveChanges();
 
-            if (ventaParaActualizar.SubTotal == 0)
+            if (laVentaParaActualizar.SubTotal == 0)
             {
-                ElContexto.Ventas.Remove(ventaParaActualizar);
+                ElContexto.Ventas.Remove(laVentaParaActualizar);
                 ElContexto.SaveChanges();
             }
 
         }
 
-        public VentaDetalles ObtengaVentaDetallePorId(int idVentaDetalle)
+        public VentaDetalles ObtengaVentaDetallePorId(int elIdVentaDeDetalle)
         {
-            return ElContexto.VentaDetalles.Find(idVentaDetalle);
+            return ElContexto.VentaDetalles.Find(elIdVentaDeDetalle);
         }
 
-        public bool VerificarCajaAbierta(string nombreUsuario)
+        public bool VerifiqueLaCajaAbierta(string elNombreUsuario)
         {
 
 
-            AperturaDeCaja cajaAbierta = ElContexto.AperturasDeCaja.FirstOrDefault(c => c.UserId == nombreUsuario && c.Estado == EstadoCajas.Abierta);
-            bool cajaEstaAbierta = (cajaAbierta != null);
-            return cajaEstaAbierta;
+            AperturaDeCaja laCajaAbierta = ElContexto.AperturasDeCaja.FirstOrDefault(elElemento => elElemento.UserId == elNombreUsuario && elElemento.Estado == EstadoCajas.Abierta);
+            bool laCajaEstaAbierta = (laCajaAbierta != null);
+            return laCajaEstaAbierta;
         }
     }
 }

@@ -11,11 +11,11 @@ namespace Proyecto_Programado.BL
     public interface IAdministradorDeUsuarios
     {
 
-        bool RegistrarUsuario(string nombre, string correo, string clave);
-        void EnvieCorreoElectronico(string destinatario, string asunto, string contenido);
-        bool VerifiqueCredenciales(string nombre, string clave);
-        Usuario ObtenerUsuarioPorNombre(string nombre);
-        Rol ObtengaElRolDelUsuario(string nombre);
-        void CambiarClave(Usuario usuario, string claveNueva);
+        bool RegistreElUsuario(string elNombre, string elCorreo, string laClave);
+        void EnvieElCorreoElectronico(string elDestinatario, string elAsunto, string elContenido);
+        bool VerifiqueCredenciales(string elNombre, string laClave);
+        Usuario ObtengaElUsuarioPorNombre(string elNombre);
+        Rol ObtengaElRolDelUsuario(string elNombre);
+        void CambieLaClave(Usuario elUsuario, string laClaveNueva);
     }
 }

@@ -14,12 +14,12 @@ namespace Proyecto_Programado.BL
 
         public DBContexto ElContexto;
 
-        public AdministradorDeInventarios(DBContexto contexto)
+        public AdministradorDeInventarios(DBContexto elContexto)
         {
-            ElContexto = contexto;
+            ElContexto = elContexto;
         }
 
-        public List<Inventario> ObtenLaListaDeInventarios()
+        public List<Inventario> ObtengaLaListaDeInventarios()
         {
 
             var laListaDeInventarios = ElContexto.Inventarios.ToList();
@@ -27,89 +27,89 @@ namespace Proyecto_Programado.BL
             return laListaDeInventarios;
         }
 
-        public void AgregueelInventario(Model.Inventario inventario, string nombreUsuario)
+        public void AgregueElInventario(Model.Inventario elInventario, string elNombreDeUsuario)
         {
-            inventario.Cantidad = 0;
-            ElContexto.Inventarios.Add(inventario);
+            elInventario.Cantidad = 0;
+            ElContexto.Inventarios.Add(elInventario);
             ElContexto.SaveChanges();
 
-            var historico = new HistoricoInventario
+            var elHistorico = new HistoricoInventario
             {
-                IdInventario = inventario.Id,
-                nombreUsuario = nombreUsuario,
+                IdInventario = elInventario.Id,
+                nombreUsuario = elNombreDeUsuario,
                 fechaCreacion = DateTime.UtcNow,
                 TipoModificacion = TipoModificacion.Creacion,
                 
             };
 
 
-            ElContexto.HistoricoInventario.Add(historico);
+            ElContexto.HistoricoInventario.Add(elHistorico);
             ElContexto.SaveChanges();
             
 
         }
-        public Model.Inventario ObtengaElInventario(int Id)
+        public Model.Inventario ObtengaElInventario(int elId)
         {
-            Model.Inventario resultado;
+            Model.Inventario elResultado;
       
-            resultado = ElContexto.Inventarios.Find(Id);
+            elResultado = ElContexto.Inventarios.Find(elId);
           
-            return resultado;
+            return elResultado;
         }
 
-        public (Inventario, List<HistoricoInventario>) ObtengaInventarioConHistorico(int id)
+        public (Inventario, List<HistoricoInventario>) ObtengaInventarioConHistorico(int elId)
         {
-            var inventario = ElContexto.Inventarios.Find(id);
+            var elInventario = ElContexto.Inventarios.Find(elId);
 
 
-            var historicoInventarios = ElContexto.HistoricoInventario
-                                               .Where(h => h.IdInventario == id)
+            var elHistoricoInventarios = ElContexto.HistoricoInventario
+                                               .Where(elElemento => elElemento.IdInventario == elId)
                                                .ToList();
 
-            return (inventario, historicoInventarios);
+            return (elInventario, elHistoricoInventarios);
         }
 
 
 
 
-        public void EditeElInventario(Model.Inventario inventario, string nombreUsuario)
+        public void EditeElInventario(Model.Inventario elInventario, string elNombreDeUsuario)
         {
-            Model.Inventario inventarioOriginal = ObtengaElInventario(inventario.Id);
+            Model.Inventario elInventarioOriginal = ObtengaElInventario(elInventario.Id);
 
-            List<string> modificaciones = new List<string>();
+            List<string> lasModificaciones = new List<string>();
 
-            if (inventarioOriginal.Nombre != inventario.Nombre)
+            if (elInventarioOriginal.Nombre != elInventario.Nombre)
             {
-                modificaciones.Add($"Nombre: {inventarioOriginal.Nombre} -> {inventario.Nombre}");
+                lasModificaciones.Add($"Nombre: {elInventarioOriginal.Nombre} -> {elInventario.Nombre}");
             }
 
-            if (inventarioOriginal.Categoria != inventario.Categoria)
+            if (elInventarioOriginal.Categoria != elInventario.Categoria)
             {
-                modificaciones.Add($"Categoría: {inventarioOriginal.Categoria} -> {inventario.Categoria}");
+                lasModificaciones.Add($"Categoría: {elInventarioOriginal.Categoria} -> {elInventario.Categoria}");
             }
 
-            if (inventarioOriginal.Precio != inventario.Precio)
+            if (elInventarioOriginal.Precio != elInventario.Precio)
             {
-                modificaciones.Add($"Precio: {inventarioOriginal.Precio} -> {inventario.Precio}");
+                lasModificaciones.Add($"Precio: {elInventarioOriginal.Precio} -> {elInventario.Precio}");
             }
 
-            inventarioOriginal.Nombre = inventario.Nombre;
-            inventarioOriginal.Categoria = inventario.Categoria;
-            inventarioOriginal.Precio = inventario.Precio;
+            elInventarioOriginal.Nombre = elInventario.Nombre;
+            elInventarioOriginal.Categoria = elInventario.Categoria;
+            elInventarioOriginal.Precio = elInventario.Precio;
 
-            ElContexto.Inventarios.Update(inventarioOriginal);
+            ElContexto.Inventarios.Update(elInventarioOriginal);
             ElContexto.SaveChanges();
 
-            var historico = new HistoricoInventario
+            var elHistorico = new HistoricoInventario
             {
-                IdInventario = inventario.Id,
-                nombreUsuario = nombreUsuario,
+                IdInventario = elInventario.Id,
+                nombreUsuario = elNombreDeUsuario,
                 fechaCreacion = DateTime.UtcNow,
                 TipoModificacion = TipoModificacion.Modificacion,
-                Modificacion = string.Join("\n", modificaciones) 
+                Modificacion = string.Join("\n", lasModificaciones) 
             };
 
-            ElContexto.HistoricoInventario.Add(historico);
+            ElContexto.HistoricoInventario.Add(elHistorico);
             ElContexto.SaveChanges();
         }
 

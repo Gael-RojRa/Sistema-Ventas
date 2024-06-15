@@ -1,4 +1,6 @@
-﻿using Proyecto_Programado.DA;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Proyecto_Programado.DA;
 using Proyecto_Programado.Model;
 using System;
 using System.Collections.Generic;
@@ -17,17 +19,10 @@ namespace Proyecto_Programado.BL
             ElContexto = contexto;
         }
 
-        public void ActualiceLaCantidadDeInventario(int cantidadVendida, int idInventario)
+        public void ActualiceLaCantidadDeInventario(int cantidadVendida)
         {
-            Inventario inventario = ElContexto.Inventarios.Find(idInventario);
-            if (inventario != null)
-            {
-                inventario.Cantidad -= cantidadVendida;
-                ElContexto.Inventarios.Update(inventario);
-                ElContexto.SaveChanges();
-            }
+    
         }
-       
 
         public void AgregueDetalleVenta(VentaDetalles nuevoDetalleVenta)
         {
@@ -133,21 +128,24 @@ namespace Proyecto_Programado.BL
             ElContexto.SaveChanges();
         }
 
-
-        public Venta ObtengaVentaPorId(int idVenta)
+        public void ApliqueElDescuento(int porcentajeDescuento, int id)
         {
-            return ElContexto.Ventas.Find(idVenta);
+            decimal porcentajeDecimal = porcentajeDescuento / 100.0m;
+
+            ElContexto.Database.ExecuteSqlRaw(
+                "UPDATE VentaDetalles " +
+                "SET MontoDescuento = Monto * {0}, " +
+                "MontoFinal = Monto - (Monto * {0}) " +
+                "WHERE Id_Venta = {1}",
+                porcentajeDecimal, id);
+
+            ElContexto.Database.ExecuteSqlRaw(
+                "UPDATE Ventas " +
+                "SET PorcentajeDesCuento = {2}, " +
+                "MontoDescuento = SubTotal * {0}, " +
+                "Total = SubTotal - (SubTotal * {0}) " +
+                "WHERE Id = {1}",
+                porcentajeDecimal, id, porcentajeDescuento);
         }
-
-        public void EliminarVenta(int id)
-        {
-            var itemAEliminar = ElContexto.VentaDetalles.FirstOrDefault(item => item.Id == id);
-
-
-            ElContexto.VentaDetalles.Remove(itemAEliminar);
-            ElContexto.SaveChanges();
-
-        }
-
     }
 }

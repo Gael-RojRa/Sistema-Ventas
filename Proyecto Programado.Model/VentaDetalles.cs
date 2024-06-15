@@ -24,5 +24,8 @@ namespace Proyecto_Programado.Model
         [DataType(DataType.Currency)]
         [Column(TypeName = "money")]
         public decimal MontoDescuento { get; set; }
+        [DataType(DataType.Currency)]
+        [Column(TypeName = "money")]
+        public decimal MontoFinal { get; set; }
     }
 }

@@ -14,7 +14,10 @@ namespace Proyecto_Programado.UI.ViewModels
         [Display(Name = "Subtotal")]
         public decimal Monto { get; set; }
 
+        public int PorcentajeDescuento { get; set; }
+
         [Display(Name = "Monto descuento")]
+        [Range(0, 100, ErrorMessage = "El valor debe entre 0 y 100.")]
         public decimal MontoDescuento { get; set; }
 
         public decimal Total { get; set; }

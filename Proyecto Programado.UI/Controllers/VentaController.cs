@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Proyecto_Programado.BL;
 using Proyecto_Programado.Model;
 using Proyecto_Programado.UI.ViewModels;
@@ -8,7 +10,7 @@ using System.Security.Claims;
 
 namespace Proyecto_Programado.UI.Controllers
 {
-
+    [Authorize]
     public class VentaController : Controller
     {
         public readonly IAdministradorDeVentas ElAdministrador;
@@ -37,6 +39,7 @@ namespace Proyecto_Programado.UI.Controllers
                 Precio = detalle.Precio,
                 Monto = detalle.Monto,
                 MontoDescuento = detalle.MontoDescuento,
+                Total = detalle.MontoFinal,
                 NombreInventario = ElAdministrador.ObtengaElInventario(detalle.Id_Inventario).Nombre
             }).ToList();
 
@@ -93,6 +96,7 @@ namespace Proyecto_Programado.UI.Controllers
                 Precio = ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
                 Monto = laVenta.Cantidad * ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
                 MontoDescuento = 0,
+                MontoFinal = laVenta.Cantidad * ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
                 Id_Inventario = laVenta.IdItemSeleccionado,
                 Id_Venta = idNuevaVenta
             };
@@ -138,6 +142,7 @@ namespace Proyecto_Programado.UI.Controllers
                 Precio = ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
                 Monto = laVenta.Cantidad * ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
                 MontoDescuento = 0,
+                MontoFinal = laVenta.Cantidad * ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
                 Id_Inventario = laVenta.IdItemSeleccionado,
                 Id_Venta = laVenta.idVenta
             };
@@ -151,40 +156,15 @@ namespace Proyecto_Programado.UI.Controllers
             return RedirectToAction("Carrito", new { id = laVenta.idVenta });
         }
 
-        // GET: VentaController/SeleccioneTipoDePago/5
-        public ActionResult SeleccioneTipoDePago(int id)
-        {
-            ViewBag.IdVenta = id;
-            return View();
-        }
 
-        // POST: VentaController/SeleccioneTipoDePago/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult SeleccioneTipoDePago(int id, TipoDePago tipoDePago)
+        public IActionResult AplicarDescuento(int porcentajeDescuento, int idVenta)
         {
-            try
-            {
-                Venta laVenta = ElAdministrador.ObtengaVentaPorId(id);
-                laVenta.TipoDePago = tipoDePago;
-                laVenta.Estado = EstadoVenta.Terminada;
 
-                ElAdministrador.ActualiceVenta(id, laVenta);
+           ElAdministrador.ApliqueElDescuento(porcentajeDescuento, idVenta);
 
-                List<VentaDetalles> detallesDeLaVenta = ElAdministrador.ObtengaLosItemsDeUnaVenta(id);
-                foreach (var detalle in detallesDeLaVenta)
-                {
-                    ElAdministrador.ActualiceLaCantidadDeInventario(detalle.Cantidad, detalle.Id_Inventario);
-                }
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Carrito", new { id = idVenta });
         }
-
 
 
         // GET: VentaController/Edit/5
@@ -211,13 +191,22 @@ namespace Proyecto_Programado.UI.Controllers
         // GET: VentaController/Delete/5
         public ActionResult Delete(int id)
         {
-
-            ElAdministrador.EliminarVenta(id);
-
-
-            return RedirectToAction("Index");
+            return View();
         }
 
-
+        // POST: VentaController/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
     }
 }

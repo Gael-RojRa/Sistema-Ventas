@@ -57,3 +57,15 @@
         }
     </tbody>
 </table>
+
+<div>
+    <h2>Ingresar Porcentaje de Descuento</h2>
+    <form asp-action="AplicarDescuento">
+        <div class="form-group">
+            <label for="porcentajeDescuento">Porcentaje de Descuento</label>
+            <input type="number" class="form-control" id="porcentajeDescuento" name="porcentajeDescuento" step="0.01" required />
+        </div>
+        <input type="hidden" id="idVenta" name="idVenta" value="@ViewBag.IdVenta" />
+        <button type="submit" class="btn btn-primary">Aplicar Descuento</button>
+    </form>
+</div>

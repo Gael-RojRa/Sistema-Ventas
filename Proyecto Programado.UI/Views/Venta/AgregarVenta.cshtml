@@ -12,11 +12,13 @@
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
 
-                <div class="form-group mb-4">
-                    <label asp-for="NombreCliente" class="form-label">Nombre del Cliente</label>
-                    <input asp-for="NombreCliente" class="form-control" placeholder="Ingrese el nombre del cliente" />
-                    <span asp-validation-for="NombreCliente" class="text-danger"></span>
-                </div>
+            <div class="form-group mb-4">
+                <label asp-for="NombreCliente" class="form-label">Nombre del Cliente</label>
+                <input asp-for="NombreCliente" class="form-control" placeholder="Ingrese el nombre del cliente" />
+                <span asp-validation-for="NombreCliente" class="text-danger"></span>
+
+            </div>
+
 
             <h4 class="mb-3">Seleccione un artículo y especifique la cantidad:</h4>
             <div class="row">
@@ -64,12 +66,12 @@
 </div>
 
 @section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script>
         function toggleCantidad(index, maxCantidad) {
-
             var cantidadGroups = document.querySelectorAll('.cantidad-group');
             cantidadGroups.forEach(group => group.style.display = 'none');
-
 
             var cantidadGroup = document.getElementById('cantidadGroup_' + index);
             cantidadGroup.style.display = 'block';
@@ -92,8 +94,23 @@
                 submitButton.disabled = false;
             }
         }
+
+        function validarFormulario(event) {
+            var nombreCliente = document.getElementById('NombreCliente').value.trim();
+            var errorNombreCliente = document.getElementById('errorNombreCliente');
+
+            if (nombreCliente === "") {
+                errorNombreCliente.style.display = 'block';
+                event.preventDefault(); 
+            } else {
+                errorNombreCliente.style.display = 'none';
+            }
+        }
+
+        document.getElementById('ventaForm').addEventListener('submit', validarFormulario);
     </script>
 }
+
 
 
 

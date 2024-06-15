@@ -6,6 +6,7 @@ using System.Xml.Linq;
 
 namespace Proyecto_Programado.UI.Controllers
 {
+    [Authorize]
     public class CajaController : Controller
     {
         private readonly IAdministradorDeCaja ElAdministrador;

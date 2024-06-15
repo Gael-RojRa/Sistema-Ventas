@@ -15,7 +15,7 @@ namespace Proyecto_Programado.BL
         List<Venta> ObtenLaListaDeVentas();
         Inventario ObtengaElInventario(int id);
 
-       void ActualiceLaCantidadDeInventario(int cantidadVendida, int idInventario);
+        void ActualiceLaCantidadDeInventario(int cantidadVendida);
         int AgregueVenta(Venta laNuevaVenta);
         void AgregueDetalleVenta(VentaDetalles nuevoDetalleVenta);
 
@@ -30,8 +30,7 @@ namespace Proyecto_Programado.BL
         string ObtengaNombreDeVenta(int idVenta);
 
         void ActualiceElTotalEnElIndexDeVentas(int id, VentaDetalles nuevoDetalle);
-        Venta ObtengaVentaPorId(int idVenta);
 
-        public void EliminarVenta(int id);
+        public void ApliqueElDescuento(int porcentajeDescuento, int id);
     }
 }

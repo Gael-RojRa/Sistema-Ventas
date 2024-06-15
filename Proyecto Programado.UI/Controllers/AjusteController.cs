@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Proyecto_Programado.BL;
 using Proyecto_Programado.Model;
@@ -6,6 +7,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Proyecto_Programado.UI.Controllers
 {
+    [Authorize]
     public class AjusteController : Controller
     {
         public readonly IAdministradorDeAjustes ElAdministrador;
@@ -60,9 +62,6 @@ namespace Proyecto_Programado.UI.Controllers
             return View(ajustesInventario);
         
         }
-
-       
-
 
 
         // GET: AjusteController/Create

@@ -7,6 +7,7 @@ namespace Proyecto_Programado.UI.ViewModels
         public int Id { get; set; }
         public int Id_Venta { get; set; }
         public int Id_Inventario { get; set; }
+        [Display(Name = "Nombre del item")]
         public string NombreInventario { get; set; }
         public int Cantidad { get; set; }
         public decimal Precio { get; set; }

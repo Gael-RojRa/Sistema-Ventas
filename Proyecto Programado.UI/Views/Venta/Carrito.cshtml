@@ -7,9 +7,11 @@
 <h1>Carrito</h1>
 
 <p>
-    <a asp-action="AgregarDetalleVenta" asp-route-idVenta="@ViewBag.IdVenta">Agregar Item</a>
-
+    <a class="btn btn-primary" asp-action="AgregarDetalleVenta" asp-route-idVenta="@ViewBag.IdVenta">Agregar Item</a>
 </p>
+
+
+
 <table class="table">
     <thead>
         <tr>
@@ -69,3 +71,7 @@
         <button type="submit" class="btn btn-primary">Aplicar Descuento</button>
     </form>
 </div>
+
+<br>
+<br>
+<a asp-action="Index" class="btn btn-primary btn-lg">Regresar</a>

@@ -3,7 +3,8 @@
 @{
     ViewData["Title"] = "Agregar Venta";
 }
-
+@if (ViewBag.CajaAbierta == true)
+{
 <h1 class="text-center mt-4">Agregar Venta</h1>
 
 <div class="row">
@@ -63,6 +64,12 @@
         </form>
     </div>
 </div>
+}
+else
+{
+    <p>La caja está cerrada actualmente. No se pueden realizar ventas.</p>
+   
+}
 
 <div class="text-center mt-4">
     <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>

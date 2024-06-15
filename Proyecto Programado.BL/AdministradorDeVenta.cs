@@ -21,13 +21,13 @@ namespace Proyecto_Programado.BL
 
         public void ActualiceLaCantidadDeInventario(int cantidadVendida)
         {
-    
+
         }
 
         public void AgregueDetalleVenta(VentaDetalles nuevoDetalleVenta)
         {
             ElContexto.VentaDetalles.Add(nuevoDetalleVenta);
-            ElContexto.SaveChanges();   
+            ElContexto.SaveChanges();
         }
 
         public string ObtengaNombreDeVenta(int idVenta)
@@ -42,6 +42,8 @@ namespace Proyecto_Programado.BL
 
         public int AgregueVenta(Venta laNuevaVenta)
         {
+         
+
             ElContexto.Ventas.Add(laNuevaVenta);
             ElContexto.SaveChanges();
 
@@ -84,7 +86,7 @@ namespace Proyecto_Programado.BL
         public int ObtenerIdCajaAbierta(string nombreUsuario)
         {
 
-            AperturaDeCaja laCaja =  ElContexto.AperturasDeCaja.FirstOrDefault(c => c.UserId == nombreUsuario && c.Estado == EstadoCajas.Abierta);
+            AperturaDeCaja laCaja = ElContexto.AperturasDeCaja.FirstOrDefault(c => c.UserId == nombreUsuario && c.Estado == EstadoCajas.Abierta);
             int idCaja = laCaja.Id;
             return idCaja;
         }
@@ -103,6 +105,25 @@ namespace Proyecto_Programado.BL
             ventaOriginal.Total = ventaActualizada.Total;
             ventaOriginal.MontoDescuento = ventaActualizada.MontoDescuento;
             ventaOriginal.PorcentajeDescuento = ventaActualizada.PorcentajeDescuento;
+
+            AperturaDeCaja laAperturaDeCaja = ElContexto.AperturasDeCaja.Find(ventaActualizada.IdAperturaDeCaja);
+
+            TipoDePago tipoDePago = ventaActualizada.TipoDePago;
+
+            if (tipoDePago == TipoDePago.Efectivo)
+            {
+                laAperturaDeCaja.Efectivo += ventaActualizada.Total;
+            }
+            else if (tipoDePago == TipoDePago.Tarjeta)
+            {
+                laAperturaDeCaja.Tarjeta += ventaActualizada.Total;
+            }
+            else if(tipoDePago == TipoDePago.SinpeMovil)
+            {
+                laAperturaDeCaja.SinpeMovil += ventaActualizada.Total;
+            }
+
+            ElContexto.AperturasDeCaja.Update(laAperturaDeCaja);
 
             ElContexto.Ventas.Update(ventaOriginal);
             ElContexto.SaveChanges();

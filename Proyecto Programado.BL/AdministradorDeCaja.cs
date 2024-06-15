@@ -24,6 +24,10 @@ namespace Proyecto_Programado.BL
             caja.UserId = nombreUsuario;
             caja.FechaDeInicio = DateTime.Now;
             caja.Estado = EstadoCajas.Abierta;
+            //ESTO
+            caja.Efectivo = 0;
+            caja.Tarjeta = 0;
+            caja.SinpeMovil = 0;
 
             ElContexto.AperturasDeCaja.Add(caja);
             ElContexto.SaveChanges();

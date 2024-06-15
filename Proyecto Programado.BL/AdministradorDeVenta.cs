@@ -19,15 +19,10 @@ namespace Proyecto_Programado.BL
             ElContexto = contexto;
         }
 
-        public void ActualiceLaCantidadDeInventario(int cantidadVendida)
-        {
-
-        }
-
         public void AgregueDetalleVenta(VentaDetalles nuevoDetalleVenta)
         {
             ElContexto.VentaDetalles.Add(nuevoDetalleVenta);
-            ElContexto.SaveChanges();
+            ElContexto.SaveChanges();   
         }
 
         public string ObtengaNombreDeVenta(int idVenta)
@@ -42,8 +37,6 @@ namespace Proyecto_Programado.BL
 
         public int AgregueVenta(Venta laNuevaVenta)
         {
-         
-
             ElContexto.Ventas.Add(laNuevaVenta);
             ElContexto.SaveChanges();
 
@@ -86,7 +79,7 @@ namespace Proyecto_Programado.BL
         public int ObtenerIdCajaAbierta(string nombreUsuario)
         {
 
-            AperturaDeCaja laCaja = ElContexto.AperturasDeCaja.FirstOrDefault(c => c.UserId == nombreUsuario && c.Estado == EstadoCajas.Abierta);
+            AperturaDeCaja laCaja =  ElContexto.AperturasDeCaja.FirstOrDefault(c => c.UserId == nombreUsuario && c.Estado == EstadoCajas.Abierta);
             int idCaja = laCaja.Id;
             return idCaja;
         }
@@ -106,48 +99,28 @@ namespace Proyecto_Programado.BL
             ventaOriginal.MontoDescuento = ventaActualizada.MontoDescuento;
             ventaOriginal.PorcentajeDescuento = ventaActualizada.PorcentajeDescuento;
 
-            AperturaDeCaja laAperturaDeCaja = ElContexto.AperturasDeCaja.Find(ventaActualizada.IdAperturaDeCaja);
-
-            TipoDePago tipoDePago = ventaActualizada.TipoDePago;
-
-            if (tipoDePago == TipoDePago.Efectivo)
-            {
-                laAperturaDeCaja.Efectivo += ventaActualizada.Total;
-            }
-            else if (tipoDePago == TipoDePago.Tarjeta)
-            {
-                laAperturaDeCaja.Tarjeta += ventaActualizada.Total;
-            }
-            else if(tipoDePago == TipoDePago.SinpeMovil)
-            {
-                laAperturaDeCaja.SinpeMovil += ventaActualizada.Total;
-            }
-
-            ElContexto.AperturasDeCaja.Update(laAperturaDeCaja);
-
             ElContexto.Ventas.Update(ventaOriginal);
             ElContexto.SaveChanges();
         }
 
-        public void ActualiceElTotalEnElIndexDeVentas(int id, VentaDetalles nuevoDetalle)
+       public void ActualiceElTotalEnElIndexDeVentas(int id)
         {
             decimal sumatoriaDelMontoDeDetalles = 0;
             VentaDetalles detalleActual = ElContexto.VentaDetalles.Find(id);
-
-            if (detalleActual != null)
-            {
+            
                 sumatoriaDelMontoDeDetalles = ElContexto.VentaDetalles
                     .Where(d => d.Id_Venta == detalleActual.Id_Venta)
                     .Sum(d => d.Monto);
-            }
+            
 
-            Venta ventaAModificar = ElContexto.Ventas.Find(id);
+            Venta ventaAModificar = ElContexto.Ventas.Find(detalleActual.Id_Venta);
             ventaAModificar.SubTotal = sumatoriaDelMontoDeDetalles;
             ventaAModificar.Total = sumatoriaDelMontoDeDetalles;
 
             ElContexto.Ventas.Update(ventaAModificar);
             ElContexto.SaveChanges();
         }
+
 
         public void ApliqueElDescuento(int porcentajeDescuento, int id)
         {
@@ -196,10 +169,32 @@ namespace Proyecto_Programado.BL
 
         public void EliminarVenta(int id)
         {
-            var itemAEliminar = ElContexto.VentaDetalles.FirstOrDefault(item => item.Id == id);
+            decimal sumatoriaDelMontoDeDetalles = 0;
+            VentaDetalles itemAEliminar = ElContexto.VentaDetalles.Find(id);
 
             ElContexto.VentaDetalles.Remove(itemAEliminar);
+
             ElContexto.SaveChanges();
+
+            int idDeLaVentaDelDetalles = itemAEliminar.Id_Venta;
+
+            Venta ventaParaActualizar = ElContexto.Ventas.Find(idDeLaVentaDelDetalles);
+
+            sumatoriaDelMontoDeDetalles = ElContexto.VentaDetalles
+                .Where(d => d.Id_Venta == ventaParaActualizar.Id)
+                .Sum(d => d.Monto);
+
+            ventaParaActualizar.SubTotal = sumatoriaDelMontoDeDetalles;
+            ventaParaActualizar.Total = sumatoriaDelMontoDeDetalles;
+
+            ElContexto.Ventas.Update(ventaParaActualizar);
+            ElContexto.SaveChanges();
+
+            if (ventaParaActualizar.SubTotal == 0)
+            {
+                ElContexto.Ventas.Remove(ventaParaActualizar);
+                ElContexto.SaveChanges();
+            }
 
         }
 

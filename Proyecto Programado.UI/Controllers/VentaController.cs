@@ -172,7 +172,7 @@ namespace Proyecto_Programado.UI.Controllers
             
             ViewBag.IdVenta = laVenta.idVenta;
 
-            ElAdministrador.ActualiceElTotalEnElIndexDeVentas(laVenta.idVenta, nuevoDetalle);
+            ElAdministrador.ActualiceElTotalEnElIndexDeVentas(nuevoDetalle.Id);
 
             return RedirectToAction("Carrito", new { id = laVenta.idVenta });
         }

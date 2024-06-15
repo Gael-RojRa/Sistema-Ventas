@@ -139,5 +139,15 @@ namespace Proyecto_Programado.BL
             return ElContexto.Ventas.Find(idVenta);
         }
 
+        public void EliminarVenta(int id)
+        {
+            var itemAEliminar = ElContexto.VentaDetalles.FirstOrDefault(item => item.Id == id);
+
+
+            ElContexto.VentaDetalles.Remove(itemAEliminar);
+            ElContexto.SaveChanges();
+
+        }
+
     }
 }

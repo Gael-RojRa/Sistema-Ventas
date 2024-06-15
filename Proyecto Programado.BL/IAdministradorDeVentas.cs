@@ -31,5 +31,7 @@ namespace Proyecto_Programado.BL
 
         void ActualiceElTotalEnElIndexDeVentas(int id, VentaDetalles nuevoDetalle);
         Venta ObtengaVentaPorId(int idVenta);
+
+        public void EliminarVenta(int id);
     }
 }

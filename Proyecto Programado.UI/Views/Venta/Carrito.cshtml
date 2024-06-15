@@ -51,9 +51,7 @@
                     @Html.DisplayFor(modelItem => item.Total)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    @Html.ActionLink("Borrar item", "Delete", new { id = item.Id }, new { @class = "btn btn-sm btn-danger btn-custom", onclick = "return confirm('¿Estás seguro de que deseas eliminar este item?');" })
                 </td>
             </tr>
         }

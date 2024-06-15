@@ -211,22 +211,13 @@ namespace Proyecto_Programado.UI.Controllers
         // GET: VentaController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+
+            ElAdministrador.EliminarVenta(id);
+
+
+            return RedirectToAction("Index");
         }
 
-        // POST: VentaController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+
     }
 }

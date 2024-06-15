@@ -44,6 +44,7 @@
                                            max="@Model.ItemsInventario[i].Cantidad"
                                            onchange="validarCantidad(@i, @Model.ItemsInventario[i].Cantidad)"
                                            data-max-cantidad="@Model.ItemsInventario[i].Cantidad" />
+
                                     <div class="text-danger" id="errorCantidad_@i" style="display: none;">
                                         La cantidad no puede exceder la cantidad disponible.
                                     </div>
@@ -84,6 +85,7 @@
         }
 
 
+
         function validarCantidad(index, maxCantidad) {
             var cantidadInput = document.getElementById('cantidad_' + index);
             var errorDiv = document.getElementById('errorCantidad_' + index);
@@ -97,6 +99,7 @@
                 submitButton.disabled = false;
             }
         }
+
 
 
 

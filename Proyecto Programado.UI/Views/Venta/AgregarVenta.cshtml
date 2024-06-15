@@ -40,13 +40,11 @@
                                 </div>
                                 <div class="form-group mt-2 cantidad-group" id="cantidadGroup_@i" style="display: none;">
                                     <label for="cantidad_@i" class="form-label">Cantidad</label>
-                                    <input type="number" class="form-control" id="cantidad_@i"
-                                           name="Cantidad" min="1" value="1"
-                                           max="@Model.ItemsInventario[i].Cantidad"
-                                           onchange="validarCantidad(@i, @Model.ItemsInventario[i].Cantidad)"
-                                           data-max-cantidad="@Model.ItemsInventario[i].Cantidad" />
-
-
+                                        <input type="number" class="form-control" id="cantidad_@i"
+                                               name="Cantidad" min="1" value="1"
+                                               max="@Model.ItemsInventario[i].Cantidad"
+                                               onchange="validarCantidad(@i, @Model.ItemsInventario[i].Cantidad)"
+                                               data-max-cantidad="@Model.ItemsInventario[i].Cantidad" />
 
                                     <div class="text-danger" id="errorCantidad_@i" style="display: none;">
                                         La cantidad no puede exceder la cantidad disponible.
@@ -94,6 +92,7 @@ else
         }
 
 
+
         function validarCantidad(index, maxCantidad) {
             var cantidadInput = document.getElementById('cantidad_' + index);
             var errorDiv = document.getElementById('errorCantidad_' + index);
@@ -107,6 +106,7 @@ else
                 submitButton.disabled = false;
             }
         }
+
 
 
 

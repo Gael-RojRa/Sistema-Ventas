@@ -94,17 +94,36 @@ namespace Proyecto_Programado.BL
 
         public void ActualiceLaVenta(int elId, Venta laVentaActualizada)
         {
-            Venta laVentaOriginal = ElContexto.Ventas.Find(elId);
-            laVentaOriginal.SubTotal = laVentaActualizada.SubTotal;
-            laVentaOriginal.Total = laVentaActualizada.Total;
-            laVentaOriginal.MontoDescuento = laVentaActualizada.MontoDescuento;
-            laVentaOriginal.PorcentajeDescuento = laVentaActualizada.PorcentajeDescuento;
+            Venta ventaOriginal = ElContexto.Ventas.Find(elId);
+            ventaOriginal.SubTotal = laVentaActualizada.SubTotal;
+            ventaOriginal.Total = laVentaActualizada.Total;
+            ventaOriginal.MontoDescuento = laVentaActualizada.MontoDescuento;
+            ventaOriginal.PorcentajeDescuento = laVentaActualizada.PorcentajeDescuento;
 
-            ElContexto.Ventas.Update(laVentaOriginal);
+            AperturaDeCaja laAperturaDeCaja = ElContexto.AperturasDeCaja.Find(laVentaActualizada.IdAperturaDeCaja);
+
+            TipoDePago tipoDePago = laVentaActualizada.TipoDePago;
+
+            if (tipoDePago == TipoDePago.Efectivo)
+            {
+                laAperturaDeCaja.Efectivo += laVentaActualizada.Total;
+            }
+            else if (tipoDePago == TipoDePago.Tarjeta)
+            {
+                laAperturaDeCaja.Tarjeta += laVentaActualizada.Total;
+            }
+            else if (tipoDePago == TipoDePago.SinpeMovil)
+            {
+                laAperturaDeCaja.SinpeMovil += laVentaActualizada.Total;
+            }
+
+            ElContexto.AperturasDeCaja.Update(laAperturaDeCaja);
+
+            ElContexto.Ventas.Update(ventaOriginal);
             ElContexto.SaveChanges();
         }
 
-       public void ActualiceElTotalEnElIndexDeVentas(int elId)
+        public void ActualiceElTotalEnElIndexDeVentas(int elId)
         {
             decimal laSumatoriaDelMontoDeDetalles = 0;
             VentaDetalles elDetalleActual = ElContexto.VentaDetalles.Find(elId);
@@ -212,5 +231,7 @@ namespace Proyecto_Programado.BL
             bool laCajaEstaAbierta = (laCajaAbierta != null);
             return laCajaEstaAbierta;
         }
+
+
     }
 }

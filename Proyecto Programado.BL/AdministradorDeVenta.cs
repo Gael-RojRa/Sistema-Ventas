@@ -187,5 +187,13 @@ namespace Proyecto_Programado.BL
             return ElContexto.VentaDetalles.Find(idVentaDetalle);
         }
 
+        public bool VerificarCajaAbierta(string nombreUsuario)
+        {
+
+
+            AperturaDeCaja cajaAbierta = ElContexto.AperturasDeCaja.FirstOrDefault(c => c.UserId == nombreUsuario && c.Estado == EstadoCajas.Abierta);
+            bool cajaEstaAbierta = (cajaAbierta != null);
+            return cajaEstaAbierta;
+        }
     }
 }

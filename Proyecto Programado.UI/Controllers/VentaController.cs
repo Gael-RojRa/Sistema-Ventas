@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Proyecto_Programado.BL;
+using Proyecto_Programado.DA;
 using Proyecto_Programado.Model;
 using Proyecto_Programado.UI.ViewModels;
 using System.Security.Claims;
@@ -167,6 +168,42 @@ namespace Proyecto_Programado.UI.Controllers
         }
 
 
+        // GET: VentaController/SeleccioneTipoDePago/5
+        public ActionResult SeleccioneTipoDePago(int id)
+        {
+            ViewBag.IdVenta = id;
+            return View();
+        }
+
+        // POST: VentaController/SeleccioneTipoDePago/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SeleccioneTipoDePago(int id, TipoDePago tipoDePago)
+        {
+            try
+            {
+                Venta laVenta = ElAdministrador.ObtengaVentaPorId(id);
+                laVenta.TipoDePago = tipoDePago;
+                laVenta.Estado = EstadoVenta.Terminada;
+
+                ElAdministrador.ActualiceVenta(id, laVenta);
+
+                List<VentaDetalles> detallesDeLaVenta = ElAdministrador.ObtengaLosItemsDeUnaVenta(id);
+                foreach (var detalle in detallesDeLaVenta)
+                {
+                    ElAdministrador.ActualiceLaCantidadDeInventario(detalle.Cantidad, detalle.Id_Inventario);
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+
+
         // GET: VentaController/Edit/5
         public ActionResult Edit(int id)
         {
@@ -191,22 +228,12 @@ namespace Proyecto_Programado.UI.Controllers
         // GET: VentaController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
-        }
 
-        // POST: VentaController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            ElAdministrador.EliminarVenta(id);
+
+
+            return RedirectToAction("Index");
         }
+        
     }
 }

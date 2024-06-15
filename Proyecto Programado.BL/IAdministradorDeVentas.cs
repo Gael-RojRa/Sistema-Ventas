@@ -31,6 +31,12 @@ namespace Proyecto_Programado.BL
 
         void ActualiceElTotalEnElIndexDeVentas(int id, VentaDetalles nuevoDetalle);
 
-        public void ApliqueElDescuento(int porcentajeDescuento, int id);
+        void ApliqueElDescuento(int porcentajeDescuento, int id);
+
+        void ActualiceLaCantidadDeInventario(int cantidadVendida, int idInventario);
+
+        Venta ObtengaVentaPorId(int idVenta);
+
+        void EliminarVenta(int id);
     }
 }

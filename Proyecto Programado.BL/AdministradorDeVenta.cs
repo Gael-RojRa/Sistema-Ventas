@@ -147,5 +147,29 @@ namespace Proyecto_Programado.BL
                 "WHERE Id = {1}",
                 porcentajeDecimal, id, porcentajeDescuento);
         }
+        public void ActualiceLaCantidadDeInventario(int cantidadVendida, int idInventario)
+        {
+            Inventario inventario = ElContexto.Inventarios.Find(idInventario);
+            if (inventario != null)
+            {
+                inventario.Cantidad -= cantidadVendida;
+                ElContexto.Inventarios.Update(inventario);
+                ElContexto.SaveChanges();
+            }
+        }
+        public Venta ObtengaVentaPorId(int idVenta)
+        {
+            return ElContexto.Ventas.Find(idVenta);
+        }
+
+        public void EliminarVenta(int id)
+        {
+            var itemAEliminar = ElContexto.VentaDetalles.FirstOrDefault(item => item.Id == id);
+
+            ElContexto.VentaDetalles.Remove(itemAEliminar);
+            ElContexto.SaveChanges();
+
+        }
+
     }
 }

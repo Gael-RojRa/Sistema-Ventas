@@ -47,6 +47,25 @@ namespace Proyecto_Programado.UI.Controllers
             ViewBag.IdVenta = id;
             return View(detallesConNombre);
         }
+        public ActionResult CarritoTerminado(int id)
+        {
+            List<VentaDetalles> laListaDeDetalles = ElAdministrador.ObtengaLosItemsDeUnaVenta(id);
+            var detallesConNombre = laListaDeDetalles.Select(detalle => new VentaDetalleVM
+            {
+                Id = detalle.Id,
+                Id_Venta = detalle.Id_Venta,
+                Id_Inventario = detalle.Id_Inventario,
+                Cantidad = detalle.Cantidad,
+                Precio = detalle.Precio,
+                Monto = detalle.Monto,
+                MontoDescuento = detalle.MontoDescuento,
+                Total = detalle.MontoFinal,
+                NombreInventario = ElAdministrador.ObtengaElInventario(detalle.Id_Inventario).Nombre
+            }).ToList();
+
+            ViewBag.IdVenta = id;
+            return View(detallesConNombre);
+        }
 
 
         // GET: VentaController/Details/5
@@ -65,7 +84,8 @@ namespace Proyecto_Programado.UI.Controllers
             {
                 ItemsInventario = laListaDeInventarios
             };
-
+            bool cajaAbierta = ElAdministrador.VerificarCajaAbierta(User.Identity.Name); 
+            ViewBag.CajaAbierta = cajaAbierta;
             return View(elModeloAuxiliarDeVenta);
         }
 

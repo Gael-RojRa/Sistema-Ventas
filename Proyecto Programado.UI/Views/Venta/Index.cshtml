@@ -6,9 +6,12 @@
 
 <h1>Ventas</h1>
 
-<p>
-    <a asp-action="AgregarVenta">Registrar Nueva Venta</a>
-</p>
+
+    <p>
+        <a asp-action="AgregarVenta">Registrar Nueva Venta</a>
+    </p>
+
+
 <table class="table">
     <thead>
         <tr>
@@ -71,17 +74,20 @@
                 </td>
 
                 <td>
-                    @Html.ActionLink("Ver Carrito", "Carrito", new { id = item.Id }) |
                     @if (item.Estado == Proyecto_Programado.Model.EstadoVenta.Terminada)
                     {
-                        <span class="text-muted">Venta Terminada</span>
+                    
+ 
+                    @Html.ActionLink("Ver Carrito", "CarritoTerminado", new { id = item.Id }); 
                     }
                     else
                     {
+                        @Html.ActionLink("Ver Carrito", "Carrito", new { id = item.Id });
+                        <span>&vert;</span>
                         @Html.ActionLink("Terminar Venta", "SeleccioneTipoDePago", new { id = item.Id })
                     }
-
                 </td>
+
             </tr>
         }
     </tbody>

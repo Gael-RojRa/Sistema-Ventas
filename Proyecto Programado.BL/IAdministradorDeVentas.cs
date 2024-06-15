@@ -38,5 +38,8 @@ namespace Proyecto_Programado.BL
         Venta ObtengaVentaPorId(int idVenta);
 
         void EliminarVenta(int id);
+
+        public bool VerificarCajaAbierta(string nombreUsuario);
     }
+
 }

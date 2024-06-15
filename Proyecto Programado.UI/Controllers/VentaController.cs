@@ -151,6 +151,41 @@ namespace Proyecto_Programado.UI.Controllers
             return RedirectToAction("Carrito", new { id = laVenta.idVenta });
         }
 
+        // GET: VentaController/SeleccioneTipoDePago/5
+        public ActionResult SeleccioneTipoDePago(int id)
+        {
+            ViewBag.IdVenta = id;
+            return View();
+        }
+
+        // POST: VentaController/SeleccioneTipoDePago/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SeleccioneTipoDePago(int id, TipoDePago tipoDePago)
+        {
+            try
+            {
+                Venta laVenta = ElAdministrador.ObtengaVentaPorId(id);
+                laVenta.TipoDePago = tipoDePago;
+                laVenta.Estado = EstadoVenta.Terminada;
+
+                ElAdministrador.ActualiceVenta(id, laVenta);
+
+                List<VentaDetalles> detallesDeLaVenta = ElAdministrador.ObtengaLosItemsDeUnaVenta(id);
+                foreach (var detalle in detallesDeLaVenta)
+                {
+                    ElAdministrador.ActualiceLaCantidadDeInventario(detalle.Cantidad, detalle.Id_Inventario);
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+
 
         // GET: VentaController/Edit/5
         public ActionResult Edit(int id)

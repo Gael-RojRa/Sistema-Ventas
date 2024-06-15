@@ -17,10 +17,17 @@ namespace Proyecto_Programado.BL
             ElContexto = contexto;
         }
 
-        public void ActualiceLaCantidadDeInventario(int cantidadVendida)
+        public void ActualiceLaCantidadDeInventario(int cantidadVendida, int idInventario)
         {
-    
+            Inventario inventario = ElContexto.Inventarios.Find(idInventario);
+            if (inventario != null)
+            {
+                inventario.Cantidad -= cantidadVendida;
+                ElContexto.Inventarios.Update(inventario);
+                ElContexto.SaveChanges();
+            }
         }
+       
 
         public void AgregueDetalleVenta(VentaDetalles nuevoDetalleVenta)
         {
@@ -125,5 +132,12 @@ namespace Proyecto_Programado.BL
             ElContexto.Ventas.Update(ventaAModificar);
             ElContexto.SaveChanges();
         }
+
+
+        public Venta ObtengaVentaPorId(int idVenta)
+        {
+            return ElContexto.Ventas.Find(idVenta);
+        }
+
     }
 }

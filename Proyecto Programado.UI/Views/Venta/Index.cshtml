@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Ventas</h1>
 
 <p>
     <a asp-action="AgregarVenta">Registrar Nueva Venta</a>
@@ -71,9 +71,16 @@
                 </td>
 
                 <td>
-                    @Html.ActionLink("Modificar Venta", "Carrito", new { id=item.Id}) |
-                   @{ /*@Html.ActionLink("Details", "Details", new {  id=item.PrimaryKey  }) |
-                    @Html.ActionLink("Delete", "Delete", new { id=item.PrimaryKey })  */}
+                    @Html.ActionLink("Ver Carrito", "Carrito", new { id = item.Id }) |
+                    @if (item.Estado == Proyecto_Programado.Model.EstadoVenta.Terminada)
+                    {
+                        <span class="text-muted">Venta Terminada</span>
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Terminar Venta", "SeleccioneTipoDePago", new { id = item.Id })
+                    }
+
                 </td>
             </tr>
         }

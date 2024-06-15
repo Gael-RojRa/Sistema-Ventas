@@ -5,7 +5,6 @@ using Proyecto_Programado.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,13 +21,13 @@ namespace Proyecto_Programado.BL
 
         public void ActualiceLaCantidadDeInventario(int cantidadVendida)
         {
-
+    
         }
 
         public void AgregueDetalleVenta(VentaDetalles nuevoDetalleVenta)
         {
             ElContexto.VentaDetalles.Add(nuevoDetalleVenta);
-            ElContexto.SaveChanges();
+            ElContexto.SaveChanges();   
         }
 
         public string ObtengaNombreDeVenta(int idVenta)
@@ -85,7 +84,7 @@ namespace Proyecto_Programado.BL
         public int ObtenerIdCajaAbierta(string nombreUsuario)
         {
 
-            AperturaDeCaja laCaja = ElContexto.AperturasDeCaja.FirstOrDefault(c => c.UserId == nombreUsuario && c.Estado == EstadoCajas.Abierta);
+            AperturaDeCaja laCaja =  ElContexto.AperturasDeCaja.FirstOrDefault(c => c.UserId == nombreUsuario && c.Estado == EstadoCajas.Abierta);
             int idCaja = laCaja.Id;
             return idCaja;
         }
@@ -158,6 +157,17 @@ namespace Proyecto_Programado.BL
                 ElContexto.SaveChanges();
             }
         }
+
+        public void RestaureLaCantidadDelItemEliminado(int cantidadDevuelta, int idInventario)
+        {
+            Inventario inventario = ElContexto.Inventarios.Find(idInventario);
+            if (inventario != null)
+            {
+                inventario.Cantidad += cantidadDevuelta;
+                ElContexto.Inventarios.Update(inventario);
+                ElContexto.SaveChanges();
+            }
+        }
         public Venta ObtengaVentaPorId(int idVenta)
         {
             return ElContexto.Ventas.Find(idVenta);
@@ -171,13 +181,11 @@ namespace Proyecto_Programado.BL
             ElContexto.SaveChanges();
 
         }
-        public bool VerificarCajaAbierta(string nombreUsuario)
+
+        public VentaDetalles ObtengaVentaDetallePorId(int idVentaDetalle)
         {
-           
-           
-            AperturaDeCaja cajaAbierta = ElContexto.AperturasDeCaja.FirstOrDefault(c => c.UserId == nombreUsuario && c.Estado == EstadoCajas.Abierta);
-            bool cajaEstaAbierta = (cajaAbierta != null);
-            return cajaEstaAbierta;
+            return ElContexto.VentaDetalles.Find(idVentaDetalle);
         }
+
     }
 }

@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Proyecto_Programado.BL;
 using Proyecto_Programado.Model;
+using Proyecto_Programado.UI.ViewModels;
+using System.Security.Claims;
 
 
 namespace Proyecto_Programado.UI.Controllers
@@ -17,8 +19,21 @@ namespace Proyecto_Programado.UI.Controllers
         // GET: VentaController
         public ActionResult Index()
         {
-            return View();
+            List<Venta> lasVentas;
+            lasVentas = ElAdministrador.ObtenLaListaDeVentas();
+            
+            return View(lasVentas);
         }
+
+        public ActionResult Carrito(int id)
+        {
+            List<VentaDetalles> laListaDeDetalles = ElAdministrador.ObtengaLosItemsDeUnaVenta(id);
+
+            ViewBag.IdVenta = id;
+
+            return View(laListaDeDetalles);
+        }
+
 
         // GET: VentaController/Details/5
         public ActionResult Details(int id)
@@ -26,36 +41,106 @@ namespace Proyecto_Programado.UI.Controllers
             return View();
         }
 
-        // GET: VentaController/Create
-        public ActionResult Create()
+  
+        public ActionResult AgregarVenta()
         {
+            List<Inventario> laListaDeInventarios;
+            laListaDeInventarios = ElAdministrador.ObtenLaListaDeInventarios();
 
-            return View();
+            Venta_VentaDetalleVM elModeloAuxiliarDeVenta = new Venta_VentaDetalleVM
+            {
+                ItemsInventario = laListaDeInventarios
+            };
+
+            return View(elModeloAuxiliarDeVenta);
         }
 
         // POST: VentaController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Venta venta)
+        public ActionResult AgregarVenta(Venta_VentaDetalleVM laVenta)
         {
-            if (ModelState.IsValid)
+            Venta nuevaVenta = new Venta
             {
-                try
-                {
-                    ElAdministrador.RegistreVenta(venta);
-                    return RedirectToAction("Index"); // Redirecciona a la acción deseada después de registrar la venta
-                }
-                catch (InvalidOperationException ex)
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                }
-            }
-            return View(venta);
+
+                NombreCliente = laVenta.NombreCliente,
+                Fecha = DateTime.Now,
+                TipoDePago = TipoDePago.PorDefinir,
+                Total = 0,
+                SubTotal = 0,
+                PorcentajeDescuento = 0,
+                MontoDescuento = 0,
+                Estado = EstadoVenta.EnProceso,
+                IdAperturaDeCaja = ElAdministrador.ObtenerIdCajaAbierta(User.Identity.Name)
+
+            };
+
+            int idNuevaVenta = ElAdministrador.AgregueVenta(nuevaVenta);
+
+            VentaDetalles nuevoDetalle = new VentaDetalles
+            {
+                Cantidad = laVenta.Cantidad,
+                Precio = ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
+                Monto = laVenta.Cantidad * ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
+                MontoDescuento = 0,
+                Id_Inventario = laVenta.IdItemSeleccionado,
+                Id_Venta = idNuevaVenta
+            };
+
+            nuevaVenta.SubTotal = nuevoDetalle.Monto;
+            nuevaVenta.MontoDescuento = nuevoDetalle.MontoDescuento;
+            nuevaVenta.Total = nuevaVenta.SubTotal - nuevoDetalle.MontoDescuento;
+
+            ElAdministrador.ActualiceVenta(idNuevaVenta, nuevaVenta);
+
+            ElAdministrador.AgregueDetalleVenta(nuevoDetalle);
+
+            return RedirectToAction("Index");
         }
+
+        public ActionResult AgregarDetalleVenta(int idVenta)
+        {
+            List<Inventario> laListaDeInventarios = ElAdministrador.ObtenLaListaDeInventarios();
+            List<VentaDetalles> listaDeInventariosYaAniadidos = ElAdministrador.ObtengaLosItemsDeUnaVenta(idVenta);
+            var idsInventariosYaAniadidos = listaDeInventariosYaAniadidos.Select(d => d.Id_Inventario).ToList();
+            List<Inventario> laListaDeInventarioActualesDisponibles = laListaDeInventarios
+                .Where(inv => !idsInventariosYaAniadidos.Contains(inv.Id))
+                .ToList();
+            string elNombre = ElAdministrador.ObtengaNombreDeVenta(idVenta);
+            Venta_VentaDetalleVM elModeloAuxiliarDeVenta = new Venta_VentaDetalleVM
+            {
+                ItemsInventario = laListaDeInventarioActualesDisponibles,
+                NombreCliente = elNombre,
+                idVenta = idVenta
+            };
+            return View(elModeloAuxiliarDeVenta);
+        }
+
+
+        // POST: VentaController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AgregarDetalleVenta(Venta_VentaDetalleVM laVenta)
+        {
+            VentaDetalles nuevoDetalle = new VentaDetalles
+            {
+                Cantidad = laVenta.Cantidad,
+                Precio = ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
+                Monto = laVenta.Cantidad * ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
+                MontoDescuento = 0,
+                Id_Inventario = laVenta.IdItemSeleccionado,
+                Id_Venta = laVenta.idVenta
+            };
+            ElAdministrador.AgregueDetalleVenta(nuevoDetalle);
+
+            
+            ViewBag.IdVenta = laVenta.idVenta;
+
+
+
+            return RedirectToAction("Carrito", new { id = laVenta.idVenta });
+        }
+
 
         // GET: VentaController/Edit/5
         public ActionResult Edit(int id)

@@ -8,7 +8,7 @@ namespace Proyecto_Programado.Model
 {
     public enum EstadoCajas
     {
-        CajaAbierta = 1,
-        CajaCerrada = 2
+        Abierta = 1,
+        Cerrada = 2
     }
 }

@@ -16,6 +16,52 @@ namespace Proyecto_Programado.BL
         {
             ElContexto = contexto;
         }
+
+        public void ActualiceLaCantidadDeInventario(int cantidadVendida)
+        {
+    
+        }
+
+        public void AgregueDetalleVenta(VentaDetalles nuevoDetalleVenta)
+        {
+            ElContexto.VentaDetalles.Add(nuevoDetalleVenta);
+            ElContexto.SaveChanges();   
+        }
+
+        public string ObtengaNombreDeVenta(int idVenta)
+        {
+            Venta laVenta;
+            laVenta = ElContexto.Ventas.Find(idVenta);
+            string nombre;
+            nombre = laVenta.NombreCliente;
+
+            return nombre;
+        }
+
+        public int AgregueVenta(Venta laNuevaVenta)
+        {
+            ElContexto.Ventas.Add(laNuevaVenta);
+            ElContexto.SaveChanges();
+
+            int idAsignado = laNuevaVenta.Id;
+
+            return idAsignado;
+        }
+
+        public Inventario ObtengaElInventario(int id)
+        {
+            Inventario elInventario = ElContexto.Inventarios.Find(id);
+
+            return elInventario;
+        }
+
+        public List<VentaDetalles> ObtengaLosItemsDeUnaVenta(int idVenta)
+        {
+            var listaDeDetalles = ElContexto.VentaDetalles.Where(d => d.Id_Venta == idVenta).ToList();
+
+            return listaDeDetalles;
+        }
+
         public List<Inventario> ObtenLaListaDeInventarios()
         {
 
@@ -24,32 +70,40 @@ namespace Proyecto_Programado.BL
             return laListaDeInventarios;
         }
 
-        public void RegistreVenta(Model.Venta venta)
+        public List<Venta> ObtenLaListaDeVentas()
         {
-            try
-            {
-                // Verificar si el usuario tiene una apertura de caja válida
-                var aperturaDeCaja = ElContexto.AperturasDeCaja.FirstOrDefault(a => a.Id == venta.IdAperturaDeCaja && a.Estado == EstadoCajas.CajaAbierta);
-                if (aperturaDeCaja == null)
-                {
-                    throw new InvalidOperationException("No tiene una apertura de caja abierta.");
-                }
 
-                // Asignar la apertura de caja y otros valores a la venta
-                venta.Fecha = DateTime.Now;
-                venta.Estado = EstadoVenta.EnProceso;
-                venta.IdAperturaDeCaja = aperturaDeCaja.Id;
+            var laListaDeVentas = ElContexto.Ventas.ToList();
 
-                ElContexto.Ventas.Add(venta);
-                ElContexto.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                // Manejo de excepciones aquí, puedes loguear o lanzar la excepción nuevamente si es necesario
-                throw new Exception("Error al registrar la venta.", ex);
-            }
+            return laListaDeVentas;
         }
 
 
+        public int ObtenerIdCajaAbierta(string nombreUsuario)
+        {
+
+            AperturaDeCaja laCaja =  ElContexto.AperturasDeCaja.FirstOrDefault(c => c.UserId == nombreUsuario && c.Estado == EstadoCajas.Abierta);
+            int idCaja = laCaja.Id;
+            return idCaja;
+        }
+
+        public decimal ObtengaElPrecioDelInventario(int id)
+        {
+            Inventario elInventario = ElContexto.Inventarios.Find(id);
+            decimal precio = elInventario.Precio;
+            return precio;
+        }
+
+        public void ActualiceVenta(int id, Venta ventaActualizada)
+        {
+            Venta ventaOriginal = ElContexto.Ventas.Find(id);
+            ventaOriginal.SubTotal = ventaActualizada.SubTotal;
+            ventaOriginal.Total = ventaActualizada.Total;
+            ventaOriginal.MontoDescuento = ventaActualizada.MontoDescuento;
+            ventaOriginal.PorcentajeDescuento = ventaActualizada.PorcentajeDescuento;
+
+            ElContexto.Ventas.Update(ventaOriginal);
+            ElContexto.SaveChanges();
+        }
     }
 }

@@ -15,15 +15,14 @@
                 @Html.DisplayNameFor(model => model.CantidadActual)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Ajuste)
+                @Html.DisplayNameFor(model => model.Tipo)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Tipo)
+                @Html.DisplayNameFor(model => model.Ajuste)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Fecha)
             </th>
-         
             <th>
                 @Html.DisplayNameFor(model => model.UserId)
             </th>
@@ -39,10 +38,10 @@
                 @Html.DisplayFor(modelItem => item.CantidadActual)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Ajuste)
+                    @Html.DisplayFor(modelItem => item.Tipo)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Tipo)
+                @Html.DisplayFor(modelItem => item.Ajuste)
             </td>
            <td>
                 @Html.DisplayFor(modelItem => item.Fecha)
@@ -50,10 +49,8 @@
             <td>
                 @Html.DisplayFor(modelItem => item.UserId)
             </td>
-           
             <td>
                     @Html.ActionLink("Detalles", "Details", new { id = item.Id }, new { @class = "btn btn-sm btn-info btn-custom" })
-
             </td>
         </tr>
 

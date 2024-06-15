@@ -41,7 +41,7 @@
                         <td>@Html.DisplayFor(modelItem => item.Cantidad)</td>
                         <td>@Html.DisplayFor(modelItem => item.Precio)</td>
                         <td>
-                            @Html.ActionLink("Agregar", "AgregarAjuste", new { id_inventario = item.Id }, new { @class = "btn btn-sm btn-success btn-custom" })
+                            @Html.ActionLink("Agregar Ajuste", "AgregarAjuste", new { id_inventario = item.Id }, new { @class = "btn btn-sm btn-success btn-custom" })
 
                             @Html.ActionLink("Todos los ajustes", "MostrarAjustes", new { id = item.Id }, new { @class = "btn btn-sm btn-info btn-custom" })
                            

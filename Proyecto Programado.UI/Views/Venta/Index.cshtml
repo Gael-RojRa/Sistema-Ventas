@@ -1,0 +1,81 @@
+﻿@model IEnumerable<Proyecto_Programado.Model.Venta>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="AgregarVenta">Registrar Nueva Venta</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NombreCliente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fecha)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SubTotal)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PorcentajeDescuento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MontoDescuento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Total)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipoDePago)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Estado)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.NombreCliente)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Fecha)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SubTotal)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PorcentajeDescuento)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MontoDescuento)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Total)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TipoDePago)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Estado)
+                </td>
+
+                <td>
+                    @Html.ActionLink("Modificar Venta", "Carrito", new { id=item.Id}) |
+                   @{ /*@Html.ActionLink("Details", "Details", new {  id=item.PrimaryKey  }) |
+                    @Html.ActionLink("Delete", "Delete", new { id=item.PrimaryKey })  */}
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

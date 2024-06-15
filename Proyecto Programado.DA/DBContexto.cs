@@ -18,6 +18,7 @@ namespace Proyecto_Programado.DA
         public DbSet<AjusteDeInventario> AjusteDeInventarios { get; set; }
         public DbSet<AperturaDeCaja> AperturasDeCaja { get; set; }
         public DbSet<Venta> Ventas { get; set; }
+        public DbSet<VentaDetalles> VentaDetalles { get; set; }
 
 
     }

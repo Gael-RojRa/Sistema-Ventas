@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.CodeAnalysis.Options;
+using Proyecto_Programado.BL;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -13,6 +14,8 @@ builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeInventarios, P
 builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeAjustes, Proyecto_Programado.BL.AdministradorDeAjustes>();
 builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeCaja, Proyecto_Programado.BL.AdministradorDeCaja>();
 builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeVentas, Proyecto_Programado.BL.AdministradorDeVenta>();
+builder.Services.AddScoped<Proyecto_Programado.BL.IAdministradorDeSolicitudes, Proyecto_Programado.BL.AdministradorDeSolicitudes>();
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<Proyecto_Programado.DA.DBContexto>(x => x.UseSqlServer(connectionString));
 

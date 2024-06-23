@@ -27,33 +27,6 @@ namespace Proyecto_Programado.UI.Controllers
 
 
         [HttpGet]
-        public IActionResult Registrarse()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Registrarse(UsuarioVM usuario)
-        {
-            if (usuario.Clave != usuario.ConfirmarClave)
-            {
-                ViewData["Mensaje"] = "Las contraseñas no coinciden";
-                return View();
-            }
-
-            bool agregadoCorrecto = ElAdministrador.RegistreElUsuario(usuario.Nombre, usuario.correoElectronico, usuario.Clave);
-            if (agregadoCorrecto != false)
-            {
-                return RedirectToAction("InicieSesion", "Login");
-            }
-
-            ViewData["Mensaje"] = "No se pudo crear el usuario, error fatal";
-            return View();
-
-
-        }
-
-        [HttpGet]
         public IActionResult InicieSesion()
         {
             return View();

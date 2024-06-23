@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Proyecto_Programado.Model.SolicitudRegistro>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Lista de solicitudes pendientes</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.correoElectronico)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Clave)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EstadoRegistro)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaSolicitud)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.correoElectronico)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Clave)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EstadoRegistro)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaSolicitud)
+            </td>
+            <td>
+                    @Html.ActionLink("Aprobar", "Activar", new { id = item.Id }, new { @class = "btn btn-success" })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

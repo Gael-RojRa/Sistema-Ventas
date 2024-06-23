@@ -19,7 +19,7 @@ namespace Proyecto_Programado.DA
         public DbSet<AperturaDeCaja> AperturasDeCaja { get; set; }
         public DbSet<Venta> Ventas { get; set; }
         public DbSet<VentaDetalles> VentaDetalles { get; set; }
-
+        public DbSet<SolicitudRegistro> SolicitudRegistro { get; set; }
 
     }
 }

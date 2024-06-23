@@ -54,6 +54,7 @@ namespace Proyecto_Programado.BL
         {
 
             return ElContexto.AperturasDeCaja.FirstOrDefault(elElemento => elElemento.UserId == elNombreDeUsuario && elElemento.Estado == EstadoCajas.Abierta);
+
         }
     }
 

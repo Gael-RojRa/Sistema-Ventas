@@ -51,9 +51,16 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Venta" asp-action="Index">Ventas</a>
                         </li>
+                        @if (User.IsInRole("AdministradorDelSistema"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="SolicitudDeRegistros" asp-action="Index">Lista de solicitudes de registro</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Inventario" asp-action="Salir">Cerrar Sesion</a>
                         </li>
+                        
                     </ul>
                 </div>
             </div>

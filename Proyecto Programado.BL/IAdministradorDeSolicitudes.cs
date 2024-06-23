@@ -13,12 +13,17 @@ namespace Proyecto_Programado.BL
         public bool SoliciteRegistro(string nombreUsuario, string email, string clave);
         public void NotificarAdministrador(SolicitudRegistro solicitud);
         public void EnvieElCorreoElectronico(string elDestinatario, string elAsunto, string elContenido);
-        public void Active(int id);
         public Model.SolicitudRegistro ObtengaLaSolicitud(int id);
         public List<Model.SolicitudRegistro> ObtengaLaLista();
         public List<Model.SolicitudRegistro> ObtengaLaListaDePendientes();
 
         public bool AprobarSolicitud(int solicitudId);
+
+        public void CrearUsuario(string usuario, string correoElectronico);
+
+        public SolicitudRegistro ObtengaElUsuarioPorNombre(string elNombre);
+
+        public Rol ObtengaElRolDelUsuario(string elNombre);
 
     }
 }

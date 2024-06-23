@@ -114,15 +114,7 @@ namespace Proyecto_Programado.BL
 
             return true;
         }
-        public void Active(int id)
-        {
-            Model.SolicitudRegistro solicitud;
-            solicitud = ObtengaLaSolicitud(id);
-            solicitud.EstadoRegistro = EstadoRegistro.Aprobado;
-            ElContexto.SolicitudRegistro.Update(solicitud);
-            ElContexto.SaveChanges();
 
-        }
         public Model.SolicitudRegistro ObtengaLaSolicitud(int id)
         {
             List<Model.SolicitudRegistro> lista;
@@ -135,6 +127,32 @@ namespace Proyecto_Programado.BL
 
             return null;
 
+        }
+        public void CrearUsuario(string usuario, string correoElectronico)
+        {
+            var nuevoUsuario = new SolicitudRegistro
+            {
+                Nombre = usuario,
+                correoElectronico = correoElectronico,
+                EstadoRegistro = EstadoRegistro.Pendiente,
+                FechaSolicitud = DateTime.Now,
+                Clave = "", 
+               
+              
+            };
+
+            ElContexto.SolicitudRegistro.Add(nuevoUsuario);
+            ElContexto.SaveChanges();
+        }
+        public SolicitudRegistro ObtengaElUsuarioPorNombre(string elNombre)
+        {
+            return ElContexto.SolicitudRegistro.SingleOrDefault(elElemento => elElemento.Nombre == elNombre);
+        }
+
+        public Rol ObtengaElRolDelUsuario(string elNombre)
+        {
+            var elUsuario = ElContexto.Usuario.SingleOrDefault(elElemento => elElemento.Nombre == elNombre);
+            return elUsuario.rol;
         }
 
         public List<SolicitudRegistro> ObtengaLaListaDeSolicitudes()

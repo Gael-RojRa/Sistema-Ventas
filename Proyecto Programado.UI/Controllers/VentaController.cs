@@ -272,10 +272,12 @@ namespace Proyecto_Programado.UI.Controllers
         }
 
         // GET: VentaController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int id, int idVenta)
         {
 
+            
             ElAdministrador.ElimineLaVenta(id);
+           
 
 
             return RedirectToAction("Index");

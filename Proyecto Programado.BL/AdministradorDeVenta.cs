@@ -141,7 +141,6 @@ namespace Proyecto_Programado.BL
             ElContexto.SaveChanges();
         }
 
-
         public void ApliqueElDescuento(int elPorcentajeDescuento, int elId)
         {
             decimal elPorcentajeDecimal = elPorcentajeDescuento / 100.0m;
@@ -193,11 +192,9 @@ namespace Proyecto_Programado.BL
             VentaDetalles elItemAEliminar = ElContexto.VentaDetalles.Find(elId);
 
             ElContexto.VentaDetalles.Remove(elItemAEliminar);
-
             ElContexto.SaveChanges();
 
             int idDeLaVentaDelDetalles = elItemAEliminar.Id_Venta;
-
             Venta laVentaParaActualizar = ElContexto.Ventas.Find(idDeLaVentaDelDetalles);
 
             laSumatoriaDelMontoDeDetalles = ElContexto.VentaDetalles
@@ -205,7 +202,10 @@ namespace Proyecto_Programado.BL
                 .Sum(elElemento => elElemento.Monto);
 
             laVentaParaActualizar.SubTotal = laSumatoriaDelMontoDeDetalles;
-            laVentaParaActualizar.Total = laSumatoriaDelMontoDeDetalles;
+            decimal porcentajeDescuentoDecimal = laVentaParaActualizar.PorcentajeDescuento / 100m;
+            decimal valorDescuento = laSumatoriaDelMontoDeDetalles * porcentajeDescuentoDecimal;
+            laVentaParaActualizar.Total = laSumatoriaDelMontoDeDetalles - valorDescuento;
+            laVentaParaActualizar.MontoDescuento = valorDescuento;
 
             ElContexto.Ventas.Update(laVentaParaActualizar);
             ElContexto.SaveChanges();
@@ -215,8 +215,8 @@ namespace Proyecto_Programado.BL
                 ElContexto.Ventas.Remove(laVentaParaActualizar);
                 ElContexto.SaveChanges();
             }
-
         }
+
 
         public VentaDetalles ObtengaVentaDetallePorId(int elIdVentaDeDetalle)
         {

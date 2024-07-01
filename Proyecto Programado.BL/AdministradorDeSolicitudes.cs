@@ -21,7 +21,7 @@ namespace Proyecto_Programado.BL
 
         
 
-        public bool SoliciteRegistro(string nombreUsuario, string email, string clave)
+        public bool SoliciteElRegistro(string nombreUsuario, string email, string clave)
         {
             bool solicitudExitosa = false;
             try
@@ -51,7 +51,7 @@ namespace Proyecto_Programado.BL
             }
             
         }
-        public void NotificarAdministrador(SolicitudRegistro solicitud)
+        public void NotifiqueAlAdministrador(SolicitudRegistro solicitud)
         {
             string adminEmail = "vheinner@gmail.com";
             string subject = "Nueva solicitud de registro";

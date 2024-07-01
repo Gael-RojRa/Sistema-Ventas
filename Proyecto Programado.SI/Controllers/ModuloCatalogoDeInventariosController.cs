@@ -1,83 +1,52 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Proyecto_Programado.BL;
 
 namespace Proyecto_Programado.SI.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class ModuloCatalogoDeInventariosController : Controller
     {
-        // GET: ModuloCatalogoDeInventariosController
-        public ActionResult Index()
+        private readonly Proyecto_Programado.BL.IAdministradorDeInventarios ElAdministradorDeInventarios;
+
+        public ModuloCatalogoDeInventariosController(IAdministradorDeInventarios elAdministradorDeInventarios)
         {
-            return View();
+  
+            ElAdministradorDeInventarios = elAdministradorDeInventarios;
+            
         }
 
-        // GET: ModuloCatalogoDeInventariosController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet("ObtengaLaListaDeInventarios")]
+        public IActionResult ObtengaLaListaDeInventarios()
         {
-            return View();
+            return Ok(ElAdministradorDeInventarios.ObtengaLaListaDeInventarios());
         }
 
-        // GET: ModuloCatalogoDeInventariosController/Create
-        public ActionResult Create()
+        [HttpPost("AgregueElInventario")]
+        public IActionResult AgregueElInventario([FromBody] Proyecto_Programado.Model.Inventario elInventario, string elNombreDeUsuario)
         {
-            return View();
+            ElAdministradorDeInventarios.AgregueElInventario(elInventario, elNombreDeUsuario);
+            return Ok();
         }
 
-        // POST: ModuloCatalogoDeInventariosController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [HttpGet("ObtengaElInventario")]
+        public IActionResult ObtengaElInventario(int elId)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return Ok(ElAdministradorDeInventarios.ObtengaElInventario(elId));
         }
 
-        // GET: ModuloCatalogoDeInventariosController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpPost("EditeElInventario")]
+        public IActionResult EditeElInventario([FromBody] Proyecto_Programado.Model.Inventario elInventario, string elNombreDeUsuario)
         {
-            return View();
+            ElAdministradorDeInventarios.EditeElInventario(elInventario, elNombreDeUsuario);
+            return Ok();
         }
 
-        // POST: ModuloCatalogoDeInventariosController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        [HttpGet("ObtengaInventarioConHistorico")]
+        public IActionResult ObtengaInventarioConHistorico(int elId)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ModuloCatalogoDeInventariosController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ModuloCatalogoDeInventariosController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return Ok(ElAdministradorDeInventarios.ObtengaInventarioConHistorico(elId));
         }
     }
 }

@@ -43,7 +43,7 @@ namespace Proyecto_Programado.UI.Controllers
             }
             else
             {
-                bool solicitudExitosa = ElAdministrador.SoliciteRegistro(usuario.Nombre, usuario.correoElectronico, usuario.Clave);
+                bool solicitudExitosa = ElAdministrador.SoliciteElRegistro(usuario.Nombre, usuario.correoElectronico, usuario.Clave);
 
                 if (solicitudExitosa != false)
                 {

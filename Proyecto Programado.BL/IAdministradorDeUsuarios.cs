@@ -11,7 +11,6 @@ namespace Proyecto_Programado.BL
     public interface IAdministradorDeUsuarios
     {
 
-        bool RegistreElUsuario(string elNombre, string elCorreo, string laClave);
         void EnvieElCorreoElectronico(string elDestinatario, string elAsunto, string elContenido);
         bool VerifiqueCredenciales(string elNombre, string laClave);
         Usuario ObtengaElUsuarioPorNombre(string elNombre);

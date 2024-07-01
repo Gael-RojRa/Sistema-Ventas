@@ -38,7 +38,7 @@ namespace Proyecto_Programado.BL
                 ElContexto.SolicitudRegistro.Add(laNuevaSolicitud);
                 ElContexto.SaveChanges();
 
-                //NotificarAdministrador(laNuevaSolicitud);
+                NotifiqueAlAdministrador(laNuevaSolicitud);
 
                 solicitudExitosa = true;
 
@@ -53,11 +53,11 @@ namespace Proyecto_Programado.BL
         }
         public void NotifiqueAlAdministrador(SolicitudRegistro solicitud)
         {
-            string adminEmail = "vheinner@gmail.com";
+            string adminEmail = "comercionoreply@gmail.com";
             string subject = "Nueva solicitud de registro";
             string body = $"Se ha recibido una nueva solicitud de registro de {solicitud.Nombre} ({solicitud.correoElectronico}).";
 
-            //EnvieElCorreoElectronico(adminEmail, subject, body);
+            EnvieElCorreoElectronico(adminEmail, subject, body);
         }
 
         public void EnvieElCorreoElectronico(string elDestinatario, string elAsunto, string elContenido)

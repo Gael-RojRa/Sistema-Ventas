@@ -10,6 +10,5 @@ namespace Proyecto_Programado.Model
     {
         Pendiente = 1,
         Aprobado = 2,
-        Rechazado = 3,
     }
 }

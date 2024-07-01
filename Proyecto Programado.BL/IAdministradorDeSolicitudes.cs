@@ -11,7 +11,7 @@ namespace Proyecto_Programado.BL
     {
         public List<SolicitudRegistro> ObtengaLaListaDeSolicitudes();
         public bool SoliciteElRegistro(string nombreUsuario, string email, string clave);
-        public void NotifiqueAlAdministrador(SolicitudRegistro solicitud);
+        
         public void EnvieElCorreoElectronico(string elDestinatario, string elAsunto, string elContenido);
         public Model.SolicitudRegistro ObtengaLaSolicitud(int id);
         public List<Model.SolicitudRegistro> ObtengaLaLista();

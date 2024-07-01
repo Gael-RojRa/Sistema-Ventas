@@ -16,37 +16,6 @@ namespace Proyecto_Programado.BL
             ElContexto = elContexto;
         }
 
-        public bool RegistreElUsuario(string elNombre, string elCorreo, string laClave)
-        {
-            bool lasCredencialesCorrectas = false;
-            try
-            {
-                Usuario elUsuarioNuevo = new Usuario();
-
-                elUsuarioNuevo.Nombre = elNombre;
-                elUsuarioNuevo.correoElectronico = elCorreo;
-                elUsuarioNuevo.Clave = laClave;
-                elUsuarioNuevo.rol = Rol.UsuarioNormal;
-
-                ElContexto.Usuario.Add(elUsuarioNuevo);
-                ElContexto.SaveChanges();
-
-                string elAsunto = "Solicitud de creación de usuario.";
-                string elContenido = "Cuenta de usuario creada satisfactoriamente para el usuario " + elUsuarioNuevo.Nombre;
-
-                EnvieElCorreoElectronico(elUsuarioNuevo.correoElectronico, elAsunto, elContenido);
-
-                lasCredencialesCorrectas = true;
-
-                return lasCredencialesCorrectas;
-            }
-
-            catch (Exception laExcepcion)
-            {
-                return lasCredencialesCorrectas;
-            }
-        }
-
         public void EnvieElCorreoElectronico(string elDestinatario, string elAsunto, string elContenido)
         {
             try

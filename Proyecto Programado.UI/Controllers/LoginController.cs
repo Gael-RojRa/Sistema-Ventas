@@ -20,9 +20,49 @@ namespace Proyecto_Programado.UI.Controllers
     {
         // GET: LoginController
         public readonly IAdministradorDeUsuarios ElAdministrador;
-        public LoginController(IAdministradorDeUsuarios administrador)
+        public readonly IAdministradorDeSolicitudes ElAdministradorDeSolicitudes;
+        public LoginController(IAdministradorDeUsuarios administrador, IAdministradorDeSolicitudes elAdministradorDeSolicitudes)
         {
+            ElAdministradorDeSolicitudes = elAdministradorDeSolicitudes;
             ElAdministrador = administrador;
+        }
+
+
+        [HttpGet]
+        public IActionResult Registrarse()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Registrarse(UsuarioVM usuario)
+        {
+            if (usuario.Clave != usuario.ConfirmarClave)
+            {
+                ViewData["Mensaje"] = "Las contraseñas no coinciden";
+                return View();
+            }
+            var usuarioExistente = ElAdministrador.ObtengaElUsuarioPorNombre(usuario.Nombre);
+            if (usuarioExistente != null)
+            {
+                ViewData["Mensaje"] = "El nombre de usuario ya está en uso";
+                return View();
+            }
+            else
+            {
+                bool solicitudExitosa = ElAdministradorDeSolicitudes.SoliciteElRegistro(usuario.Nombre, usuario.correoElectronico, usuario.Clave);
+
+                if (solicitudExitosa != false)
+                {
+
+                    return RedirectToAction("SolicitudPendiente", "SolicitudDeRegistros");
+
+                }
+            }
+
+            ViewData["Mensaje"] = "No se pudo crear el usuario, error fatal";
+            return View();
+
         }
 
 
@@ -35,42 +75,56 @@ namespace Proyecto_Programado.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> InicieSesionAsync(UsuarioLoginVM usuario)
         {
-            bool lasCrendicalesSonCorrectas;
-            lasCrendicalesSonCorrectas = ElAdministrador.VerifiqueCredenciales(usuario.NombreUsuario, usuario.Clave);
-
-            if (lasCrendicalesSonCorrectas)
+            List<SolicitudRegistro> laListaDeSolicitudes = ElAdministradorDeSolicitudes.ObtengaLaLista();
+            foreach (var item in laListaDeSolicitudes)
             {
-                List<Claim> claims = new List<Claim>
+                
+                if (item.Nombre == usuario.NombreUsuario && item.EstadoRegistro == EstadoRegistro.Pendiente)
+                {
+                    
+                    return RedirectToAction("SolicitudPendiente", "SolicitudDeRegistros");
+                    
+                }
+
+            }
+            bool lasCrendicalesSonCorrectas;
+                lasCrendicalesSonCorrectas = ElAdministrador.VerifiqueCredenciales(usuario.NombreUsuario, usuario.Clave);
+
+                if (lasCrendicalesSonCorrectas)
+                {
+                    List<Claim> claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, usuario.NombreUsuario),
                     new Claim(ClaimTypes.Role, ElAdministrador.ObtengaElRolDelUsuario(usuario.NombreUsuario).ToString())
                 };
 
-                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                AuthenticationProperties properties = new AuthenticationProperties
-                {
-                    AllowRefresh = true,
-                    IsPersistent = true
-                };
+                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    AuthenticationProperties properties = new AuthenticationProperties
+                    {
+                        AllowRefresh = true,
+                        IsPersistent = true
+                    };
 
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    properties
-                    );
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        properties
+                        );
 
 
-                
+
                     return RedirectToAction("Index", "Inventario");
 
-                
 
-            }
-            else
-            {
-                ViewData["Mensaje"] = "Las credenciales son incorrectas o la cuenta esta bloqueada";
-                return View(usuario);
-            }
+
+                }
+                else
+                {
+                    ViewData["Mensaje"] = "Las credenciales son incorrectas o la cuenta esta bloqueada";
+                    return View(usuario);
+                }
+
+            
 
 
         }

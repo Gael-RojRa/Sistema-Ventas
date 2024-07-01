@@ -21,42 +21,7 @@ namespace Proyecto_Programado.UI.Controllers
             ElAdministrador = administrador;
         }
 
-        [HttpGet]
-        public IActionResult Registrarse()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Registrarse(UsuarioVM usuario)
-        {
-            if (usuario.Clave != usuario.ConfirmarClave)
-            {
-                ViewData["Mensaje"] = "Las contraseñas no coinciden";
-                return View();
-            }
-            var usuarioExistente = ElAdministrador.ObtengaElUsuarioPorNombre(usuario.Nombre);
-            if (usuarioExistente != null)
-            {
-                ViewData["Mensaje"] = "El nombre de usuario ya está en uso";
-                return View();
-            }
-            else
-            {
-                bool solicitudExitosa = ElAdministrador.SoliciteElRegistro(usuario.Nombre, usuario.correoElectronico, usuario.Clave);
-
-                if (solicitudExitosa != false)
-                {
-
-                    return RedirectToAction("SolicitudPendiente", "SolicitudDeRegistros");
-
-                }
-            }
-
-            ViewData["Mensaje"] = "No se pudo crear el usuario, error fatal";
-            return View();
-
-        }
+        
         public async Task Login()
         {
             await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme, new AuthenticationProperties
@@ -134,73 +99,6 @@ namespace Proyecto_Programado.UI.Controllers
 
        
 
-        // GET: SolicitudDeRegistrosController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: SolicitudDeRegistrosController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: SolicitudDeRegistrosController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: SolicitudDeRegistrosController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: SolicitudDeRegistrosController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: SolicitudDeRegistrosController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: SolicitudDeRegistrosController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        
     }
 }

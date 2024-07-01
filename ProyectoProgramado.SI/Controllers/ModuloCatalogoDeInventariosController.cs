@@ -6,15 +6,15 @@ namespace Proyecto_Programado.SI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ModuloCatalogoDeInventariosController : Controller
+    public class ModuloCatalogoDeInventariosController : ControllerBase
     {
         private readonly Proyecto_Programado.BL.IAdministradorDeInventarios ElAdministradorDeInventarios;
 
         public ModuloCatalogoDeInventariosController(IAdministradorDeInventarios elAdministradorDeInventarios)
         {
-  
+
             ElAdministradorDeInventarios = elAdministradorDeInventarios;
-            
+
         }
 
         [HttpGet("ObtengaLaListaDeInventarios")]

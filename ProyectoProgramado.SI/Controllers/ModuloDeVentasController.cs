@@ -83,7 +83,7 @@ namespace Proyecto_Programado.SI.Controllers
         }
         // GET: api/Ventas
         [HttpGet("ObtengaLaListaDeVentas")]
-        public ActionResult<List<Venta>> ObtengaLaListaDeVentas()
+        public ActionResult<List<Venta>> ObtengaLaListaDeVentas()//llamada en controler
         {
             return ElAdministrador.ObtengaLaListaDeVentas();
         }

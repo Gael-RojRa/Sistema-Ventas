@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Proyecto_Programado.BL;
 using Proyecto_Programado.DA;
 using Proyecto_Programado.Model;
 using Proyecto_Programado.UI.ViewModels;
+using System.Net.Http;
 using System.Security.Claims;
 
 
@@ -20,11 +22,19 @@ namespace Proyecto_Programado.UI.Controllers
             ElAdministrador = administrador;
         }
         // GET: VentaController
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            List<Venta> lasVentas;
-            lasVentas = ElAdministrador.ObtengaLaListaDeVentas();
-            
+            List<Venta> lasVentas = new List<Venta>();
+
+            var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync("https://localhost:7237/ObtengaLaListaDeVentas");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                lasVentas = JsonConvert.DeserializeObject<List<Venta>>(jsonResponse);
+            }
+
             return View(lasVentas);
         }
 
@@ -74,7 +84,7 @@ namespace Proyecto_Programado.UI.Controllers
             return View();
         }
 
-  
+
         public ActionResult AgregarVenta()
         {
             List<Inventario> laListaDeInventarios;
@@ -84,7 +94,7 @@ namespace Proyecto_Programado.UI.Controllers
             {
                 ItemsInventario = laListaDeInventarios
             };
-            bool cajaAbierta = ElAdministrador.VerifiqueLaCajaAbierta(User.Identity.Name); 
+            bool cajaAbierta = ElAdministrador.VerifiqueLaCajaAbierta(User.Identity.Name);
             ViewBag.CajaAbierta = cajaAbierta;
             return View(elModeloAuxiliarDeVenta);
         }
@@ -135,15 +145,40 @@ namespace Proyecto_Programado.UI.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult AgregarDetalleVenta(int idVenta)
+        public async Task <ActionResult> AgregarDetalleVenta(int idVenta)
         {
-            List<Inventario> laListaDeInventarios = ElAdministrador.ObtengaLaListaDeInventarios();
-            List<VentaDetalles> listaDeInventariosYaAniadidos = ElAdministrador.ObtengaLosItemsDeUnaVenta(idVenta);
+
+            List<Inventario> laListaDeInventarios = new List<Inventario>();
+            List<VentaDetalles> listaDeInventariosYaAniadidos = new List<VentaDetalles>();
+            string elNombre = string.Empty;
+
+            var httpClient = new HttpClient();
+
+            var inventariosResponse = await httpClient.GetAsync("https://localhost:7237/ObtengaLaListaDeInventarios");
+            if (inventariosResponse.IsSuccessStatusCode)
+            {
+                var inventariosJson = await inventariosResponse.Content.ReadAsStringAsync();
+                laListaDeInventarios = JsonConvert.DeserializeObject<List<Inventario>>(inventariosJson);
+            }
+
+            var detallesResponse = await httpClient.GetAsync($"https://localhost:7237/ObtengaLosItemsDeUnaVenta/{idVenta}");
+            if (detallesResponse.IsSuccessStatusCode)
+            {
+                var detallesJson = await detallesResponse.Content.ReadAsStringAsync();
+                listaDeInventariosYaAniadidos = JsonConvert.DeserializeObject<List<VentaDetalles>>(detallesJson);
+            }
+
+            var nombreResponse = await httpClient.GetAsync($"https://localhost:7237/ObtengaElNombreDeVenta/{idVenta}");
+            if (nombreResponse.IsSuccessStatusCode)
+            {
+                elNombre = await nombreResponse.Content.ReadAsStringAsync();
+            }
+
             var idsInventariosYaAniadidos = listaDeInventariosYaAniadidos.Select(d => d.Id_Inventario).ToList();
             List<Inventario> laListaDeInventarioActualesDisponibles = laListaDeInventarios
                 .Where(inv => !idsInventariosYaAniadidos.Contains(inv.Id))
                 .ToList();
-            string elNombre = ElAdministrador.ObtengaElNombreDeVenta(idVenta);
+
             Venta_VentaDetalleVM elModeloAuxiliarDeVenta = new Venta_VentaDetalleVM
             {
                 ItemsInventario = laListaDeInventarioActualesDisponibles,
@@ -151,8 +186,22 @@ namespace Proyecto_Programado.UI.Controllers
                 idVenta = idVenta
             };
             return View(elModeloAuxiliarDeVenta);
+            //Implementacion anterior sin api
+            //List<Inventario> laListaDeInventarios = ElAdministrador.ObtengaLaListaDeInventarios();
+            //List<VentaDetalles> listaDeInventariosYaAniadidos = ElAdministrador.ObtengaLosItemsDeUnaVenta(idVenta);
+            //var idsInventariosYaAniadidos = listaDeInventariosYaAniadidos.Select(d => d.Id_Inventario).ToList();
+            //List<Inventario> laListaDeInventarioActualesDisponibles = laListaDeInventarios
+            //    .Where(inv => !idsInventariosYaAniadidos.Contains(inv.Id))
+            //    .ToList();
+            //string elNombre = ElAdministrador.ObtengaElNombreDeVenta(idVenta);
+            //Venta_VentaDetalleVM elModeloAuxiliarDeVenta = new Venta_VentaDetalleVM
+            //{
+            //    ItemsInventario = laListaDeInventarioActualesDisponibles,
+            //    NombreCliente = elNombre,
+            //    idVenta = idVenta
+            //};
+            //return View(elModeloAuxiliarDeVenta);
         }
-
 
         // POST: VentaController/Create
         [HttpPost]
@@ -172,7 +221,7 @@ namespace Proyecto_Programado.UI.Controllers
             };
             ElAdministrador.AgregueDetalleVenta(nuevoDetalle);
 
-            
+
             ViewBag.IdVenta = laVenta.idVenta;
 
             ElAdministrador.ActualiceElTotalEnElIndexDeVentas(nuevoDetalle.Id);
@@ -182,12 +231,28 @@ namespace Proyecto_Programado.UI.Controllers
 
 
         [HttpPost]
-        public IActionResult AplicarDescuento(int porcentajeDescuento, int idVenta)
+        public async Task<IActionResult> AplicarDescuento(int porcentajeDescuento, int idVenta)
         {
 
-           ElAdministrador.ApliqueElDescuento(porcentajeDescuento, idVenta);
+            var httpClient = new HttpClient();
+            var requestUri = $"https://localhost:7237/apliqueDescuento/{idVenta}/{porcentajeDescuento}";
 
-            return RedirectToAction("Carrito", new { id = idVenta });
+            var request = new HttpRequestMessage(HttpMethod.Put, requestUri);
+
+            var response = await httpClient.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Carrito", new { id = idVenta });
+            }
+            else
+            {
+                // Manejar el error adecuadamente
+                return View("Error");
+            }
+            //Forma Anterior, sin api
+            //ElAdministrador.ApliqueElDescuento(porcentajeDescuento, idVenta);
+            //return RedirectToAction("Carrito", new { id = idVenta });
         }
 
 
@@ -208,7 +273,7 @@ namespace Proyecto_Programado.UI.Controllers
                 Venta laVenta = ElAdministrador.ObtengaVentaPorId(id);
                 List<VentaDetalles> detallesDeLaVenta = ElAdministrador.ObtengaLosItemsDeUnaVenta(id);
 
-                bool inventarioSuficiente = true; 
+                bool inventarioSuficiente = true;
 
                 foreach (var detalle in detallesDeLaVenta)
                 {
@@ -216,14 +281,14 @@ namespace Proyecto_Programado.UI.Controllers
                     {
                         string nombreInventario = ElAdministrador.ObtengaElInventario(detalle.Id_Inventario).Nombre;
                         ViewData["Cantidad"] = "La cantidad a comprar es mayor a la cantidad disponible del inventario: " + nombreInventario + ", por favor verifique su carrito";
-                        inventarioSuficiente = false;  
-                        break;  
+                        inventarioSuficiente = false;
+                        break;
                     }
                 }
 
                 if (!inventarioSuficiente)
                 {
-                    
+
                     return View();
                 }
                 else
@@ -272,16 +337,26 @@ namespace Proyecto_Programado.UI.Controllers
         }
 
         // GET: VentaController/Delete/5
-        public ActionResult Delete(int id, int idVenta)
+        public async Task<ActionResult> Delete(int id, int idVenta)
         {
+            var httpClient = new HttpClient();
+            var requestUri = $"https://localhost:7237/ElimineLaVenta/{id}";
 
-            
-            ElAdministrador.ElimineLaVenta(id);
-           
+            var response = await httpClient.DeleteAsync(requestUri);
 
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
 
-            return RedirectToAction("Index");
+                return View("Error");
+            }
+            //funcionamiento antiguo sin API.
+            //ElAdministrador.ElimineLaVenta(id);
+            //return RedirectToAction("Index");
         }
-        
+
     }
 }

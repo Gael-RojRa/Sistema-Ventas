@@ -45,11 +45,6 @@ namespace Proyecto_Programado.BL
 
         }
 
-
-
-
-
-
         public AperturaDeCaja ObtengaLaCajaAbierta(string elNombreDeUsuario)
         {
 

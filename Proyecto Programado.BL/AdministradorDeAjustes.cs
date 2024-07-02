@@ -86,7 +86,7 @@ namespace Proyecto_Programado.BL
             ElContexto.Inventarios.Update(elInventario);
             ElContexto.SaveChanges();
 
-            var elHistorico = new HistoricoInventario
+            var elHistorico = new HistoriconInventario
             {
                 IdInventario = elInventario.Id,
                 nombreUsuario = elNombreDeUsuario,

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Proyecto_Programado.BL;
+using Proyecto_Programado.Model;
 
 namespace Proyecto_Programado.SI.Controllers
 {
@@ -30,6 +31,7 @@ namespace Proyecto_Programado.SI.Controllers
             return Ok();
         }
 
+
         [HttpGet("ObtengaElInventario")]
         public IActionResult ObtengaElInventario(int elId)
         {
@@ -43,10 +45,15 @@ namespace Proyecto_Programado.SI.Controllers
             return Ok();
         }
 
-        [HttpGet("ObtengaInventarioConHistorico")]
+        [HttpGet("ObtengaInventarioConHistorico/{elId}")]
         public IActionResult ObtengaInventarioConHistorico(int elId)
         {
-            return Ok(ElAdministradorDeInventarios.ObtengaInventarioConHistorico(elId));
+            var respuesta = ElAdministradorDeInventarios.ObtengaInventarioConHistorico(elId);
+
+           
+
+            return Ok(new { Inventario = respuesta.Item1, HistoricoInventarios = respuesta.Item2 });
         }
+
     }
 }

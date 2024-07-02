@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto_Programado.Model
 {
-    public class HistoricoInventario
+    public class HistoriconInventario
     {
         public int Id { get; set; }
         public int IdInventario {  get; set; }

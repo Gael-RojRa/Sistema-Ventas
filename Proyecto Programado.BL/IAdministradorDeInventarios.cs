@@ -19,7 +19,7 @@ namespace Proyecto_Programado.BL
 
         public void EditeElInventario(Model.Inventario elInventario, string elNombreDeUsuario);
 
-        public (Inventario, List<HistoricoInventario>) ObtengaInventarioConHistorico(int elId);
+        public (Inventario, List<HistoriconInventario>) ObtengaInventarioConHistorico(int elId);
        
 
     }

@@ -12,7 +12,7 @@ namespace Proyecto_Programado.Model
     public class AperturaDeCaja
     {
         public int Id { get; set; }
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
         [DisplayName("Fecha de Inicio")]
         public DateTime FechaDeInicio { get; set; }
         public DateTime? FechaDeCierre { get; set; }
@@ -21,15 +21,15 @@ namespace Proyecto_Programado.Model
         [Required]
         [DataType(DataType.Currency)]
         [Column(TypeName = "money")]
-        public decimal? Efectivo { get; set; }
+        public decimal? Efectivo { get; set; } = 0;
         [Required]
         [DataType(DataType.Currency)]
         [Column(TypeName = "money")]
-        public decimal? Tarjeta { get; set; }
+        public decimal? Tarjeta { get; set; } = 0;
         [Required]
         [DataType(DataType.Currency)]
         [Column(TypeName = "money")]
-        public decimal? SinpeMovil { get; set; }
+        public decimal? SinpeMovil { get; set; } = 0;
 
     }
 }

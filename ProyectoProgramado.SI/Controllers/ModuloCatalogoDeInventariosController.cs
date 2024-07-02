@@ -25,14 +25,15 @@ namespace Proyecto_Programado.SI.Controllers
         }
 
         [HttpPost("AgregueElInventario")]
-        public IActionResult AgregueElInventario([FromBody] Proyecto_Programado.Model.Inventario elInventario, string elNombreDeUsuario)
+        public IActionResult AgregueElInventario([FromBody] Proyecto_Programado.Model.Inventario elInventario, [FromQuery] string elNombreDeUsuario)
         {
             ElAdministradorDeInventarios.AgregueElInventario(elInventario, elNombreDeUsuario);
             return Ok();
         }
 
 
-        [HttpGet("ObtengaElInventario")]
+
+        [HttpGet("ObtengaElInventario/{elId}")]
         public IActionResult ObtengaElInventario(int elId)
         {
             return Ok(ElAdministradorDeInventarios.ObtengaElInventario(elId));

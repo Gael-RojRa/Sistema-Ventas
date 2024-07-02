@@ -24,7 +24,6 @@ namespace Proyecto_Programado.BL
             laCaja.UserId = elNombreDeUsuario;
             laCaja.FechaDeInicio = DateTime.Now;
             laCaja.Estado = EstadoCajas.Abierta;
-            //ESTO
             laCaja.Efectivo = 0;
             laCaja.Tarjeta = 0;
             laCaja.SinpeMovil = 0;

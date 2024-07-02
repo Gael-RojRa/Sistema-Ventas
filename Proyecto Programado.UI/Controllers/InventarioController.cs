@@ -106,7 +106,6 @@ namespace Proyecto_Programado.UI.Controllers
             return View();
         }
 
-        // POST: InventarioController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Inventario inventario)
@@ -116,52 +115,46 @@ namespace Proyecto_Programado.UI.Controllers
                 var httpClient = new HttpClient();
                 try
                 {
-                    // Obtener el nombre de usuario actual
-                    var elNombreDeUsuario = User.Identity.Name;
+                    string elNombreDeUsuario = User.Identity.Name;
 
-                    // Crear un objeto anónimo que incluya el inventario y el nombre de usuario
-                    var objetoAEnviar = new
-                    {
-                        elInventario = inventario,
-                        elNombreDeUsuario = elNombreDeUsuario
-                    };
-
-                    // Serializar el objeto anónimo a JSON
-                    var json = JsonConvert.SerializeObject(objetoAEnviar);
+                    var json = JsonConvert.SerializeObject(inventario);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    // Enviar la solicitud POST
-                    var respuesta = await httpClient.PostAsync("https://localhost:7237/ModuloCatalogoDeInventarios/AgregueElInventario", content);
+                    var url = $"https://localhost:7237/ModuloCatalogoDeInventarios/AgregueElInventario?elNombreDeUsuario={Uri.EscapeDataString(elNombreDeUsuario)}";
+
+                    var respuesta = await httpClient.PostAsync(url, content);
                     if (respuesta.IsSuccessStatusCode)
                     {
                         return RedirectToAction(nameof(Index));
                     }
                     else
                     {
-                        // Manejar el caso en que la respuesta no es exitosa
                         return View(inventario);
                     }
                 }
                 catch (Exception ex)
                 {
-                    // Manejar la excepción
                     Console.WriteLine($"Exception: {ex.Message}");
                     return View("Error", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
                 }
             }
 
-            // Si el modelo no es válido, retornar la vista con el inventario
             return View(inventario);
         }
 
 
 
+
         // GET: InventarioController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
             Model.Inventario inventario;
-            inventario = ElAdministrador.ObtengaElInventario(id);
+            
+            var httpClient = new HttpClient();
 
+            var url = $"https://localhost:7237/ModuloCatalogoDeInventarios/ObtengaElInventario/{id}";
+            var respuesta = await httpClient.GetAsync(url);
+            inventario = JsonConvert.DeserializeObject<Model.Inventario>(await respuesta.Content.ReadAsStringAsync());
             return View(inventario);
         }
 
@@ -184,40 +177,6 @@ namespace Proyecto_Programado.UI.Controllers
                 return View();
             }
         }
-
-        // GET: InventarioController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: InventarioController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        public async Task<IActionResult> Salir()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            // Opcionalmente, elimina las cookies manualmente si es necesario
-            Response.Cookies.Delete(".AspNetCore.Cookies");
-            Response.Cookies.Delete(".AspNetCore.Google");
-            Response.Cookies.Delete(".AspNetCore.Facebook");
-
-            return RedirectToAction("InicieSesion", "Login");
-        }
-
 
     }
 }

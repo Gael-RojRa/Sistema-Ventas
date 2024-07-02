@@ -246,5 +246,16 @@ namespace Proyecto_Programado.UI.Controllers
             return View();
         }
 
+        public async Task<IActionResult> Salir()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Opcionalmente, elimina las cookies manualmente si es necesario
+            Response.Cookies.Delete(".AspNetCore.Cookies");
+            Response.Cookies.Delete(".AspNetCore.Google");
+            Response.Cookies.Delete(".AspNetCore.Facebook");
+
+            return RedirectToAction("InicieSesion", "Login");
+        }
     }
 }

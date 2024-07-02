@@ -33,7 +33,7 @@ namespace Proyecto_Programado.BL
             ElContexto.Inventarios.Add(elInventario);
             ElContexto.SaveChanges();
 
-            var elHistorico = new HistoricoInventario
+            var elHistorico = new HistoriconInventario
             {
                 IdInventario = elInventario.Id,
                 nombreUsuario = elNombreDeUsuario,
@@ -57,7 +57,7 @@ namespace Proyecto_Programado.BL
             return elResultado;
         }
 
-        public (Inventario, List<HistoricoInventario>) ObtengaInventarioConHistorico(int elId)
+        public (Inventario, List<HistoriconInventario>) ObtengaInventarioConHistorico(int elId)
         {
             var elInventario = ElContexto.Inventarios.Find(elId);
 
@@ -100,7 +100,7 @@ namespace Proyecto_Programado.BL
             ElContexto.Inventarios.Update(elInventarioOriginal);
             ElContexto.SaveChanges();
 
-            var elHistorico = new HistoricoInventario
+            var elHistorico = new HistoriconInventario
             {
                 IdInventario = elInventario.Id,
                 nombreUsuario = elNombreDeUsuario,

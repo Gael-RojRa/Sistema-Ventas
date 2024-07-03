@@ -6,10 +6,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
+using Newtonsoft.Json;
 using Proyecto_Programado.BL;
 using Proyecto_Programado.Model;
 using Proyecto_Programado.UI.ViewModels;
+using System.Net.Http;
 using System.Security.Claims;
+using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
@@ -215,8 +218,10 @@ namespace Proyecto_Programado.UI.Controllers
 
         // POST: LoginController/CambiarClave
         [HttpPost]
-        public IActionResult CambiarClave(CambioClaveVM modelo)
+        public async Task<IActionResult> CambiarClaveAsync(CambioClaveVM modelo)
         {
+            var httpClient = new HttpClient();
+
             if (!ModelState.IsValid)
             {
                 return View(modelo);
@@ -229,14 +234,53 @@ namespace Proyecto_Programado.UI.Controllers
                 return View(modelo);
             }
 
-            ElAdministrador.CambieLaClave(usuario, modelo.ClaveNueva);
+            // Crear el objeto de usuario con la nueva clave
+            var cambioClaveRequest = new
+            {
+                elUsuario = new { Nombre = modelo.Nombre },
+                laClaveNueva = modelo.ClaveNueva
+            };
 
-            string asunto = "Cambio de clave";
-            string contenido = $"Le informamos que el cambio de clave de la cuenta del usuario {modelo.Nombre} se ejecutó satisfactoriamente.";
-            ElAdministrador.EnvieElCorreoElectronico(usuario.correoElectronico, asunto, contenido);
+           
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(cambioClaveRequest), Encoding.UTF8, "application/json");
 
-            ViewData["Mensaje"] = "Cambio de clave realizado correctamente.";
+            var response = await httpClient.PutAsync("https://localhost:7237/api/ModuloDeUsuario/CambieLaClave", jsonContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string asunto = "Cambio de clave";
+                string contenido = $"Le informamos que el cambio de clave de la cuenta del usuario {modelo.Nombre} se ejecutó satisfactoriamente.";
+                ElAdministrador.EnvieElCorreoElectronico(usuario.correoElectronico, asunto, contenido);
+
+                ViewData["Mensaje"] = "Cambio de clave realizado correctamente.";
+            }
+            else
+            {
+                ViewData["Mensaje"] = $"Error al cambiar la clave: {response.ReasonPhrase}";
+            }
+
             return View(modelo);
+            //FORMA ANTIGUA SIN API
+            //if (!ModelState.IsValid)
+            //{
+            //    return View(modelo);
+            //}
+
+            //var usuario = ElAdministrador.ObtengaElUsuarioPorNombre(modelo.Nombre);
+            //if (usuario == null)
+            //{
+            //    ViewData["Mensaje"] = "Usuario no encontrado.";
+            //    return View(modelo);
+            //}
+
+            //ElAdministrador.CambieLaClave(usuario, modelo.ClaveNueva);
+
+            //string asunto = "Cambio de clave";
+            //string contenido = $"Le informamos que el cambio de clave de la cuenta del usuario {modelo.Nombre} se ejecutó satisfactoriamente.";
+            //ElAdministrador.EnvieElCorreoElectronico(usuario.correoElectronico, asunto, contenido);
+
+            //ViewData["Mensaje"] = "Cambio de clave realizado correctamente.";
+            //return View(modelo);
         }
 
         [HttpGet]

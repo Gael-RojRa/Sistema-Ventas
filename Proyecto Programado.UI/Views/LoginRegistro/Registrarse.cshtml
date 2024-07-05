@@ -24,26 +24,26 @@
 
                 <div class="card-body">
 
-                    <form asp-for="Login" asp-action="Registrarse" method="post">
+                    <form asp-for="LoginRegistro" asp-action="Registrarse" method="post">
                         <input class="form-control mb-3" type="text" placeholder="Nombre" requred asp-for="Nombre" />
                         <input class="form-control mb-3" type="email" placeholder="Correo" requred asp-for="correoElectronico" />
                         <input class="form-control mb-3" type="password" placeholder="Clave" requred asp-for="Clave" />
                         <input class="form-control mb-3" type="password" placeholder="Confirmar Clave" requred asp-for="ConfirmarClave" />
 
                         <div class="d-grid gap-2 mb-3">
-                            <button class="btn btn-primary" type="submit">Registrate</button> 
+                            <button class="btn btn-primary" type="submit">Registrate</button>
                         </div>
 
                         @if (ViewData["Mensaje"] != null)
                         {
                             <div class="alert alert-danger" role="alert">
                                 @ViewData["Mensaje"]
-                                
+
                             </div>
                         }
-                        
 
-                        ¿Ya tiene una cuenta? <a asp-controller="Login" asp-action="InicieSesion">Iniciar Sesion</a>
+
+                        ¿Ya tiene una cuenta? <a asp-controller="LoginRegistro" asp-action="InicieSesion">Iniciar Sesion</a>
                     </form>
                 </div>
 
@@ -54,7 +54,9 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    
-    
+
+
 </body>
 </html>
+
+

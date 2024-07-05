@@ -1,35 +1,29 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Facebook;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Client;
-using Newtonsoft.Json;
 using Proyecto_Programado.BL;
 using Proyecto_Programado.Model;
-using Proyecto_Programado.UI.ViewModels;
-using System.Net.Http;
 using System.Security.Claims;
+using Proyecto_Programado.UI.ViewModels;
+using Microsoft.AspNetCore.Authentication.Facebook;
+using Newtonsoft.Json;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
 
 namespace Proyecto_Programado.UI.Controllers
 {
-    
-    public class LoginController : Controller
+    public class LoginRegistroController : Controller
     {
-        // GET: LoginController
-        public readonly IAdministradorDeUsuarios ElAdministrador;
-        public readonly IAdministradorDeSolicitudes ElAdministradorDeSolicitudes;
-        public LoginController(IAdministradorDeUsuarios administrador, IAdministradorDeSolicitudes elAdministradorDeSolicitudes)
-        {
-            ElAdministradorDeSolicitudes = elAdministradorDeSolicitudes;
-            ElAdministrador = administrador;
-        }
 
+        // GET: LoginRegistroController
+        public readonly IAdministradorDeSolicitudes ElAdministrador;
+        public readonly IAdministradorDeUsuarios    ElAdministradorDeUsuarios;
+        public LoginRegistroController(IAdministradorDeSolicitudes administrador, IAdministradorDeUsuarios elAdministradorDeUsuarios)
+        {
+            ElAdministrador = administrador;
+            ElAdministradorDeUsuarios = elAdministradorDeUsuarios;
+        }
 
         [HttpGet]
         public IActionResult Registrarse()
@@ -53,12 +47,12 @@ namespace Proyecto_Programado.UI.Controllers
             }
             else
             {
-                bool solicitudExitosa = ElAdministradorDeSolicitudes.SoliciteElRegistro(usuario.Nombre, usuario.correoElectronico, usuario.Clave);
+                bool solicitudExitosa = ElAdministrador.SoliciteElRegistro(usuario.Nombre, usuario.correoElectronico, usuario.Clave);
 
                 if (solicitudExitosa != false)
                 {
 
-                    return RedirectToAction("SolicitudPendiente", "SolicitudDeRegistros");
+                    return RedirectToAction("SolicitudPendiente", "LoginRegistro");
 
                 }
             }
@@ -67,7 +61,6 @@ namespace Proyecto_Programado.UI.Controllers
             return View();
 
         }
-
 
         [HttpGet]
         public IActionResult InicieSesion()
@@ -78,67 +71,63 @@ namespace Proyecto_Programado.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> InicieSesionAsync(UsuarioLoginVM usuario)
         {
-            List<SolicitudRegistro> laListaDeSolicitudes = ElAdministradorDeSolicitudes.ObtengaLaLista();
+            List<SolicitudRegistro> laListaDeSolicitudes = ElAdministrador.ObtengaLaLista();
             foreach (var item in laListaDeSolicitudes)
             {
-                
+
                 if (item.Nombre == usuario.NombreUsuario && item.EstadoRegistro == EstadoRegistro.Pendiente)
                 {
-                    
-                    return RedirectToAction("SolicitudPendiente", "SolicitudDeRegistros");
-                    
+
+                    return RedirectToAction("SolicitudPendiente", "LoginRegistro");
+
                 }
 
             }
             bool lasCrendicalesSonCorrectas;
-                lasCrendicalesSonCorrectas = ElAdministrador.VerifiqueCredenciales(usuario.NombreUsuario, usuario.Clave);
+            lasCrendicalesSonCorrectas = ElAdministradorDeUsuarios.VerifiqueCredenciales(usuario.NombreUsuario, usuario.Clave);
 
-                if (lasCrendicalesSonCorrectas)
-                {
-                    List<Claim> claims = new List<Claim>
+            if (lasCrendicalesSonCorrectas)
+            {
+                List<Claim> claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, usuario.NombreUsuario),
                     new Claim(ClaimTypes.Role, ElAdministrador.ObtengaElRolDelUsuario(usuario.NombreUsuario).ToString())
                 };
 
-                    ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    AuthenticationProperties properties = new AuthenticationProperties
-                    {
-                        AllowRefresh = true,
-                        IsPersistent = true
-                    };
-
-                    await HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        properties
-                        );
-
-
-
-                    return RedirectToAction("Index", "Inventario");
-
-
-
-                }
-                else
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                AuthenticationProperties properties = new AuthenticationProperties
                 {
-                    ViewData["Mensaje"] = "Las credenciales son incorrectas o la cuenta esta bloqueada";
-                    return View(usuario);
-                }
+                    AllowRefresh = true,
+                    IsPersistent = true
+                };
 
-            
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    properties
+                    );
 
 
+
+                return RedirectToAction("Index", "Inventario");
+
+
+
+            }
+            else
+            {
+                ViewData["Mensaje"] = "Las credenciales son incorrectas o la cuenta esta bloqueada";
+                return View(usuario);
+            }
         }
-        
+
         public async Task Login()
         {
             await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme, new AuthenticationProperties
             {
-                
+
                 RedirectUri = Url.Action("GoogleResponse"),
-                
+
             });
         }
         public async Task<IActionResult> GoogleResponse()
@@ -154,6 +143,65 @@ namespace Proyecto_Programado.UI.Controllers
             var claimsPrincipal = result.Principal;
 
             var nameClaim = claimsPrincipal.FindFirst(ClaimTypes.Name);
+            var emailClaim = claimsPrincipal.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (nameClaim == null)
+            {
+                return BadRequest("Claim de Name no encontrado");
+            }
+
+
+            var usuarioName = nameClaim.Value;
+            var usuarioEmail = emailClaim;
+            var usuarioExistente = ElAdministrador.ObtengaElUsuarioPorNombre(usuarioName);
+
+            if (usuarioExistente == null)
+            {
+                ElAdministrador.CrearUsuario(usuarioName, usuarioEmail);
+                return RedirectToAction("SolicitudPendiente", "LoginRegistro");
+
+            }
+            else
+            {
+                if (usuarioExistente.EstadoRegistro == EstadoRegistro.Pendiente)
+                {
+                    return RedirectToAction("SolicitudPendiente", "LoginRegistro");
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Inventario");
+                }
+            }
+        }
+
+        public async Task<IActionResult> LoginWithFacebook()
+        {
+            try
+            {
+                var redirectUrl = Url.Action("FacebookResponse", "LoginRegistro");
+                var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+                return Challenge(properties, FacebookDefaults.AuthenticationScheme);
+            }
+            catch (Exception ex)
+            {
+
+                return RedirectToAction("Error", "Home");
+            }
+        }
+
+        public async Task<IActionResult> FacebookResponse()
+        {
+            var resultado = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            if (!resultado.Succeeded)
+            {
+                return Unauthorized();
+            }
+
+            var claimsPrincipal = resultado.Principal;
+
+            var nameClaim = claimsPrincipal.FindFirst(ClaimTypes.Name);
+            var emailClaim = claimsPrincipal.FindFirst(ClaimTypes.Email)?.Value;
 
             if (nameClaim == null)
             {
@@ -161,51 +209,25 @@ namespace Proyecto_Programado.UI.Controllers
             }
 
             var usuarioName = nameClaim.Value;
+            var usuarioEmail = emailClaim;
 
-            return RedirectToAction("Index", "Inventario");
-        }
+            var usuarioExistente = ElAdministrador.ObtengaElUsuarioPorNombre(usuarioName);
 
-
-        public async Task<IActionResult> LoginWithFacebook()
-        {
-            try
+            if (usuarioExistente == null)
             {
-                var redirectUrl = Url.Action("FacebookResponse", "Login");
-                var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
-                return Challenge(properties, FacebookDefaults.AuthenticationScheme);
+                ElAdministrador.CrearUsuario(usuarioName, usuarioEmail);
+                return RedirectToAction("SolicitudPendiente", "LoginRegistro");
             }
-            catch (Exception ex)
+            else
             {
-                
-                return RedirectToAction("Error", "Home");
-            }
-        }
-
-        public async Task<IActionResult> FacebookResponse()
-        {
-            try
-            {
-                var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-                if (!result.Succeeded)
+                if (usuarioExistente.EstadoRegistro == EstadoRegistro.Pendiente)
                 {
-                    return RedirectToAction("AccessDenied", "Home");
+                    return RedirectToAction("SolicitudPendiente", "LoginRegistro");
                 }
-
-                var claims = result.Principal.Identities.FirstOrDefault()?.Claims.Select(claim => new
+                else
                 {
-                    claim.Issuer,
-                    claim.OriginalIssuer,
-                    claim.Type,
-                    claim.Value
-                });
-
-                return RedirectToAction("Index", "Inventario");
-            }
-            catch (Exception ex)
-            {
-
-                return RedirectToAction("Error", "Home");
+                    return RedirectToAction("Index", "Inventario");
+                }
             }
         }
 
@@ -241,10 +263,10 @@ namespace Proyecto_Programado.UI.Controllers
                 laClaveNueva = modelo.ClaveNueva
             };
 
-           
+
             var jsonContent = new StringContent(JsonConvert.SerializeObject(cambioClaveRequest), Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PutAsync("https://localhost:7237/api/ModuloDeUsuario/CambieLaClave", jsonContent);
+            var response = await httpClient.PutAsync("https://localhost:7237/api/ModuloLoginRegistro/CambieLaClave", jsonContent);
 
             if (response.IsSuccessStatusCode)
             {
@@ -282,13 +304,25 @@ namespace Proyecto_Programado.UI.Controllers
             //ViewData["Mensaje"] = "Cambio de clave realizado correctamente.";
             //return View(modelo);
         }
-
-        [HttpGet]
-        public IActionResult DeBienvenida(string usuario)
+        public IActionResult SolicitudPendiente()
         {
-            TempData["Usuario"] = usuario;
             return View();
         }
+
+        // GET: SolicitudDeRegistrosController
+        public ActionResult Index()
+        {
+            List<SolicitudRegistro> laListadeSolicitudes;
+            laListadeSolicitudes = ElAdministrador.ObtengaLaListaDePendientes();
+            return View(laListadeSolicitudes);
+        }
+
+        public ActionResult Activar(int id)
+        {
+            ElAdministrador.AprobarSolicitud(id);
+            return RedirectToAction(nameof(Index));
+        }
+
 
         public async Task<IActionResult> Salir()
         {
@@ -299,7 +333,7 @@ namespace Proyecto_Programado.UI.Controllers
             Response.Cookies.Delete(".AspNetCore.Google");
             Response.Cookies.Delete(".AspNetCore.Facebook");
 
-            return RedirectToAction("InicieSesion", "Login");
+            return RedirectToAction("InicieSesion", "LoginRegistro");
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Proyecto_Programado.UI.Controllers
             try
             {
 
-                 var respuesta = await httpClient.GetAsync("https://localhost:7237/ModuloCatalogoDeInventarios/ObtengaLaListaDeInventarios");
+                 var respuesta = await httpClient.GetAsync("https://apicomerciovs.azurewebsites.net/ModuloCatalogoDeInventarios/ObtengaLaListaDeInventarios");
                 string apiResponse = await respuesta.Content.ReadAsStringAsync();
                 laListadeInventarios = JsonConvert.DeserializeObject<List<Model.Inventario>>(apiResponse);
 
@@ -64,7 +64,7 @@ namespace Proyecto_Programado.UI.Controllers
         public async Task<ActionResult> Details(int id)
         {
             var httpClient = new HttpClient();
-            var url = $"https://localhost:7237/ModuloCatalogoDeInventarios/ObtengaInventarioConHistorico/{id}";
+            var url = $"https://apicomerciovs.azurewebsites.net/ModuloCatalogoDeInventarios/ObtengaInventarioConHistorico/{id}";
 
             try
             {
@@ -120,7 +120,7 @@ namespace Proyecto_Programado.UI.Controllers
                     var json = JsonConvert.SerializeObject(inventario);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    var url = $"https://localhost:7237/ModuloCatalogoDeInventarios/AgregueElInventario?elNombreDeUsuario={Uri.EscapeDataString(elNombreDeUsuario)}";
+                    var url = $"https://apicomerciovs.azurewebsites.net/ModuloCatalogoDeInventarios/AgregueElInventario?elNombreDeUsuario={Uri.EscapeDataString(elNombreDeUsuario)}";
 
                     var respuesta = await httpClient.PostAsync(url, content);
                     if (respuesta.IsSuccessStatusCode)
@@ -152,7 +152,7 @@ namespace Proyecto_Programado.UI.Controllers
             
             var httpClient = new HttpClient();
 
-            var url = $"https://localhost:7237/ModuloCatalogoDeInventarios/ObtengaElInventario/{id}";
+            var url = $"https://apicomerciovs.azurewebsites.net/ModuloCatalogoDeInventarios/ObtengaElInventario/{id}";
             var respuesta = await httpClient.GetAsync(url);
             inventario = JsonConvert.DeserializeObject<Model.Inventario>(await respuesta.Content.ReadAsStringAsync());
             return View(inventario);

@@ -8,6 +8,7 @@ namespace Proyecto_Programado.SI.Controllers
 {
     public class ModuloDeVentasController : ControllerBase
     {
+
         public DBContexto ElContexto;
         private readonly BL.IAdministradorDeVentas ElAdministrador;
         public ModuloDeVentasController(Proyecto_Programado.BL.IAdministradorDeVentas administrador, DBContexto elContexto)

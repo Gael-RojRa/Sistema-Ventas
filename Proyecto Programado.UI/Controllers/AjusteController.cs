@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Proyecto_Programado.UI.ViewModels;
 
 namespace Proyecto_Programado.UI.Controllers
 {
@@ -114,20 +115,33 @@ namespace Proyecto_Programado.UI.Controllers
         // GET: AjusteController/Create
         public async Task<ActionResult> AgregarAjuste(int id_inventario)
         {
+            var httpClient = new HttpClient();
+
             try
             {
-                var httpClient = new HttpClient();
-                var response = await httpClient.GetAsync($"https://localhost:7237/api/ModuloDeAjustes/ObtengaLaCantidadActual?id={id_inventario}");
+                var query = new Dictionary<string, string>()
+                {
+
+                    ["id"] = id_inventario.ToString()
+                };
+
+                var uri = QueryHelpers.AddQueryString("https://localhost:7237/api/ModuloDeAjustes/ObtengaLaCantidadActual", query);
+
+                var response = await httpClient.GetAsync(uri);
+
+                
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var cantidad = await response.Content.ReadFromJsonAsync<int>();
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+                    var cantidad = JsonConvert.DeserializeObject<int>(apiResponse);
 
                     var cantidadActual = new Model.AjusteDeInventario
                     {
                         CantidadActual = cantidad,
                         Id_Inventario = id_inventario,
-                        Ajuste = 0
+                        Ajuste = 0,
+                        UserId = User.Identity.Name
                     };
 
                     return View(cantidadActual);
@@ -151,13 +165,17 @@ namespace Proyecto_Programado.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AgregarAjuste(AjusteDeInventario nuevoAjuste)
         {
+            var httpClient = new HttpClient();
+
             try
             {
-                var httpClient = new HttpClient();
+                
                 var json = JsonConvert.SerializeObject(nuevoAjuste);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await httpClient.PostAsync($"https://localhost:7237/api/ModuloDeAjustes/AgregueUnAjuste?elNombreDeUsuario={User.Identity.Name}", content);
+                var url = $"https://localhost:7237/api/ModuloDeAjustes/AgregueUnAjuste?elNombreDeUsuario={Uri.EscapeDataString(User.Identity.Name)}";
+
+                var response = await httpClient.PostAsync(url, content);
 
                 if (response.IsSuccessStatusCode)
                 {

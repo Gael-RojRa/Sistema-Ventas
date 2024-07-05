@@ -41,7 +41,7 @@ namespace ProyectoProgramado.SI.Controllers
         [HttpGet("ObtengaLaCantidadActual")]
         public IActionResult ObtengaLaCantidadActual(int id)
         {
-            return Ok(ElAdministradorDeAjustes.ObtengaLosAjustesDeInventario(id));
+            return Ok(ElAdministradorDeAjustes.ObtengaLaCantidadActual(id));
         }
 
         [HttpPost("AgregueUnAjuste")]

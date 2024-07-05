@@ -34,7 +34,7 @@ namespace Proyecto_Programado.UI.Controllers
             try
             {
 
-                 var respuesta = await httpClient.GetAsync("https://valoshopapi.azurewebsites.net/ModuloCatalogoDeInventarios/ObtengaLaListaDeInventarios");
+                 var respuesta = await httpClient.GetAsync("https://localhost:7237/ModuloCatalogoDeInventarios/ObtengaLaListaDeInventarios");
                 string apiResponse = await respuesta.Content.ReadAsStringAsync();
                 laListadeInventarios = JsonConvert.DeserializeObject<List<Model.Inventario>>(apiResponse);
 

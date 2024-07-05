@@ -6,8 +6,9 @@ using Proyecto_Programado.Model;
 
 namespace ProyectoProgramado.SI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("[controller]")]
+
     public class ModuloDeAjustesController : ControllerBase
     {
         private readonly Proyecto_Programado.BL.IAdministradorDeAjustes ElAdministradorDeAjustes;

@@ -27,7 +27,7 @@ namespace Proyecto_Programado.UI.Controllers
             List<Venta> lasVentas = new List<Venta>();
 
             var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync("https://localhost:7237/ObtengaLaListaDeVentas");
+            var response = await httpClient.GetAsync("https://apicomerciovs.azurewebsites.net/ObtengaLaListaDeVentas");
 
             if (response.IsSuccessStatusCode)
             {
@@ -46,7 +46,7 @@ namespace Proyecto_Programado.UI.Controllers
             var httpClient = new HttpClient();
 
             // Obtener los items de una venta
-            var detallesResponse = await httpClient.GetAsync($"https://localhost:7237/ObtengaLosItemsDeUnaVenta/{id}");
+            var detallesResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ObtengaLosItemsDeUnaVenta/{id}");
             if (detallesResponse.IsSuccessStatusCode)
             {
                 var detallesJson = await detallesResponse.Content.ReadAsStringAsync();
@@ -56,7 +56,7 @@ namespace Proyecto_Programado.UI.Controllers
             foreach (var detalle in laListaDeDetalles)
             {
                 // Obtener el inventario por cada detalle
-                var inventarioResponse = await httpClient.GetAsync($"https://localhost:7237/ModuloCatalogoDeInventarios/ObtengaElInventario/{detalle.Id_Inventario}");
+                var inventarioResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloCatalogoDeInventarios/ObtengaElInventario/{detalle.Id_Inventario}");
                 if (inventarioResponse.IsSuccessStatusCode)
                 {
                     var inventarioJson = await inventarioResponse.Content.ReadAsStringAsync();
@@ -195,21 +195,21 @@ namespace Proyecto_Programado.UI.Controllers
 
             var httpClient = new HttpClient();
 
-            var inventariosResponse = await httpClient.GetAsync("https://localhost:7237/ObtengaLaListaDeInventarios");
+            var inventariosResponse = await httpClient.GetAsync("https://apicomerciovs.azurewebsites.net/ObtengaLaListaDeInventarios");
             if (inventariosResponse.IsSuccessStatusCode)
             {
                 var inventariosJson = await inventariosResponse.Content.ReadAsStringAsync();
                 laListaDeInventarios = JsonConvert.DeserializeObject<List<Inventario>>(inventariosJson);
             }
 
-            var detallesResponse = await httpClient.GetAsync($"https://localhost:7237/ObtengaLosItemsDeUnaVenta/{idVenta}");
+            var detallesResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ObtengaLosItemsDeUnaVenta/{idVenta}");
             if (detallesResponse.IsSuccessStatusCode)
             {
                 var detallesJson = await detallesResponse.Content.ReadAsStringAsync();
                 listaDeInventariosYaAniadidos = JsonConvert.DeserializeObject<List<VentaDetalles>>(detallesJson);
             }
 
-            var nombreResponse = await httpClient.GetAsync($"https://localhost:7237/ObtengaElNombreDeVenta/{idVenta}");
+            var nombreResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ObtengaElNombreDeVenta/{idVenta}");
             if (nombreResponse.IsSuccessStatusCode)
             {
                 elNombre = await nombreResponse.Content.ReadAsStringAsync();
@@ -276,7 +276,7 @@ namespace Proyecto_Programado.UI.Controllers
         {
 
             var httpClient = new HttpClient();
-            var requestUri = $"https://localhost:7237/apliqueDescuento/{idVenta}/{porcentajeDescuento}";
+            var requestUri = $"https://apicomerciovs.azurewebsites.net/{idVenta}/{porcentajeDescuento}";
 
             var request = new HttpRequestMessage(HttpMethod.Put, requestUri);
 
@@ -381,7 +381,7 @@ namespace Proyecto_Programado.UI.Controllers
         public async Task<ActionResult> Delete(int id, int idVenta)
         {
             var httpClient = new HttpClient();
-            var requestUri = $"https://localhost:7237/ElimineLaVenta/{id}";
+            var requestUri = $"https://apicomerciovs.azurewebsites.net/ElimineLaVenta/{id}";
 
             var response = await httpClient.DeleteAsync(requestUri);
 

@@ -117,116 +117,36 @@ namespace Proyecto_Programado.SI.Controllers
         [HttpPut("ActualiceLaVenta/{id}")]
         public IActionResult ActualiceLaVenta(int id, [FromBody] Venta laVentaActualizada)
         {
-            Venta ventaOriginal = ElContexto.Ventas.Find(id);
-            if (ventaOriginal == null)
-            {
-                return NotFound();
-            }
-
-            ventaOriginal.SubTotal = laVentaActualizada.SubTotal;
-            ventaOriginal.Total = laVentaActualizada.Total;
-            ventaOriginal.MontoDescuento = laVentaActualizada.MontoDescuento;
-            ventaOriginal.PorcentajeDescuento = laVentaActualizada.PorcentajeDescuento;
-
-            AperturaDeCaja laAperturaDeCaja = ElContexto.AperturasDeCaja.Find(laVentaActualizada.IdAperturaDeCaja);
-            if (laAperturaDeCaja == null)
-            {
-                return NotFound();
-            }
-
-            TipoDePago tipoDePago = laVentaActualizada.TipoDePago;
-
-            if (tipoDePago == TipoDePago.Efectivo)
-            {
-                laAperturaDeCaja.Efectivo += laVentaActualizada.Total;
-            }
-            else if (tipoDePago == TipoDePago.Tarjeta)
-            {
-                laAperturaDeCaja.Tarjeta += laVentaActualizada.Total;
-            }
-            else if (tipoDePago == TipoDePago.SinpeMovil)
-            {
-                laAperturaDeCaja.SinpeMovil += laVentaActualizada.Total;
-            }
-
-            ElContexto.AperturasDeCaja.Update(laAperturaDeCaja);
-            ElContexto.Ventas.Update(ventaOriginal);
-            ElContexto.SaveChanges();
-
-            return NoContent();
+            ElAdministrador.ActualiceLaVenta(id, laVentaActualizada);
+            return Ok();
         }
 
 
         [HttpPut("ActualiceElTotalEnElIndexDeVentas/{id}")]
         public IActionResult ActualiceElTotalEnElIndexDeVentas(int id)
         {
-            var elDetalleActual = ElContexto.VentaDetalles.Find(id);
-            if (elDetalleActual == null)
-            {
-                return NotFound();
-            }
 
-            var laSumatoriaDelMontoDeDetalles = ElContexto.VentaDetalles
-                .Where(elElemento => elElemento.Id_Venta == elDetalleActual.Id_Venta)
-                .Sum(elElemento => elElemento.Monto);
+            ElAdministrador.ActualiceElTotalEnElIndexDeVentas(id);
 
-            var laVentaAModificar = ElContexto.Ventas.Find(elDetalleActual.Id_Venta);
-            if (laVentaAModificar == null)
-            {
-                return NotFound();
-            }
-
-            laVentaAModificar.SubTotal = laSumatoriaDelMontoDeDetalles;
-            laVentaAModificar.Total = laSumatoriaDelMontoDeDetalles;
-
-            ElContexto.Ventas.Update(laVentaAModificar);
-            ElContexto.SaveChanges();
-
-            return NoContent();
+            return Ok();
         }
 
-        [HttpPut("apliqueDescuento/{id}/{porcentajeDescuento}")]
+        [HttpPut("ApliqueElDescuento/{id}/{porcentajeDescuento}")]
         public IActionResult ApliqueElDescuento(int porcentajeDescuento, int id)
         {
-            decimal elPorcentajeDecimal = porcentajeDescuento / 100.0m;
+            ElAdministrador.ApliqueElDescuento(porcentajeDescuento, id);
 
-            ElContexto.Database.ExecuteSqlRaw(
-                "UPDATE VentaDetalles " +
-                "SET MontoDescuento = Monto * {0}, " +
-                "MontoFinal = Monto - (Monto * {0}) " +
-                "WHERE Id_Venta = {1}",
-                elPorcentajeDecimal, id);
-
-            ElContexto.Database.ExecuteSqlRaw(
-                "UPDATE Ventas " +
-                "SET PorcentajeDescuento = {2}, " +
-                "MontoDescuento = SubTotal * {0}, " +
-                "Total = SubTotal - (SubTotal * {0}) " +
-                "WHERE Id = {1}",
-                elPorcentajeDecimal, id, porcentajeDescuento);
-
-            return NoContent();
+            return Ok();
         }
+
         [HttpPut("ActualiceLaCantidadDeInventario/{id}/{cantidadVendida}")]
         public IActionResult ActualiceLaCantidadDeInventario(int cantidadVendida, int id)
         {
-            var elInventario = ElContexto.Inventarios.Find(id);
-            if (elInventario == null)
-            {
-                return NotFound();
-            }
+            ElAdministrador.ActualiceLaCantidadDeInventario(cantidadVendida, id);
 
-            elInventario.Cantidad -= cantidadVendida;
-            if (elInventario.Cantidad < 0)
-            {
-                return BadRequest("La cantidad en el inventario no puede ser negativa.");
-            }
-
-            ElContexto.Inventarios.Update(elInventario);
-            ElContexto.SaveChanges();
-
-            return NoContent();
+            return Ok();
         }
+
         [HttpPut("RestaureLaCantidadDelItemEliminado/{id}/{cantidadDevuelta}")]
         public IActionResult RestaureLaCantidadDelItemEliminado(int cantidadDevuelta, int id)
         {
@@ -242,6 +162,7 @@ namespace Proyecto_Programado.SI.Controllers
 
             return NoContent();
         }
+
         [HttpGet("ObtengaVentaPorId/{id}")]
         public ActionResult<Venta> ObtengaVentaPorId(int id)
         {
@@ -257,42 +178,9 @@ namespace Proyecto_Programado.SI.Controllers
         [HttpDelete("ElimineLaVenta/{id}")]
         public IActionResult ElimineLaVenta(int id)
         {
-            var elItemAEliminar = ElContexto.VentaDetalles.Find(id);
-            if (elItemAEliminar == null)
-            {
-                return NotFound();
-            }
+            ElAdministrador.ElimineLaVenta(id);
 
-            ElContexto.VentaDetalles.Remove(elItemAEliminar);
-            ElContexto.SaveChanges();
-
-            int idDeLaVentaDelDetalle = elItemAEliminar.Id_Venta;
-            var laVentaParaActualizar = ElContexto.Ventas.Find(idDeLaVentaDelDetalle);
-            if (laVentaParaActualizar == null)
-            {
-                return NotFound();
-            }
-
-            var laSumatoriaDelMontoDeDetalles = ElContexto.VentaDetalles
-                .Where(elElemento => elElemento.Id_Venta == laVentaParaActualizar.Id)
-                .Sum(elElemento => elElemento.Monto);
-
-            laVentaParaActualizar.SubTotal = laSumatoriaDelMontoDeDetalles;
-            decimal porcentajeDescuentoDecimal = laVentaParaActualizar.PorcentajeDescuento / 100m;
-            decimal valorDescuento = laSumatoriaDelMontoDeDetalles * porcentajeDescuentoDecimal;
-            laVentaParaActualizar.Total = laSumatoriaDelMontoDeDetalles - valorDescuento;
-            laVentaParaActualizar.MontoDescuento = valorDescuento;
-
-            ElContexto.Ventas.Update(laVentaParaActualizar);
-            ElContexto.SaveChanges();
-
-            if (laVentaParaActualizar.SubTotal == 0)
-            {
-                ElContexto.Ventas.Remove(laVentaParaActualizar);
-                ElContexto.SaveChanges();
-            }
-
-            return NoContent();
+            return Ok();
         }
 
         [HttpGet("ObtengaVentaDetallePorId/{id}")]

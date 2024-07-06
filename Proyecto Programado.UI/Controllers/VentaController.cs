@@ -46,7 +46,7 @@ namespace Proyecto_Programado.UI.Controllers
             var httpClient = new HttpClient();
 
             // Obtener los items de una venta
-            var detallesResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ObtengaLosItemsDeUnaVenta/{id}");
+            var detallesResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloCatalogoDeInventarios/ObtengaLosItemsDeUnaVenta/{id}");
             if (detallesResponse.IsSuccessStatusCode)
             {
                 var detallesJson = await detallesResponse.Content.ReadAsStringAsync();

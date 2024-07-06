@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Net;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Proyecto_Programado.UI.Controllers
 {
@@ -384,48 +385,69 @@ namespace Proyecto_Programado.UI.Controllers
             }
 
             return View(modelo);
-            //FORMA ANTIGUA SIN API
-            //if (!ModelState.IsValid)
-            //{
-            //    return View(modelo);
-            //}
-
-            //var usuario = ElAdministrador.ObtengaElUsuarioPorNombre(modelo.Nombre);
-            //if (usuario == null)
-            //{
-            //    ViewData["Mensaje"] = "Usuario no encontrado.";
-            //    return View(modelo);
-            //}
-
-            //ElAdministrador.CambieLaClave(usuario, modelo.ClaveNueva);
-
-            //string asunto = "Cambio de clave";
-            //string contenido = $"Le informamos que el cambio de clave de la cuenta del usuario {modelo.Nombre} se ejecutó satisfactoriamente.";
-            //ElAdministrador.EnvieElCorreoElectronico(usuario.correoElectronico, asunto, contenido);
-
-            //ViewData["Mensaje"] = "Cambio de clave realizado correctamente.";
-            //return View(modelo);
+           
         }
         public IActionResult SolicitudPendiente()
         {
             return View();
         }
 
+
         // GET: SolicitudDeRegistrosController
-        public ActionResult Index()
+        public async Task<IActionResult> Index(string nombre)
         {
-            List<SolicitudRegistro> laListadeSolicitudes;
-            laListadeSolicitudes = ElAdministrador.ObtengaLaListaDePendientes();
-            return View(laListadeSolicitudes);
+
+            List<Model.SolicitudRegistro> lista;
+
+            var httpClient = new HttpClient();
+
+            try
+            {
+                var respuesta = await httpClient.GetAsync("https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/ObtengaLaListaDePendientes");
+                string apiResponse = await respuesta.Content.ReadAsStringAsync();
+                lista = JsonConvert.DeserializeObject<List<Model.SolicitudRegistro>>(apiResponse);
+
+                if (nombre is null)
+                {
+                    return View(lista);
+                }
+                else
+                {
+                    List<Model.SolicitudRegistro> listaFiltrada;
+                    listaFiltrada = lista.Where(x => x.Nombre.Contains(nombre)).ToList();
+                    return View(listaFiltrada);
+                }
+            }
+            catch (Exception ex)
+            {
+                return View();
+            }
+
         }
 
-        public ActionResult Activar(int id)
+        public async Task<IActionResult> Activar(int id)
         {
-            ElAdministrador.AprobarSolicitud(id);
-            return RedirectToAction(nameof(Index));
+
+            try
+            {
+                var httpClient = new HttpClient();
+                var query = new Dictionary<string, string>()
+                {
+                    ["id"] = id.ToString()
+                };
+                var uri = QueryHelpers.AddQueryString("https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/AprobarSolicitud/{id}", query);
+                var respuesta = await httpClient.PutAsync(uri, null);
+                return RedirectToAction(nameof(Index));
+            }
+
+            catch (Exception ex)
+            {
+                return View();
+            }
+
         }
 
-
+   
         public async Task<IActionResult> Salir()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

@@ -53,27 +53,14 @@ namespace ProyectoProgramado.SI.Controllers
             }
         }
         // POST: api/AprobarSolicitud
-        [HttpPost("AprobarSolicitud")]
-        public IActionResult AprobarSolicitud([FromBody] int solicitudId)
-        {
-            try
-            {
-                bool resultado = ElAdministrador.AprobarSolicitud(solicitudId);
-
-                if (resultado)
-                {
-                    return Ok("Solicitud aprobada exitosamente");
-                }
-                else
-                {
-                    return NotFound("Solicitud no encontrada");
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error al aprobar la solicitud: {ex.Message}");
-            }
+        [HttpPut("AprobarSolicitud")]
+        public IActionResult AprobarSolicitud(int solicitudId)
+        { 
+               ElAdministrador.AprobarSolicitud(solicitudId);
+               return Ok();
         }
+   
+       
         // GET: api/ObtenerSolicitud/{id}
         [HttpGet("ObtengaLaSolicitud/{id}")]
         public IActionResult ObtengaLaSolicitud(int id)
@@ -210,27 +197,12 @@ namespace ProyectoProgramado.SI.Controllers
                 return StatusCode(500, $"Error al obtener la lista de solicitudes: {ex.Message}");
             }
         }
-        // GET: api/ObtenerListaDePendientes
+        // GET: api/ObtengaLaListaDePendientes
         [HttpGet("ObtengaLaListaDePendientes")]
         public IActionResult ObtengaLaListaDePendientes()
         {
-            try
-            {
-                var listaDePendientes = ElAdministrador.ObtengaLaListaDePendientes();
-
-                if (listaDePendientes == null || !listaDePendientes.Any())
-                {
-                    return NotFound("No se encontraron solicitudes pendientes");
-                }
-
-                return Ok(listaDePendientes);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error al obtener la lista de solicitudes pendientes: {ex.Message}");
-            }
+            return Ok(ElAdministrador.ObtengaLaListaDePendientes());
         }
-
 
         ////////////////
         // POST: api/Ventas/EnviarCorreo

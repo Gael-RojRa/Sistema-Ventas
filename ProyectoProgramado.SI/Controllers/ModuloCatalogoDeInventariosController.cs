@@ -39,7 +39,7 @@ namespace Proyecto_Programado.SI.Controllers
             return Ok(ElAdministradorDeInventarios.ObtengaElInventario(elId));
         }
 
-        [HttpPost("EditeElInventario")]
+        [HttpPut("EditeElInventario/{elNombreDeUsuario}")]
         public IActionResult EditeElInventario([FromBody] Proyecto_Programado.Model.Inventario elInventario, string elNombreDeUsuario)
         {
             ElAdministradorDeInventarios.EditeElInventario(elInventario, elNombreDeUsuario);

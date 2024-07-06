@@ -40,7 +40,7 @@ namespace Proyecto_Programado.UI.Controllers
             try
             {
 
-                var respuesta = await httpClient.GetAsync("https://localhost:7237/api/ModuloDeAjustes/ObtengaLaListaDeInventarios");
+                var respuesta = await httpClient.GetAsync("https://apicomerciovs.azurewebsites.net/ModuloDeAjustes/ObtengaLaListaDeInventarios");
 
                 string apiResponse = await respuesta.Content.ReadAsStringAsync();
                 laListaDeInventarios = JsonConvert.DeserializeObject<List<Model.Inventario>>(apiResponse);
@@ -74,7 +74,7 @@ namespace Proyecto_Programado.UI.Controllers
             List<AjusteDeInventario> laListaDeAjustes = new List<AjusteDeInventario>();
             var httpClient = new HttpClient();
 
-            var response = await httpClient.GetAsync($"https://localhost:7237/api/ModuloDeAjustes/ObtengaLosAjustes?id={id}");
+            var response = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloDeAjustes/ObtengaLosAjustes?id={id}");
 
 
             var json = await response.Content.ReadAsStringAsync();
@@ -97,7 +97,7 @@ namespace Proyecto_Programado.UI.Controllers
                 {
                     ["id"] = id.ToString()
                 };
-                var uri = QueryHelpers.AddQueryString("https://localhost:7237/api/ModuloDeAjustes/ObtengaLosAjustesDeInventario", query);
+                var uri = QueryHelpers.AddQueryString("https://apicomerciovs.azurewebsites.net/ModuloDeAjustes/ObtengaLosAjustesDeInventario", query);
                 var respuesta = await httpClient.GetAsync(uri);
                 string apiResponse = await respuesta.Content.ReadAsStringAsync();
                 ajustesInventario = JsonConvert.DeserializeObject<Model.AjusteDeInventario>(apiResponse);
@@ -125,7 +125,7 @@ namespace Proyecto_Programado.UI.Controllers
                     ["id"] = id_inventario.ToString()
                 };
 
-                var uri = QueryHelpers.AddQueryString("https://localhost:7237/api/ModuloDeAjustes/ObtengaLaCantidadActual", query);
+                var uri = QueryHelpers.AddQueryString("https://apicomerciovs.azurewebsites.net/ModuloDeAjustes/ObtengaLaCantidadActual", query);
 
                 var response = await httpClient.GetAsync(uri);
 
@@ -173,7 +173,7 @@ namespace Proyecto_Programado.UI.Controllers
                 var json = JsonConvert.SerializeObject(nuevoAjuste);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var url = $"https://localhost:7237/api/ModuloDeAjustes/AgregueUnAjuste?elNombreDeUsuario={Uri.EscapeDataString(User.Identity.Name)}";
+                var url = $"https://apicomerciovs.azurewebsites.net/ModuloDeAjustes/AgregueUnAjuste?elNombreDeUsuario={Uri.EscapeDataString(User.Identity.Name)}";
 
                 var response = await httpClient.PostAsync(url, content);
 

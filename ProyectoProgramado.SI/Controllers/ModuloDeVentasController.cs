@@ -8,14 +8,13 @@ namespace Proyecto_Programado.SI.Controllers
 {
     public class ModuloDeVentasController : ControllerBase
     {
-        public DBContexto ElContexto;
+
         private readonly BL.IAdministradorDeVentas ElAdministrador;
-        public ModuloDeVentasController(Proyecto_Programado.BL.IAdministradorDeVentas administrador, DBContexto elContexto)
+        public ModuloDeVentasController(Proyecto_Programado.BL.IAdministradorDeVentas administrador)
         {
             ElAdministrador = administrador;
-            ElContexto = elContexto;
-        }
 
+        }
         [HttpPost("AgregueDetalleVenta")]
         public IActionResult AgregueDetalleVenta([FromBody] VentaDetalles elNuevoDetalleDeVenta)
         {
@@ -24,11 +23,24 @@ namespace Proyecto_Programado.SI.Controllers
                 return BadRequest("El detalle de venta no puede ser nulo.");
             }
 
-            ElContexto.VentaDetalles.Add(elNuevoDetalleDeVenta);
-            ElContexto.SaveChanges();
+            ElAdministrador.AgregueDetalleVenta(elNuevoDetalleDeVenta);
 
             return Ok("Detalle de venta agregado exitosamente.");
         }
+
+        //[HttpPost("AgregueDetalleVenta")]
+        //public IActionResult AgregueDetalleVenta([FromBody] VentaDetalles elNuevoDetalleDeVenta)
+        //{
+        //    if (elNuevoDetalleDeVenta == null)
+        //    {
+        //        return BadRequest("El detalle de venta no puede ser nulo.");
+        //    }
+
+        //    ElContexto.VentaDetalles.Add(elNuevoDetalleDeVenta);
+        //    ElContexto.SaveChanges();
+
+        //    return Ok("Detalle de venta agregado exitosamente.");
+        //}
 
         // GET: api/Ventas/5
         [HttpGet("ObtengaElNombreDeVenta/{id}")]
@@ -43,12 +55,13 @@ namespace Proyecto_Programado.SI.Controllers
 
             return nombreVenta;
         }
+
         [HttpPost("AgregueLaVenta")]
         public IActionResult AgregueLaVenta([FromBody] Model.Venta venta)
-        {
-            ElAdministrador.AgregueLaVenta(venta);
-            return Ok(venta);
+        {           
+            return Ok(ElAdministrador.AgregueLaVenta(venta));
         }
+
         // GET: api/Ventas/Inventario/5
         [HttpGet("ObtengaElInventario/{id}")]
         public ActionResult<Inventario> ObtengaElInventario(int id)
@@ -146,27 +159,33 @@ namespace Proyecto_Programado.SI.Controllers
 
             return Ok();
         }
-
         [HttpPut("RestaureLaCantidadDelItemEliminado/{id}/{cantidadDevuelta}")]
         public IActionResult RestaureLaCantidadDelItemEliminado(int cantidadDevuelta, int id)
         {
-            var elInventario = ElContexto.Inventarios.Find(id);
-            if (elInventario == null)
-            {
-                return NotFound();
-            }
-
-            elInventario.Cantidad += cantidadDevuelta;
-            ElContexto.Inventarios.Update(elInventario);
-            ElContexto.SaveChanges();
+            ElAdministrador.RestaureLaCantidadDelItemEliminado(cantidadDevuelta, id);
 
             return NoContent();
         }
+        //[HttpPut("RestaureLaCantidadDelItemEliminado/{id}/{cantidadDevuelta}")]
+        //public IActionResult RestaureLaCantidadDelItemEliminado(int cantidadDevuelta, int id)
+        //{
+        //    var elInventario = ElAdministrador.Inventarios.Find(id);
+        //    if (elInventario == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    elInventario.Cantidad += cantidadDevuelta;
+        //    ElContexto.Inventarios.Update(elInventario);
+        //    ElContexto.SaveChanges();
+
+        //    return NoContent();
+        //}
 
         [HttpGet("ObtengaVentaPorId/{id}")]
         public ActionResult<Venta> ObtengaVentaPorId(int id)
         {
-            var venta = ElContexto.Ventas.Find(id);
+            var venta = ElAdministrador.ObtengaVentaPorId(id);
             if (venta == null)
             {
                 return NotFound();
@@ -174,6 +193,17 @@ namespace Proyecto_Programado.SI.Controllers
 
             return Ok(venta);
         }
+        //[HttpGet("ObtengaVentaPorId/{id}")]
+        //public ActionResult<Venta> ObtengaVentaPorId(int id)
+        //{
+        //    var venta = ElAdministrador.Ventas.Find(id);
+        //    if (venta == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return Ok(venta);
+        //}
 
         [HttpDelete("ElimineLaVenta/{id}")]
         public IActionResult ElimineLaVenta(int id)
@@ -182,11 +212,10 @@ namespace Proyecto_Programado.SI.Controllers
 
             return Ok();
         }
-
         [HttpGet("ObtengaVentaDetallePorId/{id}")]
         public ActionResult<VentaDetalles> ObtengaVentaDetallePorId(int id)
         {
-            var ventaDetalle = ElContexto.VentaDetalles.Find(id);
+            var ventaDetalle = ElAdministrador.ObtengaVentaDetallePorId(id);
             if (ventaDetalle == null)
             {
                 return NotFound();
@@ -194,15 +223,33 @@ namespace Proyecto_Programado.SI.Controllers
 
             return Ok(ventaDetalle);
         }
+        //[HttpGet("ObtengaVentaDetallePorId/{id}")]
+        //public ActionResult<VentaDetalles> ObtengaVentaDetallePorId(int id)
+        //{
+        //    var ventaDetalle = ElAdministrador.VentaDetalles.Find(id);
+        //    if (ventaDetalle == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return Ok(ventaDetalle);
+        //}
 
         [HttpGet("VerifiqueLaCajaAbierta/{elNombreUsuario}")]
         public IActionResult VerifiqueLaCajaAbierta(string elNombreUsuario)
         {
-            var laCajaAbierta = ElContexto.AperturasDeCaja
-                .FirstOrDefault(elElemento => elElemento.UserId == elNombreUsuario && elElemento.Estado == EstadoCajas.Abierta);
-
-            bool laCajaEstaAbierta = (laCajaAbierta != null);
+            bool laCajaEstaAbierta = ElAdministrador.VerifiqueLaCajaAbierta(elNombreUsuario);
             return Ok(laCajaEstaAbierta);
         }
+
+        //[HttpGet("VerifiqueLaCajaAbierta/{elNombreUsuario}")]
+        //public IActionResult VerifiqueLaCajaAbierta(string elNombreUsuario)
+        //{
+        //    var laCajaAbierta = ElAdministrador.AperturasDeCaja
+        //        .FirstOrDefault(elElemento => elElemento.UserId == elNombreUsuario && elElemento.Estado == EstadoCajas.Abierta);
+
+        //    bool laCajaEstaAbierta = (laCajaAbierta != null);
+        //    return Ok(laCajaEstaAbierta);
+        //}
     }
 }

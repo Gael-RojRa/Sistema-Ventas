@@ -5,7 +5,7 @@ using Proyecto_Programado.Model;
 
 namespace ProyectoProgramado.SI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ModuloLoginRegistroController : ControllerBase
     {

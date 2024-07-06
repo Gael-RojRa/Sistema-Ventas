@@ -353,7 +353,7 @@ namespace Proyecto_Programado.UI.Controllers
 
             var jsonContent = new StringContent(JsonConvert.SerializeObject(cambioClaveRequest), Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PutAsync("https://localhost:7237/api/ModuloLoginRegistro/CambieLaClave", jsonContent);
+            var response = await httpClient.PutAsync("https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/CambieLaClave", jsonContent);
 
             if (response.IsSuccessStatusCode)
             {

@@ -99,21 +99,9 @@ namespace ProyectoProgramado.SI.Controllers
         [HttpGet("ObtengaElUsuarioPorNombreEnSolicitudes/{nombre}")]
         public IActionResult ObtengaElUsuarioPorNombreEnSolicitudes(string nombre)
         {
-            try
-            {
                 var usuario = ElAdministrador.ObtengaElUsuarioPorNombre(nombre);
 
-                if (usuario == null)
-                {
-                    return NotFound("Usuario no encontrado");
-                }
-
                 return Ok(usuario);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error al obtener el usuario: {ex.Message}");
-            }
         }
 
         // GET: api/ObtenerUsuarioPorNombre/{nombre}
@@ -161,41 +149,19 @@ namespace ProyectoProgramado.SI.Controllers
         [HttpGet("ObtengaLaListaDeSolicitudes")]
         public IActionResult ObtengaLaListaDeSolicitudes()
         {
-            try
-            {
+
                 var listaDeSolicitudes = ElAdministrador.ObtengaLaListaDeSolicitudes();
 
-                if (listaDeSolicitudes == null || !listaDeSolicitudes.Any())
-                {
-                    return NotFound("No se encontraron solicitudes de registro");
-                }
-
                 return Ok(listaDeSolicitudes);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error al obtener la lista de solicitudes: {ex.Message}");
-            }
+
         }
         // GET: api/ObtengaLaLista
         [HttpGet("ObtengaLaLista")]
         public IActionResult ObtengaLaLista()
         {
-            try
-            {
                 var listaDeSolicitudes = ElAdministrador.ObtengaLaLista();
-
-                if (listaDeSolicitudes == null || !listaDeSolicitudes.Any())
-                {
-                    return NotFound("No se encontraron solicitudes de registro");
-                }
-
                 return Ok(listaDeSolicitudes);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error al obtener la lista de solicitudes: {ex.Message}");
-            }
+
         }
         // GET: api/ObtengaLaListaDePendientes
         [HttpGet("ObtengaLaListaDePendientes")]

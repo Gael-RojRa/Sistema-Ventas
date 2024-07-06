@@ -19,13 +19,6 @@ namespace Proyecto_Programado.UI.Controllers
     {
 
         // GET: LoginRegistroController
-        public readonly IAdministradorDeSolicitudes ElAdministrador;
-        public readonly IAdministradorDeUsuarios    ElAdministradorDeUsuarios;
-        public LoginRegistroController(IAdministradorDeSolicitudes administrador, IAdministradorDeUsuarios elAdministradorDeUsuarios)
-        {
-            ElAdministrador = administrador;
-            ElAdministradorDeUsuarios = elAdministradorDeUsuarios;
-        }
 
         [HttpGet]
         public IActionResult Registrarse()
@@ -292,7 +285,7 @@ namespace Proyecto_Programado.UI.Controllers
             }
         }
 
-        public async Task<IActionResult> FacebookResponse()
+        /*public async Task<IActionResult> FacebookResponse()
         {
             var resultado = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -333,7 +326,7 @@ namespace Proyecto_Programado.UI.Controllers
                 }
             }
         }
-
+        */
 
         // GET: LoginController/CambiarClave
         [HttpGet]

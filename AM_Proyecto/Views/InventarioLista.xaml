@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AM_Proyecto.ViewModels"
+             xmlns:mo="clr-namespace:AM_Proyecto.Model"
+             x:Class="AM_Proyecto.Views.InventarioLista"
+             Title="Lista de Inventarios">
+
+    <ContentPage.BindingContext>
+        <vm:InventarioVM />
+    </ContentPage.BindingContext>
+
+    <VerticalStackLayout>
+        <Button Text="Mostrar La Lista De Inventarios Registrados" Command="{Binding GetInventariosCommand}" Margin="10" />
+
+        <CollectionView ItemsSource="{Binding Inventarios}" Margin="10">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="mo:Inventario">
+                    <StackLayout Orientation="Horizontal" Spacing="10">
+                        <Label Text="{Binding Id}" FontSize="Body" />
+                        <Label Text="{Binding Nombre}" FontSize="Body" />
+                        <Label Text="{Binding Categoria.Nombre}" FontSize="Body" />
+                        <Label Text="{Binding Cantidad}" FontSize="Body" />
+                        <Label Text="{Binding Precio}" FontSize="Body" />
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+</ContentPage>

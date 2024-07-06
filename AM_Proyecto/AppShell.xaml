@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Shell
+    x:Class="AM_Proyecto.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:AM_Proyecto"
+    xmlns:vi="clr-namespace:AM_Proyecto.Views">
+
+    <ShellContent
+        Title="Aplicacion Movil"
+        ContentTemplate="{DataTemplate vi:InventarioLista}"
+        Route="InventarioLista" />
+</Shell>
+

@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.SqlTypes;
+using System.Linq;
+using System.Numerics;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AM_Proyecto.Model
+{
+    public class Inventario
+    {
+        public int Id { get; set; }
+        [Required(ErrorMessage = "El nombre es requerido")]
+        public string Nombre { get; set; }
+        [Required(ErrorMessage = "La categoría es requerida")]
+        public Categoria Categoria { get; set; }
+        public int Cantidad { get; set; } = 0;
+        [Required(ErrorMessage = "El precio es requerido")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor que 0")]
+        [DataType(DataType.Currency)]
+        [Column(TypeName = "money")]
+        public decimal Precio { get; set; }
+    }
+
+    public class Categoria
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+    }
+}

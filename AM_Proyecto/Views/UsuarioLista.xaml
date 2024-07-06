@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AM_Proyecto.ViewModels"
+             x:Class="AM_Proyecto.Views.UsuarioLista">
+
+    <ContentPage.BindingContext>
+        <vm:UsuarioVM />
+    </ContentPage.BindingContext>
+
+    <StackLayout Padding="10">
+        <Label Text="Login" FontSize="Large" HorizontalOptions="Center" />
+
+        <Entry Placeholder="Nombre" Text="{Binding Nombre}" />
+        <Entry Placeholder="Clave" IsPassword="True" Text="{Binding Clave}" />
+
+        <Button Text="Ingresar" Command="{Binding LoginCommand}" />
+        <Label Text="{Binding Mensaje}" TextColor="Red" HorizontalOptions="Center" />
+    </StackLayout>
+</ContentPage>

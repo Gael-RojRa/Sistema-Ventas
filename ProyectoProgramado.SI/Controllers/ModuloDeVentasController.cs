@@ -120,7 +120,7 @@ namespace Proyecto_Programado.SI.Controllers
             return precio;
         }
 
-        [HttpPut("ActualiceLaVenta/{idNuevaVenta}/{nuevaVenta}")]
+        [HttpPut("ActualiceLaVenta/{idNuevaVenta}")]
         public IActionResult ActualiceLaVenta(int idNuevaVenta, [FromBody] Venta nuevaVenta)
         {
             ElAdministrador.ActualiceLaVenta(idNuevaVenta, nuevaVenta);

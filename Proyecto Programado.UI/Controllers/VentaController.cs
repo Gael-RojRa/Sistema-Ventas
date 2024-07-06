@@ -255,8 +255,20 @@ namespace Proyecto_Programado.UI.Controllers
             nuevaVenta.MontoDescuento = nuevoDetalle.MontoDescuento;
             nuevaVenta.Total = nuevaVenta.SubTotal - nuevoDetalle.MontoDescuento;
 
-            var actualiceVentaUrl = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ActualiceLaVenta/{idNuevaVenta}/{nuevaVenta}";
-            var actualiceVentresponse = await httpClient.PutAsync(actualiceVentaUrl, null);
+            var actualiceVentaUrl = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ActualiceLaVenta/{idNuevaVenta}";
+
+            var actualiceVentaJson = JsonConvert.SerializeObject(nuevaVenta);
+            var actualiceVentaBuffer = System.Text.Encoding.UTF8.GetBytes(actualiceVentaJson);
+            var actualiceVentaByteContent = new ByteArrayContent(actualiceVentaBuffer);
+
+            actualiceVentaByteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var actualiceVentarequest = new HttpRequestMessage(HttpMethod.Put, actualiceVentaUrl)
+            {
+                Content = actualiceVentaByteContent
+            };
+
+            var actualiceVentaResponse = await httpClient.SendAsync(actualiceVentarequest);
 
 
             string detaleJson = JsonConvert.SerializeObject(nuevoDetalle);
@@ -373,9 +385,12 @@ namespace Proyecto_Programado.UI.Controllers
                 ["id"] = id.ToString()
             };
 
-            var uri = QueryHelpers.AddQueryString("https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ActualiceElTotalEnElIndexDeVentas", query);
+            var requestUri = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ActualiceElTotalEnElIndexDeVenta/{id}";
 
-            await httpClient.PutAsync(uri, null);
+            var request = new HttpRequestMessage(HttpMethod.Put, requestUri);
+
+            var actualiceElTotaldelIndex = await httpClient.SendAsync(request);
+
 
 
             return RedirectToAction("Carrito", new { id = laVenta.idVenta });
@@ -387,7 +402,7 @@ namespace Proyecto_Programado.UI.Controllers
         {
 
             var httpClient = new HttpClient();
-            var requestUri = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/{porcentajeDescuento}/{idVenta}";
+            var requestUri = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ApliqueElDescuento/{porcentajeDescuento}/{idVenta}";
 
             var request = new HttpRequestMessage(HttpMethod.Put, requestUri);
 

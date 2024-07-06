@@ -133,7 +133,7 @@ namespace Proyecto_Programado.UI.Controllers
                     }
 
                     // Verificar las credenciales del usuario
-                    var credencialesUrl = "https://localhost:7237/ModuloLoginRegistro/VerifiqueCredenciales";
+                    var credencialesUrl = "https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/VerifiqueCredenciales";
                     var credencialesDto = new
                     {
                         NombreUsuario = usuario.NombreUsuario,

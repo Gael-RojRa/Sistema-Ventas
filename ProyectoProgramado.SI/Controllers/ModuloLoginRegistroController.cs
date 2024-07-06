@@ -18,11 +18,11 @@ namespace ProyectoProgramado.SI.Controllers
         }
         // POST: api/SoliciteElRegistro
         [HttpPost("SoliciteElRegistro")]
-        public IActionResult SoliciteElRegistro([FromBody] string nombreUsuario, string email, string clave)
+        public IActionResult SoliciteElRegistro([FromBody] RegistroDTO registro)
         {
             try
             {
-                bool resultado = ElAdministrador.SoliciteElRegistro(nombreUsuario, email, clave);
+                bool resultado = ElAdministrador.SoliciteElRegistro(registro.NombreUsuario, registro.Email, registro.Clave);
                 if (resultado)
                 {
                     return Ok("Solicitud de registro exitosa");
@@ -107,26 +107,48 @@ namespace ProyectoProgramado.SI.Controllers
                 return StatusCode(500, $"Error al crear el usuario: {ex.Message}");
             }
         }
-        // GET: api/ObtenerUsuarioPorNombre/{nombre}
-        [HttpGet("ObtengaElUsuarioPorNombre/{nombre}")]
-        public IActionResult ObtengaElUsuarioPorNombre(string nombre)
+        // GET: api/ObtengaElUsuarioPorNombreEnSolicitudes/{nombre}
+        [HttpGet("ObtengaElUsuarioPorNombreEnSolicitudes/{nombre}")]
+        public IActionResult ObtengaElUsuarioPorNombreEnSolicitudes(string nombre)
         {
             try
             {
-                var solicitud = ElAdministrador.ObtengaElUsuarioPorNombre(nombre);
+                var usuario = ElAdministrador.ObtengaElUsuarioPorNombre(nombre);
 
-                if (solicitud == null)
+                if (usuario == null)
                 {
                     return NotFound("Usuario no encontrado");
                 }
 
-                return Ok(solicitud);
+                return Ok(usuario);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error al obtener el usuario: {ex.Message}");
             }
         }
+
+        // GET: api/ObtenerUsuarioPorNombre/{nombre}
+        [HttpGet("ObtengaElUsuarioPorNombre/{nombre}")]
+        public IActionResult ObtengaElUsuarioPorNombre(string nombre)
+        {
+            try
+            {
+                var usuario = ElAdministradorDeUsuarios.ObtengaElUsuarioPorNombre(nombre);
+
+                if (usuario == null)
+                {
+                    return NotFound("Usuario no encontrado");
+                }
+
+                return Ok(usuario);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al obtener el usuario: {ex.Message}");
+            }
+        }
+
         // GET: api/ObtenerRolDelUsuario/{nombre}
         [HttpGet("ObtengaElRolDelUsuario/{nombre}")]
         public IActionResult ObtengaElRolDelUsuario(string nombre)
@@ -225,13 +247,13 @@ namespace ProyectoProgramado.SI.Controllers
             }
         }
 
-        // POST: api/Ventas/VerifiqueCredenciales
+        // POST: api/VerifiqueCredenciales
         [HttpPost("VerifiqueCredenciales")]
-        public ActionResult<bool> VerifiqueCredenciales([FromBody] string elNombre, string laClave)
+        public ActionResult<bool> VerifiqueCredenciales([FromBody] VerificarCredencialesDTO credenciales)
         {
             try
             {
-                bool resultado = ElAdministradorDeUsuarios.VerifiqueCredenciales(elNombre, laClave);
+                bool resultado = ElAdministradorDeUsuarios.VerifiqueCredenciales(credenciales.NombreUsuario, credenciales.Clave);
                 return Ok(resultado);
             }
             catch (Exception ex)
@@ -240,7 +262,8 @@ namespace ProyectoProgramado.SI.Controllers
             }
         }
 
-        
+
+
 
         // PUT: api/Ventas/CambiarClave
         [HttpPut("CambieLaClave")]

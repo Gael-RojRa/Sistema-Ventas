@@ -150,7 +150,7 @@ namespace Proyecto_Programado.BL
         {
             return ElContexto.SolicitudRegistro.SingleOrDefault(elElemento => elElemento.Nombre == elNombre);
         }
-
+        
         public Rol ObtengaElRolDelUsuario(string elNombre)
         {
             var elUsuario = ElContexto.Usuario.SingleOrDefault(elElemento => elElemento.Nombre == elNombre);

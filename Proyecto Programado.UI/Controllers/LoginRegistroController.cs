@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Proyecto_Programado.BL;
 using Proyecto_Programado.Model;
@@ -10,6 +9,8 @@ using Proyecto_Programado.UI.ViewModels;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Newtonsoft.Json;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Net;
 
 namespace Proyecto_Programado.UI.Controllers
 {
@@ -31,36 +32,68 @@ namespace Proyecto_Programado.UI.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult Registrarse(UsuarioVM usuario)
+        public async Task<IActionResult> Registrarse(UsuarioVM usuario)
         {
             if (usuario.Clave != usuario.ConfirmarClave)
             {
                 ViewData["Mensaje"] = "Las contraseñas no coinciden";
-                return View();
+                return View(usuario);
             }
-            var usuarioExistente = ElAdministrador.ObtengaElUsuarioPorNombre(usuario.Nombre);
-            if (usuarioExistente != null)
-            {
-                ViewData["Mensaje"] = "El nombre de usuario ya está en uso";
-                return View();
-            }
-            else
-            {
-                bool solicitudExitosa = ElAdministrador.SoliciteElRegistro(usuario.Nombre, usuario.correoElectronico, usuario.Clave);
 
-                if (solicitudExitosa != false)
+            using (var httpClient = new HttpClient())
+            {
+                try
                 {
+                    var checkUrl = $"https://localhost:7237/api/ModuloLoginRegistro/ObtengaElUsuarioPorNombre/{usuario.Nombre}";
+                    var checkResponse = await httpClient.GetAsync(checkUrl);
 
-                    return RedirectToAction("SolicitudPendiente", "LoginRegistro");
+                    if (checkResponse.IsSuccessStatusCode)
+                    {
+                        var content = await checkResponse.Content.ReadAsStringAsync();
 
+                        if (!string.IsNullOrEmpty(content))
+                        {
+                            ViewData["Mensaje"] = "El nombre de usuario ya está en uso";
+                            return View(usuario);
+                        }
+                    }
+
+                    var url = "https://localhost:7237/api/ModuloLoginRegistro/SoliciteElRegistro";
+
+                    var registroDto = new RegistroDTO
+                    {
+                        NombreUsuario = usuario.Nombre,
+                        Email = usuario.correoElectronico,
+                        Clave = usuario.Clave
+                    };
+
+                    var registroJson = JsonConvert.SerializeObject(registroDto);
+                    var content2 = new StringContent(registroJson, Encoding.UTF8, "application/json");
+
+                    var response = await httpClient.PostAsync(url, content2);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("SolicitudPendiente", "LoginRegistro");
+                    }
+                    else
+                    {
+                        ViewData["Mensaje"] = "No se pudo crear el usuario, error en la API";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Exception: {ex.Message}");
+                    ViewData["Mensaje"] = "Ocurrió un error al registrar el usuario";
                 }
             }
 
-            ViewData["Mensaje"] = "No se pudo crear el usuario, error fatal";
-            return View();
-
+            return View(usuario);
         }
+
+
+
+
 
         [HttpGet]
         public IActionResult InicieSesion()
@@ -71,52 +104,104 @@ namespace Proyecto_Programado.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> InicieSesionAsync(UsuarioLoginVM usuario)
         {
-            List<SolicitudRegistro> laListaDeSolicitudes = ElAdministrador.ObtengaLaLista();
-            foreach (var item in laListaDeSolicitudes)
+            try
             {
+                // Obtener la lista de solicitudes pendientes
+                var solicitudUrl = "https://localhost:7237/api/ModuloLoginRegistro/ObtengaLaLista";
 
-                if (item.Nombre == usuario.NombreUsuario && item.EstadoRegistro == EstadoRegistro.Pendiente)
+                using (var httpClient = new HttpClient())
                 {
+                    var solicitudResponse = await httpClient.GetAsync(solicitudUrl);
 
-                    return RedirectToAction("SolicitudPendiente", "LoginRegistro");
+                    if (!solicitudResponse.IsSuccessStatusCode)
+                    {
+                        ViewData["Mensaje"] = $"Error al obtener la lista de solicitudes: {solicitudResponse.StatusCode}";
+                        return View(usuario);
+                    }
 
+                    var solicitudContent = await solicitudResponse.Content.ReadAsStringAsync();
+                    var laListaDeSolicitudes = JsonConvert.DeserializeObject<List<SolicitudRegistro>>(solicitudContent);
+
+                    // Verificar si hay una solicitud pendiente para el usuario
+                    var solicitudPendiente = laListaDeSolicitudes.FirstOrDefault(item =>
+                        item.Nombre == usuario.NombreUsuario && item.EstadoRegistro == EstadoRegistro.Pendiente);
+
+                    if (solicitudPendiente != null)
+                    {
+                        return RedirectToAction("SolicitudPendiente", "LoginRegistro");
+                    }
+
+                    // Verificar las credenciales del usuario
+                    var credencialesUrl = "https://localhost:7237/api/ModuloLoginRegistro/VerifiqueCredenciales";
+                    var credencialesDto = new
+                    {
+                        NombreUsuario = usuario.NombreUsuario,
+                        Clave = usuario.Clave
+                    };
+
+                    var json = JsonConvert.SerializeObject(credencialesDto);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var response = await httpClient.PostAsync(credencialesUrl, content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var resultJson = await response.Content.ReadAsStringAsync();
+                        var resultado = JsonConvert.DeserializeObject<bool>(resultJson);
+
+                        if (resultado)
+                        {
+                            // Obtener los claims del usuario
+                            var claimsUrl = $"https://localhost:7237/api/ModuloLoginRegistro/ObtengaElRolDelUsuario/{usuario.NombreUsuario}";
+                            var claimsResponse = await httpClient.GetAsync(claimsUrl);
+
+                            if (!claimsResponse.IsSuccessStatusCode)
+                            {
+                                ViewData["Mensaje"] = $"Error al obtener los claims del usuario: {claimsResponse.StatusCode}";
+                                return View(usuario);
+                            }
+
+                            var rolValor = await claimsResponse.Content.ReadAsStringAsync();
+                            var rolEntero = int.Parse(rolValor);
+                            var rolString = Enum.GetName(typeof(Rol), rolEntero);
+
+                            List<Claim> claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, usuario.NombreUsuario),
+                        new Claim(ClaimTypes.Role, rolString)
+                    };
+
+                            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                            AuthenticationProperties properties = new AuthenticationProperties
+                            {
+                                AllowRefresh = true,
+                                IsPersistent = true
+                            };
+
+                            await HttpContext.SignInAsync(
+                                CookieAuthenticationDefaults.AuthenticationScheme,
+                                new ClaimsPrincipal(claimsIdentity),
+                                properties
+                            );
+
+                            return RedirectToAction("Index", "Inventario");
+                        }
+                        else
+                        {
+                            ViewData["Mensaje"] = "Las credenciales son incorrectas o la cuenta está bloqueada";
+                            return View(usuario);
+                        }
+                    }
+                    else
+                    {
+                        ViewData["Mensaje"] = "Las credenciales son incorrectas o la cuenta está bloqueada";
+                        return View(usuario);
+                    }
                 }
-
             }
-            bool lasCrendicalesSonCorrectas;
-            lasCrendicalesSonCorrectas = ElAdministradorDeUsuarios.VerifiqueCredenciales(usuario.NombreUsuario, usuario.Clave);
-
-            if (lasCrendicalesSonCorrectas)
+            catch (Exception ex)
             {
-                List<Claim> claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, usuario.NombreUsuario),
-                    new Claim(ClaimTypes.Role, ElAdministrador.ObtengaElRolDelUsuario(usuario.NombreUsuario).ToString())
-                };
-
-                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                AuthenticationProperties properties = new AuthenticationProperties
-                {
-                    AllowRefresh = true,
-                    IsPersistent = true
-                };
-
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    properties
-                    );
-
-
-
-                return RedirectToAction("Index", "Inventario");
-
-
-
-            }
-            else
-            {
-                ViewData["Mensaje"] = "Las credenciales son incorrectas o la cuenta esta bloqueada";
+                Console.WriteLine($"Exception: {ex.Message}");
+                ViewData["Mensaje"] = "Ocurrió un error al iniciar sesión";
                 return View(usuario);
             }
         }
@@ -130,6 +215,8 @@ namespace Proyecto_Programado.UI.Controllers
 
             });
         }
+
+
         public async Task<IActionResult> GoogleResponse()
         {
 

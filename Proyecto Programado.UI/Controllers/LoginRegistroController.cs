@@ -424,18 +424,17 @@ namespace Proyecto_Programado.UI.Controllers
             }
 
         }
-
+        
         public async Task<IActionResult> Activar(int id)
         {
 
             try
             {
                 var httpClient = new HttpClient();
-                var query = new Dictionary<string, string>()
-                {
-                    ["id"] = id.ToString()
-                };
-                var uri = QueryHelpers.AddQueryString("https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/AprobarSolicitud/{id}", query);
+
+                int solicitudId = id;
+
+                var uri = $"https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/AprobarSolicitud/{solicitudId}";
                 var respuesta = await httpClient.PutAsync(uri, null);
                 return RedirectToAction(nameof(Index));
             }

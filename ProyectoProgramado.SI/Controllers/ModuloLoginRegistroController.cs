@@ -53,7 +53,7 @@ namespace ProyectoProgramado.SI.Controllers
             }
         }
         // POST: api/AprobarSolicitud
-        [HttpPut("AprobarSolicitud")]
+        [HttpPut("AprobarSolicitud/{solicitudId}")]
         public IActionResult AprobarSolicitud(int solicitudId)
         { 
                ElAdministrador.AprobarSolicitud(solicitudId);

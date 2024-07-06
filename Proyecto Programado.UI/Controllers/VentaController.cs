@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using Newtonsoft.Json;
 using Proyecto_Programado.BL;
 using Proyecto_Programado.DA;
 using Proyecto_Programado.Model;
 using Proyecto_Programado.UI.ViewModels;
+using System;
 using System.Net.Http;
 using System.Security.Claims;
 
@@ -307,20 +310,49 @@ namespace Proyecto_Programado.UI.Controllers
         // POST: VentaController/SeleccioneTipoDePago/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult SeleccioneTipoDePago(int id, TipoDePago tipoDePago)
+        public async Task<ActionResult> SeleccioneTipoDePago(int id, TipoDePago tipoDePago)
         {
+            var httpClient = new HttpClient();
+
             try
             {
-                Venta laVenta = ElAdministrador.ObtengaVentaPorId(id);
-                List<VentaDetalles> detallesDeLaVenta = ElAdministrador.ObtengaLosItemsDeUnaVenta(id);
+                //Venta laVenta = ElAdministrador.ObtengaVentaPorId(id);
+                //List<VentaDetalles> detallesDeLaVenta = ElAdministrador.ObtengaLosItemsDeUnaVenta(id);
+
+                Venta laVenta = new Venta();
+                List<VentaDetalles> detallesDeLaVenta = new List<VentaDetalles>();
+
+                var ventaResponse = await httpClient.GetAsync($"https://localhost:7237/ModuloDeVentas/ObtengaVentaPorId/{id}");
+                if (ventaResponse.IsSuccessStatusCode)
+                {
+                    var ventaJson = await ventaResponse.Content.ReadAsStringAsync();
+                    laVenta = JsonConvert.DeserializeObject<Venta>(ventaJson);
+                } 
+                
+
+                var detallesDeLaVentaResponse = await httpClient.GetAsync($"https://localhost:7237/ModuloDeVentas/ObtengaLaListaDeInventarios/{id}");
+                if (detallesDeLaVentaResponse.IsSuccessStatusCode)
+                {
+                    var detallesDeLaVentaJson = await detallesDeLaVentaResponse.Content.ReadAsStringAsync();
+                    detallesDeLaVenta = JsonConvert.DeserializeObject<List<VentaDetalles>>(detallesDeLaVentaJson);
+                }
+
+                
+
 
                 bool inventarioSuficiente = true;
 
                 foreach (var detalle in detallesDeLaVenta)
                 {
-                    if (detalle.Cantidad > ElAdministrador.ObtengaElInventario(detalle.Id_Inventario).Cantidad)
+                    var inventarioResponse = await httpClient.GetAsync($"https://localhost:7237/ModuloDeVentas/ObtengaElInventario/{detalle.Id_Inventario}");
+                        var inventarioJson = await inventarioResponse.Content.ReadAsStringAsync();
+                        var inventario = JsonConvert.DeserializeObject<Inventario>(inventarioJson);
+                    
+
+
+                    if (detalle.Cantidad > inventario.Cantidad)
                     {
-                        string nombreInventario = ElAdministrador.ObtengaElInventario(detalle.Id_Inventario).Nombre;
+                        string nombreInventario = inventario.Nombre;
                         ViewData["Cantidad"] = "La cantidad a comprar es mayor a la cantidad disponible del inventario: " + nombreInventario + ", por favor verifique su carrito";
                         inventarioSuficiente = false;
                         break;
@@ -336,12 +368,20 @@ namespace Proyecto_Programado.UI.Controllers
                 {
                     foreach (var detalle in detallesDeLaVenta)
                     {
-                        ElAdministrador.ActualiceLaCantidadDeInventario(detalle.Cantidad, detalle.Id_Inventario);
+
+                        var inventarioResponse = $"https://localhost:7237/ModuloDeVentas/ActualiceLaCantidadDeInventario/{detalle.Id_Inventario}/{detalle.Cantidad}";
+
+                        var response = await httpClient.PutAsync(inventarioResponse, null);
+
                     }
 
                     laVenta.TipoDePago = tipoDePago;
                     laVenta.Estado = EstadoVenta.Terminada;
-                    ElAdministrador.ActualiceLaVenta(id, laVenta);
+
+
+                    var ventaUrl = $"https://localhost:7237/ModuloDeVentas/ActualiceLaVenta/{id}/{laVenta}";
+
+                    var finalResponse = await httpClient.PutAsync(ventaUrl, null);
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -354,28 +394,6 @@ namespace Proyecto_Programado.UI.Controllers
 
 
 
-
-
-        // GET: VentaController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: VentaController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
 
         // GET: VentaController/Delete/5
         public async Task<ActionResult> Delete(int id, int idVenta)

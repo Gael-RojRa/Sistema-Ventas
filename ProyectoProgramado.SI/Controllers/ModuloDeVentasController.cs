@@ -55,12 +55,13 @@ namespace Proyecto_Programado.SI.Controllers
 
             return nombreVenta;
         }
+
         [HttpPost("AgregueLaVenta")]
         public IActionResult AgregueLaVenta([FromBody] Model.Venta venta)
-        {
-            ElAdministrador.AgregueLaVenta(venta);
-            return Ok(venta);
+        {           
+            return Ok(ElAdministrador.AgregueLaVenta(venta));
         }
+
         // GET: api/Ventas/Inventario/5
         [HttpGet("ObtengaElInventario/{id}")]
         public ActionResult<Inventario> ObtengaElInventario(int id)

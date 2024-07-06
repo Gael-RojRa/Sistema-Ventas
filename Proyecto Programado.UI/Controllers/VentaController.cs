@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -11,6 +12,7 @@ using Proyecto_Programado.Model;
 using Proyecto_Programado.UI.ViewModels;
 using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 
 
@@ -19,11 +21,7 @@ namespace Proyecto_Programado.UI.Controllers
     [Authorize]
     public class VentaController : Controller
     {
-        public readonly IAdministradorDeVentas ElAdministrador;
-        public VentaController(IAdministradorDeVentas administrador)
-        {
-            ElAdministrador = administrador;
-        }
+
         // GET: VentaController
         public async Task<ActionResult> Index()
         {
@@ -101,24 +99,55 @@ namespace Proyecto_Programado.UI.Controllers
             //ViewBag.IdVenta = id;
             //return View(detallesConNombre);
         }
-        public ActionResult CarritoTerminado(int id)
+        public async Task<IActionResult> CarritoTerminado(int id)
         {
-            List<VentaDetalles> laListaDeDetalles = ElAdministrador.ObtengaLosItemsDeUnaVenta(id);
-            var detallesConNombre = laListaDeDetalles.Select(detalle => new VentaDetalleVM
-            {
-                Id = detalle.Id,
-                Id_Venta = detalle.Id_Venta,
-                Id_Inventario = detalle.Id_Inventario,
-                Cantidad = detalle.Cantidad,
-                Precio = detalle.Precio,
-                Monto = detalle.Monto,
-                MontoDescuento = detalle.MontoDescuento,
-                Total = detalle.MontoFinal,
-                NombreInventario = ElAdministrador.ObtengaElInventario(detalle.Id_Inventario).Nombre
-            }).ToList();
+            var httpClient = new HttpClient();
 
-            ViewBag.IdVenta = id;
+            try 
+            { 
+
+            List<VentaDetalles> laListaDeDetalles = new List<VentaDetalles>();
+
+            var vdetalleResponse = await httpClient.GetAsync($"https://localhost:7237/ModuloDeVentas/ObtengaLosItemsDeUnaVenta/{id}");
+            if (vdetalleResponse.IsSuccessStatusCode)
+            {
+                var vdetalleJson = await vdetalleResponse.Content.ReadAsStringAsync();
+                    laListaDeDetalles = JsonConvert.DeserializeObject<List<VentaDetalles>>(vdetalleJson);
+            }
+
+                var inventarioTasks = laListaDeDetalles.Select(async detalle =>
+                {
+                    var inventarioResponse = await httpClient.GetAsync($"https://localhost:7237/ModuloDeVentas/ObtengaElInventario/{detalle.Id_Inventario}");
+                    inventarioResponse.EnsureSuccessStatusCode();
+                    var inventarioJson = await inventarioResponse.Content.ReadAsStringAsync();
+                    var inventario = JsonConvert.DeserializeObject<Inventario>(inventarioJson);
+
+                    return new { detalle, inventario.Nombre };
+                });
+
+                var inventarioResults = await Task.WhenAll(inventarioTasks);
+                var detallesConNombre = inventarioResults.Select(result => new VentaDetalleVM
+                {
+                    Id = result.detalle.Id,
+                    Id_Venta = result.detalle.Id_Venta,
+                    Id_Inventario = result.detalle.Id_Inventario,
+                    Cantidad = result.detalle.Cantidad,
+                    Precio = result.detalle.Precio,
+                    Monto = result.detalle.Monto,
+                    MontoDescuento = result.detalle.MontoDescuento,
+                    Total = result.detalle.MontoFinal,
+                    NombreInventario = result.Nombre
+                }).ToList();
+
+                ViewBag.IdVenta = id;
             return View(detallesConNombre);
+
+            }
+
+            catch
+            {
+                return View();
+            }
         }
 
 
@@ -129,26 +158,59 @@ namespace Proyecto_Programado.UI.Controllers
         }
 
 
-        public ActionResult AgregarVenta()
+        public async Task<ActionResult> AgregarVenta()
         {
-            List<Inventario> laListaDeInventarios;
-            laListaDeInventarios = ElAdministrador.ObtengaLaListaDeInventarios();
+            var httpClient = new HttpClient();
 
-            Venta_VentaDetalleVM elModeloAuxiliarDeVenta = new Venta_VentaDetalleVM
+            try 
+            { 
+
+                List<Inventario> laListaDeInventarios = new List<Inventario>();
+
+                var inventariosResponse = await httpClient.GetAsync("https://apicomerciovs.azurewebsites.net/ObtengaLaListaDeInventarios");
+                if (inventariosResponse.IsSuccessStatusCode)
+                {
+                    var inventariosJson = await inventariosResponse.Content.ReadAsStringAsync();
+                    laListaDeInventarios = JsonConvert.DeserializeObject<List<Inventario>>(inventariosJson);
+                }
+
+                Venta_VentaDetalleVM elModeloAuxiliarDeVenta = new Venta_VentaDetalleVM
+                {
+                    ItemsInventario = laListaDeInventarios
+                };
+
+                    var verifiqueResponse = await httpClient.GetAsync($"https://localhost:7237/ModuloDeVentas/VerifiqueLaCajaAbierta/{User.Identity.Name}");
+                    var verifiqueJson = await verifiqueResponse.Content.ReadAsStringAsync();
+                    bool verificacionDeCaja = JsonConvert.DeserializeObject<bool>(verifiqueJson);
+                
+
+                bool cajaAbierta = verificacionDeCaja;
+                ViewBag.CajaAbierta = cajaAbierta;
+                return View(elModeloAuxiliarDeVenta);
+
+            }
+            catch
             {
-                ItemsInventario = laListaDeInventarios
-            };
-            bool cajaAbierta = ElAdministrador.VerifiqueLaCajaAbierta(User.Identity.Name);
-            ViewBag.CajaAbierta = cajaAbierta;
-            return View(elModeloAuxiliarDeVenta);
+                return View();
+            }
+
+
         }
 
         // POST: VentaController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AgregarVenta(Venta_VentaDetalleVM laVenta, int cantidadSeleccionada)
+        public async Task<ActionResult>  AgregarVenta(Venta_VentaDetalleVM laVenta, int cantidadSeleccionada)
         {
+            var httpClient = new HttpClient();
+
             laVenta.Cantidad = cantidadSeleccionada;
+
+
+            var userRespone = await httpClient.GetAsync($"https://localhost:7237/ModuloDeVentas/ObtengaElIdDeLaCajaAbierta/{User.Identity.Name}");
+            var userJson = await userRespone.Content.ReadAsStringAsync();
+            int idUsuario = JsonConvert.DeserializeObject<int>(userJson);
+
 
             Venta nuevaVenta = new Venta
             {
@@ -161,19 +223,34 @@ namespace Proyecto_Programado.UI.Controllers
                 PorcentajeDescuento = 0,
                 MontoDescuento = 0,
                 Estado = EstadoVenta.EnProceso,
-                IdAperturaDeCaja = ElAdministrador.ObtengaElIdDeLaCajaAbierta(User.Identity.Name)
+                IdAperturaDeCaja = idUsuario
 
             };
 
-            int idNuevaVenta = ElAdministrador.AgregueLaVenta(nuevaVenta);
+            string json = JsonConvert.SerializeObject(nuevaVenta);
+            var buffer = System.Text.Encoding.UTF8.GetBytes(json);
+            var byteContent = new ByteArrayContent(buffer);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var response = await httpClient.PostAsync("https://localhost:7018/api/ServicioDeReparaciones/AgregueLaVenta", byteContent);
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            int idNuevaVenta = JsonConvert.DeserializeObject<int>(responseString);
+
+
+            var cantidadResponse = await httpClient.GetAsync($"https://localhost:7237/ModuloDeVentas/ObtengaElPrecioDelInventario/{laVenta.IdItemSeleccionado}");
+            cantidadResponse.EnsureSuccessStatusCode();
+            var cantidadJson = await cantidadResponse.Content.ReadAsStringAsync();
+            decimal cantidad = JsonConvert.DeserializeObject<decimal>(cantidadJson);
+
 
             VentaDetalles nuevoDetalle = new VentaDetalles
             {
                 Cantidad = laVenta.Cantidad,
-                Precio = ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
-                Monto = laVenta.Cantidad * ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
+                Precio = cantidad,
+                Monto = laVenta.Cantidad * cantidad,
                 MontoDescuento = 0,
-                MontoFinal = laVenta.Cantidad * ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
+                MontoFinal = laVenta.Cantidad * cantidad,
                 Id_Inventario = laVenta.IdItemSeleccionado,
                 Id_Venta = idNuevaVenta
             };
@@ -182,9 +259,15 @@ namespace Proyecto_Programado.UI.Controllers
             nuevaVenta.MontoDescuento = nuevoDetalle.MontoDescuento;
             nuevaVenta.Total = nuevaVenta.SubTotal - nuevoDetalle.MontoDescuento;
 
-            ElAdministrador.ActualiceLaVenta(idNuevaVenta, nuevaVenta);
+            var actualiceVentaUrl = $"https://localhost:7237/ModuloDeVentas/ActualiceLaVenta/{idNuevaVenta}/{nuevaVenta}";
+            var actualiceVentresponse = await httpClient.PutAsync(actualiceVentaUrl, null);
 
-            ElAdministrador.AgregueDetalleVenta(nuevoDetalle);
+
+            string detaleJson = JsonConvert.SerializeObject(nuevoDetalle);
+            var detalleBuffer = System.Text.Encoding.UTF8.GetBytes(detaleJson);
+            var detalleByteContent = new ByteArrayContent(detalleBuffer);
+            detalleByteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            await httpClient.PostAsync("https://localhost:7018/api/ServicioDeReparaciones/AgregueDetalleVenta", detalleByteContent);
 
             return RedirectToAction("Index");
         }
@@ -250,25 +333,41 @@ namespace Proyecto_Programado.UI.Controllers
         // POST: VentaController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AgregarDetalleVenta(Venta_VentaDetalleVM laVenta, int cantidadSeleccionada)
+        public async Task<ActionResult> AgregarDetalleVenta(Venta_VentaDetalleVM laVenta, int cantidadSeleccionada)
         {
+            var httpClient = new HttpClient();
+
             laVenta.Cantidad = cantidadSeleccionada;
+
+            var cantidadResponse = await httpClient.GetAsync($"https://localhost:7237/ModuloDeVentas/ObtengaElPrecioDelInventario/{laVenta.IdItemSeleccionado}");
+            cantidadResponse.EnsureSuccessStatusCode();
+            var cantidadJson = await cantidadResponse.Content.ReadAsStringAsync();
+            decimal cantidad = JsonConvert.DeserializeObject<decimal>(cantidadJson);
+            
+
+
             VentaDetalles nuevoDetalle = new VentaDetalles
             {
                 Cantidad = laVenta.Cantidad,
-                Precio = ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
-                Monto = laVenta.Cantidad * ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
+                Precio = cantidad,
+                Monto = laVenta.Cantidad * cantidad,
                 MontoDescuento = 0,
-                MontoFinal = laVenta.Cantidad * ElAdministrador.ObtengaElPrecioDelInventario(laVenta.IdItemSeleccionado),
+                MontoFinal = laVenta.Cantidad * cantidad,
                 Id_Inventario = laVenta.IdItemSeleccionado,
                 Id_Venta = laVenta.idVenta
             };
-            ElAdministrador.AgregueDetalleVenta(nuevoDetalle);
+
+            string detaleJson = JsonConvert.SerializeObject(nuevoDetalle);
+            var detalleBuffer = System.Text.Encoding.UTF8.GetBytes(detaleJson);
+            var detalleByteContent = new ByteArrayContent(detalleBuffer);
+            detalleByteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            await httpClient.PostAsync("https://localhost:7018/api/ServicioDeReparaciones/AgregueDetalleVenta", detalleByteContent);
 
 
             ViewBag.IdVenta = laVenta.idVenta;
 
-            ElAdministrador.ActualiceElTotalEnElIndexDeVentas(nuevoDetalle.Id);
+            var actualiceVentaUrl = $"https://localhost:7237/ModuloDeVentas/ActualiceElTotalEnElIndexDeVentas/{nuevoDetalle.Id}";
+            var actualiceVentresponse = await httpClient.PutAsync(actualiceVentaUrl, null);
 
             return RedirectToAction("Carrito", new { id = laVenta.idVenta });
         }
@@ -316,8 +415,6 @@ namespace Proyecto_Programado.UI.Controllers
 
             try
             {
-                //Venta laVenta = ElAdministrador.ObtengaVentaPorId(id);
-                //List<VentaDetalles> detallesDeLaVenta = ElAdministrador.ObtengaLosItemsDeUnaVenta(id);
 
                 Venta laVenta = new Venta();
                 List<VentaDetalles> detallesDeLaVenta = new List<VentaDetalles>();
@@ -336,9 +433,6 @@ namespace Proyecto_Programado.UI.Controllers
                     var detallesDeLaVentaJson = await detallesDeLaVentaResponse.Content.ReadAsStringAsync();
                     detallesDeLaVenta = JsonConvert.DeserializeObject<List<VentaDetalles>>(detallesDeLaVentaJson);
                 }
-
-                
-
 
                 bool inventarioSuficiente = true;
 

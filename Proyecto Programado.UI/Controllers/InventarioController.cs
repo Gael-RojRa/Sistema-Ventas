@@ -149,6 +149,7 @@ namespace Proyecto_Programado.UI.Controllers
         public async Task<ActionResult> Edit(int id)
         {
             Model.Inventario inventario;
+
             
             var httpClient = new HttpClient();
 
@@ -161,11 +162,18 @@ namespace Proyecto_Programado.UI.Controllers
         // POST: InventarioController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Model.Inventario inventario)
+        public async Task<ActionResult> Edit(Model.Inventario inventario)
         {
+            var httpClient = new HttpClient();
             try
             {
-                ElAdministrador.EditeElInventario(inventario, User.Identity.Name);
+                string elNombreDeUsuario = User.Identity.Name;
+
+                var json = JsonConvert.SerializeObject(inventario);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var url = $"https://apicomerciovs.azurewebsites.net/ModuloCatalogoDeInventarios/EditeElInventario/{elNombreDeUsuario}";
+                var respuesta = await httpClient.PutAsync(url, content);
 
 
                 int idInventario = (int)(TempData["Id_Inventario"]);

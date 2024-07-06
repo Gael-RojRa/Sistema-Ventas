@@ -10,6 +10,7 @@ namespace Proyecto_Programado.BL
 {
     public interface IAdministradorDeVentas
     {
+
         List<Inventario> ObtengaLaListaDeInventarios();
 
         List<Venta> ObtengaLaListaDeVentas();

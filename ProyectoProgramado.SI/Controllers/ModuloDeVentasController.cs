@@ -6,6 +6,9 @@ using Proyecto_Programado.Model;
 
 namespace Proyecto_Programado.SI.Controllers
 {
+
+    [ApiController]
+    [Route("[controller]")]
     public class ModuloDeVentasController : ControllerBase
     {
 
@@ -15,6 +18,7 @@ namespace Proyecto_Programado.SI.Controllers
             ElAdministrador = administrador;
 
         }
+
         [HttpPost("AgregueDetalleVenta")]
         public IActionResult AgregueDetalleVenta([FromBody] VentaDetalles elNuevoDetalleDeVenta)
         {
@@ -127,7 +131,7 @@ namespace Proyecto_Programado.SI.Controllers
             return precio;
         }
 
-        [HttpPut("ActualiceLaVenta/{id}")]
+        [HttpPut("ActualiceLaVenta/{id}/{laVentaActualizada}")]
         public IActionResult ActualiceLaVenta(int id, [FromBody] Venta laVentaActualizada)
         {
             ElAdministrador.ActualiceLaVenta(id, laVentaActualizada);

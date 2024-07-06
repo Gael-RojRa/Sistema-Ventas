@@ -42,41 +42,41 @@ namespace Proyecto_Programado.UI.Controllers
         public async Task<IActionResult> Carrito(int id)
         {
             List<VentaDetalles> laListaDeDetalles = new List<VentaDetalles>();
-            List<VentaDetalleVM> detallesConNombre = new List<VentaDetalleVM>();
 
             var httpClient = new HttpClient();
 
             // Obtener los items de una venta
-            var detallesResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ObtengaLosItemsDeUnaVenta/{id}");
+            var detallesResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloCatalogoDeInventarios/ObtengaLosItemsDeUnaVenta/{id}");
             if (detallesResponse.IsSuccessStatusCode)
             {
                 var detallesJson = await detallesResponse.Content.ReadAsStringAsync();
                 laListaDeDetalles = JsonConvert.DeserializeObject<List<VentaDetalles>>(detallesJson);
             }
 
-            foreach (var detalle in laListaDeDetalles)
+            var inventarioTasks = laListaDeDetalles.Select(async detalle =>
             {
-                // Obtener el inventario por cada detalle
-                var inventarioResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloCatalogoDeInventarios/ObtengaElInventario/{detalle.Id_Inventario}");
-                if (inventarioResponse.IsSuccessStatusCode)
-                {
-                    var inventarioJson = await inventarioResponse.Content.ReadAsStringAsync();
-                    var inventario = JsonConvert.DeserializeObject<Inventario>(inventarioJson);
+                var inventarioResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ObtengaElInventario/{detalle.Id_Inventario}");
+                inventarioResponse.EnsureSuccessStatusCode();
+                var inventarioJson = await inventarioResponse.Content.ReadAsStringAsync();
+                var inventario = JsonConvert.DeserializeObject<Inventario>(inventarioJson);
 
-                    detallesConNombre.Add(new VentaDetalleVM
-                    {
-                        Id = detalle.Id,
-                        Id_Venta = detalle.Id_Venta,
-                        Id_Inventario = detalle.Id_Inventario,
-                        Cantidad = detalle.Cantidad,
-                        Precio = detalle.Precio,
-                        Monto = detalle.Monto,
-                        MontoDescuento = detalle.MontoDescuento,
-                        Total = detalle.MontoFinal,
-                        NombreInventario = inventario.Nombre
-                    });
-                }
-            }
+                return new { detalle, inventario.Nombre };
+            });
+
+            var inventarioResults = await Task.WhenAll(inventarioTasks);
+
+            var detallesConNombre = inventarioResults.Select(result => new VentaDetalleVM
+            {
+                Id = result.detalle.Id,
+                Id_Venta = result.detalle.Id_Venta,
+                Id_Inventario = result.detalle.Id_Inventario,
+                Cantidad = result.detalle.Cantidad,
+                Precio = result.detalle.Precio,
+                Monto = result.detalle.Monto,
+                MontoDescuento = result.detalle.MontoDescuento,
+                Total = result.detalle.MontoFinal,
+                NombreInventario = result.Nombre
+            }).ToList();
 
             ViewBag.IdVenta = id;
             return View(detallesConNombre);

@@ -377,15 +377,8 @@ namespace Proyecto_Programado.UI.Controllers
 
             ViewBag.IdVenta = laVenta.idVenta;
             
-                int id = idNuevoDetalle;
 
-            var query = new Dictionary<string, string>()
-            {
-
-                ["id"] = id.ToString()
-            };
-
-            var requestUri = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ActualiceElTotalEnElIndexDeVenta/{id}";
+            var requestUri = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ActualiceElTotalEnElIndexDeVentas/{idNuevoDetalle}";
 
             var request = new HttpRequestMessage(HttpMethod.Put, requestUri);
 

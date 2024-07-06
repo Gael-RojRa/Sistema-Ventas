@@ -17,7 +17,7 @@ namespace Proyecto_Programado.BL
         Inventario ObtengaElInventario(int elId);
 
         int AgregueLaVenta(Venta laNuevaVenta);
-        void AgregueDetalleVenta(VentaDetalles elNuevoDetalleDeVenta);
+        int AgregueDetalleVenta(VentaDetalles elNuevoDetalleDeVenta);
 
         List<VentaDetalles> ObtengaLosItemsDeUnaVenta(int elIdVenta);
 

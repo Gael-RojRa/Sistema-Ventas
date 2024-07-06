@@ -22,14 +22,7 @@ namespace Proyecto_Programado.SI.Controllers
         [HttpPost("AgregueDetalleVenta")]
         public IActionResult AgregueDetalleVenta([FromBody] VentaDetalles elNuevoDetalleDeVenta)
         {
-            if (elNuevoDetalleDeVenta == null)
-            {
-                return BadRequest("El detalle de venta no puede ser nulo.");
-            }
-
-            ElAdministrador.AgregueDetalleVenta(elNuevoDetalleDeVenta);
-
-            return Ok("Detalle de venta agregado exitosamente.");
+            return Ok(ElAdministrador.AgregueDetalleVenta(elNuevoDetalleDeVenta));
         }
 
         //[HttpPost("AgregueDetalleVenta")]

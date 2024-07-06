@@ -357,13 +357,26 @@ namespace Proyecto_Programado.UI.Controllers
             var detalleBuffer = System.Text.Encoding.UTF8.GetBytes(detaleJson);
             var detalleByteContent = new ByteArrayContent(detalleBuffer);
             detalleByteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            await httpClient.PostAsync("https://apicomerciovs.azurewebsites.net/ModuloDeVentas/AgregueDetalleVenta", detalleByteContent);
+            var response = await httpClient.PostAsync("https://apicomerciovs.azurewebsites.net/ModuloDeVentas/AgregueDetalleVenta", detalleByteContent);
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            int idNuevoDetalle = JsonConvert.DeserializeObject<int>(responseString);
 
 
             ViewBag.IdVenta = laVenta.idVenta;
+            
+                int id = idNuevoDetalle;
 
-            var actualiceVentaUrl = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ActualiceElTotalEnElIndexDeVentas/{nuevoDetalle.Id}";
-            var actualiceVentresponse = await httpClient.PutAsync(actualiceVentaUrl, null);
+            var query = new Dictionary<string, string>()
+            {
+
+                ["id"] = id.ToString()
+            };
+
+            var uri = QueryHelpers.AddQueryString("https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ActualiceElTotalEnElIndexDeVentas", query);
+
+            await httpClient.PutAsync(uri, null);
+
 
             return RedirectToAction("Carrito", new { id = laVenta.idVenta });
         }

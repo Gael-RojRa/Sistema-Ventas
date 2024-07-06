@@ -19,10 +19,14 @@ namespace Proyecto_Programado.BL
             ElContexto = elContexto;
         }
 
-        public void AgregueDetalleVenta(VentaDetalles elNuevoDetalleDeVenta)
+        public int AgregueDetalleVenta(VentaDetalles elNuevoDetalleDeVenta)
         {
             ElContexto.VentaDetalles.Add(elNuevoDetalleDeVenta);
-            ElContexto.SaveChanges();   
+            ElContexto.SaveChanges();
+
+            int elIdAsignado = elNuevoDetalleDeVenta.Id;
+
+            return elIdAsignado;
         }
 
         public string ObtengaElNombreDeVenta(int elIdDeVenta)

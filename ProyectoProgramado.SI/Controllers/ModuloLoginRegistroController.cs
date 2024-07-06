@@ -11,7 +11,7 @@ namespace ProyectoProgramado.SI.Controllers
     public class ModuloLoginRegistroController : ControllerBase
     {
         private readonly Proyecto_Programado.BL.IAdministradorDeSolicitudes ElAdministrador;
-        private readonly Proyecto_Programado.BL.IAdministradorDeUsuarios    ElAdministradorDeUsuarios;
+        private readonly Proyecto_Programado.BL.IAdministradorDeUsuarios ElAdministradorDeUsuarios;
         public ModuloLoginRegistroController(Proyecto_Programado.BL.IAdministradorDeSolicitudes administrador, Proyecto_Programado.BL.IAdministradorDeUsuarios administrador2)
         {
             ElAdministrador = administrador;
@@ -55,12 +55,12 @@ namespace ProyectoProgramado.SI.Controllers
         // POST: api/AprobarSolicitud
         [HttpPut("AprobarSolicitud/{solicitudId}")]
         public IActionResult AprobarSolicitud(int solicitudId)
-        { 
-               ElAdministrador.AprobarSolicitud(solicitudId);
-               return Ok();
+        {
+            ElAdministrador.AprobarSolicitud(solicitudId);
+            return Ok();
         }
-   
-       
+
+
         // GET: api/ObtenerSolicitud/{id}
         [HttpGet("ObtengaLaSolicitud/{id}")]
         public IActionResult ObtengaLaSolicitud(int id)
@@ -239,24 +239,12 @@ namespace ProyectoProgramado.SI.Controllers
 
 
         // PUT: api/Ventas/CambiarClave
-        [HttpPut("CambieLaClave")]
-        public IActionResult CambieLaClave([FromBody] Usuario elUsuario, string laClaveNueva)
+        [HttpPut("CambieLaClave/{laClaveNueva}")]
+        public ActionResult CambieLaClave([FromBody] Usuario elUsuario, string laClaveNueva)
         {
-            try
-            {
-                var usuario = ElAdministradorDeUsuarios.ObtengaElUsuarioPorNombre(elUsuario.Nombre);
-                if (usuario == null)
-                {
-                    return NotFound("Usuario no encontrado");
-                }
+            ElAdministradorDeUsuarios.CambieLaClave(elUsuario, laClaveNueva);
 
-                ElAdministradorDeUsuarios.CambieLaClave(usuario, laClaveNueva);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error al cambiar la clave: {ex.Message}");
-            }
+            return Ok();
         }
     }
 }

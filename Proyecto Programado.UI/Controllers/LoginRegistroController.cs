@@ -334,6 +334,7 @@ namespace Proyecto_Programado.UI.Controllers
             }
         }
 
+
         // GET: LoginController/CambiarClave
         [HttpGet]
         public IActionResult CambiarClave()
@@ -342,51 +343,60 @@ namespace Proyecto_Programado.UI.Controllers
         }
 
         // POST: LoginController/CambiarClave
+        // POST: LoginController/CambiarClave
         [HttpPost]
-        public async Task<IActionResult> CambiarClaveAsync(CambioClaveVM modelo)
+        public async Task<IActionResult> CambiarClave(CambioClaveVM modelo)
         {
-            var httpClient = new HttpClient();
-
             if (!ModelState.IsValid)
             {
                 return View(modelo);
             }
 
-            var usuario = ElAdministrador.ObtengaElUsuarioPorNombre(modelo.Nombre);
-            if (usuario == null)
+            try
             {
-                ViewData["Mensaje"] = "Usuario no encontrado.";
-                return View(modelo);
-            }
+                var httpClient = new HttpClient();
+                var url = $"https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/ObtengaElUsuarioPorNombre/{modelo.Nombre}";
+                Usuario usuario = await httpClient.GetFromJsonAsync<Usuario>(url);
 
-            // Crear el objeto de usuario con la nueva clave
-            var cambioClaveRequest = new
-            {
-                elUsuario = new { Nombre = modelo.Nombre },
-                laClaveNueva = modelo.ClaveNueva
-            };
+                if (usuario == null)
+                {
+                    ViewData["Mensaje"] = "Usuario no encontrado.";
+                    return View(modelo);
+                }
 
+                string laClaveNueva = modelo.ClaveNueva;
 
-            var jsonContent = new StringContent(JsonConvert.SerializeObject(cambioClaveRequest), Encoding.UTF8, "application/json");
+                var respuesta = await httpClient.PutAsJsonAsync($"https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/CambieLaClave/{laClaveNueva}", usuario);
 
-            var response = await httpClient.PutAsync("https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/CambieLaClave", jsonContent);
+                if (respuesta.StatusCode != HttpStatusCode.OK)
+                {
+                    ViewData["Mensaje"] = "Error al cambiar la clave.";
+                    return View(modelo);
+                }
 
-            if (response.IsSuccessStatusCode)
-            {
                 string asunto = "Cambio de clave";
                 string contenido = $"Le informamos que el cambio de clave de la cuenta del usuario {modelo.Nombre} se ejecutó satisfactoriamente.";
-                ElAdministrador.EnvieElCorreoElectronico(usuario.correoElectronico, asunto, contenido);
+
+                var respuestaCorreo = await httpClient.PostAsJsonAsync("https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/EnvieElCorreoElectronico", new { correo = usuario.correoElectronico, asunto, contenido });
+
+                if (respuestaCorreo.StatusCode != HttpStatusCode.OK)
+                {
+                    ViewData["Mensaje"] = "Error al enviar el correo electrónico.";
+                    return View(modelo);
+                }
 
                 ViewData["Mensaje"] = "Cambio de clave realizado correctamente.";
+                return View(modelo);
             }
-            else
+            catch (Exception ex)
             {
-                ViewData["Mensaje"] = $"Error al cambiar la clave: {response.ReasonPhrase}";
+                Console.WriteLine($"Exception: {ex.Message}");
+                ViewData["Mensaje"] = "Ocurrió un error al cambiar la clave.";
+                return View(modelo);
             }
-
-            return View(modelo);
-           
         }
+
+
         public IActionResult SolicitudPendiente()
         {
             return View();

@@ -120,10 +120,10 @@ namespace Proyecto_Programado.SI.Controllers
             return precio;
         }
 
-        [HttpPut("ActualiceLaVenta/{id}/{laVentaActualizada}")]
-        public IActionResult ActualiceLaVenta(int id, [FromBody] Venta laVentaActualizada)
+        [HttpPut("ActualiceLaVenta/{idNuevaVenta}/{nuevaVenta}")]
+        public IActionResult ActualiceLaVenta(int idNuevaVenta, [FromBody] Venta nuevaVenta)
         {
-            ElAdministrador.ActualiceLaVenta(id, laVentaActualizada);
+            ElAdministrador.ActualiceLaVenta(idNuevaVenta, nuevaVenta);
             return Ok();
         }
 
@@ -137,7 +137,7 @@ namespace Proyecto_Programado.SI.Controllers
             return Ok();
         }
 
-        [HttpPut("ApliqueElDescuento/{id}/{porcentajeDescuento}")]
+        [HttpPut("ApliqueElDescuento/{porcentajeDescuento}/{id}")]
         public IActionResult ApliqueElDescuento(int porcentajeDescuento, int id)
         {
             ElAdministrador.ApliqueElDescuento(porcentajeDescuento, id);

@@ -387,7 +387,7 @@ namespace Proyecto_Programado.UI.Controllers
         {
 
             var httpClient = new HttpClient();
-            var requestUri = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/{idVenta}/{porcentajeDescuento}";
+            var requestUri = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/{porcentajeDescuento}/{idVenta}";
 
             var request = new HttpRequestMessage(HttpMethod.Put, requestUri);
 

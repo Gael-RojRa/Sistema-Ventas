@@ -251,7 +251,6 @@ namespace Proyecto_Programado.UI.Controllers
                 Id_Venta = idNuevaVenta
             };
 
-            NombreCliente = laVenta.NombreCliente,
             nuevaVenta.SubTotal = nuevoDetalle.Monto;
             nuevaVenta.MontoDescuento = nuevoDetalle.MontoDescuento;
             nuevaVenta.Total = nuevaVenta.SubTotal - nuevoDetalle.MontoDescuento;

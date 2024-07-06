@@ -44,7 +44,7 @@ namespace Proyecto_Programado.UI.Controllers
             {
                 try
                 {
-                    var checkUrl = $"https://localhost:7237/api/ModuloLoginRegistro/ObtengaElUsuarioPorNombre/{usuario.Nombre}";
+                    var checkUrl = $"https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/ObtengaElUsuarioPorNombre/{usuario.Nombre}";
                     var checkResponse = await httpClient.GetAsync(checkUrl);
 
                     if (checkResponse.IsSuccessStatusCode)
@@ -58,7 +58,7 @@ namespace Proyecto_Programado.UI.Controllers
                         }
                     }
 
-                    var url = "https://localhost:7237/api/ModuloLoginRegistro/SoliciteElRegistro";
+                    var url = "https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/SoliciteElRegistro";
 
                     var registroDto = new RegistroDTO
                     {
@@ -107,7 +107,7 @@ namespace Proyecto_Programado.UI.Controllers
             try
             {
                 // Obtener la lista de solicitudes pendientes
-                var solicitudUrl = "https://localhost:7237/api/ModuloLoginRegistro/ObtengaLaLista";
+                var solicitudUrl = "https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/ObtengaLaLista";
 
                 using (var httpClient = new HttpClient())
                 {
@@ -132,7 +132,7 @@ namespace Proyecto_Programado.UI.Controllers
                     }
 
                     // Verificar las credenciales del usuario
-                    var credencialesUrl = "https://localhost:7237/api/ModuloLoginRegistro/VerifiqueCredenciales";
+                    var credencialesUrl = "https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/VerifiqueCredenciales";
                     var credencialesDto = new
                     {
                         NombreUsuario = usuario.NombreUsuario,
@@ -151,7 +151,7 @@ namespace Proyecto_Programado.UI.Controllers
                         if (resultado)
                         {
                             // Obtener los claims del usuario
-                            var claimsUrl = $"https://localhost:7237/api/ModuloLoginRegistro/ObtengaElRolDelUsuario/{usuario.NombreUsuario}";
+                            var claimsUrl = $"https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/ObtengaElRolDelUsuario/{usuario.NombreUsuario}";
                             var claimsResponse = await httpClient.GetAsync(claimsUrl);
 
                             if (!claimsResponse.IsSuccessStatusCode)

@@ -165,7 +165,7 @@ namespace Proyecto_Programado.UI.Controllers
 
                 List<Inventario> laListaDeInventarios = new List<Inventario>();
 
-                var inventariosResponse = await httpClient.GetAsync("https://apicomerciovs.azurewebsites.net/ObtengaLaListaDeInventarios");
+                var inventariosResponse = await httpClient.GetAsync("https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ObtengaLaListaDeInventarios");
                 if (inventariosResponse.IsSuccessStatusCode)
                 {
                     var inventariosJson = await inventariosResponse.Content.ReadAsStringAsync();

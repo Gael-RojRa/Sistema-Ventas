@@ -27,7 +27,7 @@ namespace Proyecto_Programado.UI.Controllers
         {
             string elNombreDeUsuario = User.Identity.Name;
             var httpclient = new HttpClient();
-            var url = $"https://localhost:7237/ModuloDeCajas/ObtengaLaCajaAbierta?elNombreDeUsuario={elNombreDeUsuario}";
+            var url = $"https://apicomerciovs.azurewebsites.net/ModuloDeCajas/ObtengaLaCajaAbierta?elNombreDeUsuario={elNombreDeUsuario}";
             var respuesta = await httpclient.GetAsync(url);
             AperturaDeCaja cajaAbierta = JsonConvert.DeserializeObject<AperturaDeCaja>(await respuesta.Content.ReadAsStringAsync());
             return View(cajaAbierta);
@@ -47,7 +47,7 @@ namespace Proyecto_Programado.UI.Controllers
             });
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var url = $"https://localhost:7237/ModuloDeCajas/AbraLaCaja?elNombreDeUsuario={elNombreDeUsuario}";
+            var url = $"https://apicomerciovs.azurewebsites.net/ModuloDeCajas/AbraLaCaja?elNombreDeUsuario={elNombreDeUsuario}";
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             var respuesta = await httpClient.PostAsync(url, content);
@@ -66,7 +66,7 @@ namespace Proyecto_Programado.UI.Controllers
         public ActionResult CerrarCaja(int id)
         {
             var httpClient = new HttpClient();
-            var url = $"https://localhost:7237/ModuloDeCajas/CierreLaCaja/{id}";
+            var url = $"https://apicomerciovs.azurewebsites.net/ModuloDeCajas/CierreLaCaja/{id}";
             var respuesta = httpClient.PutAsync(url, null).Result;
             return RedirectToAction(nameof(Index));
 

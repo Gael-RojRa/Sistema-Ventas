@@ -5,8 +5,9 @@ using Proyecto_Programado.Model;
 
 namespace ProyectoProgramado.SI.Controllers
 {
-    [Route("[controller]")]
     [ApiController]
+    [Route("[controller]")]
+
     public class ModuloLoginRegistroController : ControllerBase
     {
         private readonly Proyecto_Programado.BL.IAdministradorDeSolicitudes ElAdministrador;

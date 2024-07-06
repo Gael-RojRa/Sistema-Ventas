@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using Newtonsoft.Json;
-using Proyecto_Programado.BL;
 using Proyecto_Programado.DA;
 using Proyecto_Programado.Model;
 using Proyecto_Programado.UI.ViewModels;

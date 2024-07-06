@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Proyecto_Programado.BL;
 using Proyecto_Programado.Model;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -18,12 +17,6 @@ namespace Proyecto_Programado.UI.Controllers
     public class InventarioController : Controller
     {
 
-        public readonly IAdministradorDeInventarios ElAdministrador;
-
-        public InventarioController(IAdministradorDeInventarios administrador)
-        {
-            ElAdministrador = administrador; 
-        }
         // GET: InventarioController
         public async Task<IActionResult> Index(int id, string nombre)
         {

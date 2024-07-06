@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Proyecto_Programado.BL;
 using Proyecto_Programado.Model;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -11,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
-using Proyecto_Programado.BL;
 using Proyecto_Programado.Model;
 using Proyecto_Programado.UI.Models;
 using System.Diagnostics;
@@ -25,12 +23,6 @@ namespace Proyecto_Programado.UI.Controllers
     [Authorize]
     public class AjusteController : Controller
     {
-        public readonly IAdministradorDeAjustes ElAdministrador;
-
-        public AjusteController(IAdministradorDeAjustes administrador)
-        {
-            ElAdministrador = administrador;
-        }
 
         // GET: AjusteController
         public async Task<IActionResult> Index(int id, string nombre)

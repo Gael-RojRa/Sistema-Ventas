@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Proyecto_Programado.BL;
 using Proyecto_Programado.Model;
 using System.Security.Claims;
 using Proyecto_Programado.UI.ViewModels;

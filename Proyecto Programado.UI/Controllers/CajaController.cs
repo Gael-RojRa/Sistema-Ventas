@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Proyecto_Programado.BL;
 using Proyecto_Programado.Model;
 using Proyecto_Programado.UI.ViewModels;
 using System.Net.Http;
@@ -15,12 +14,6 @@ namespace Proyecto_Programado.UI.Controllers
     [Authorize]
     public class CajaController : Controller
     {
-        private readonly IAdministradorDeCaja ElAdministrador;
-
-        public CajaController(IAdministradorDeCaja administrador)
-        {
-            ElAdministrador = administrador;
-        }
 
         // GET: CajaController
         public async Task<ActionResult> Index()

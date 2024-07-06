@@ -127,6 +127,12 @@ namespace Proyecto_Programado.SI.Controllers
             return Ok();
         }
 
+        [HttpPut("FinaliceLaVenta/{idNuevaVenta}")]
+        public IActionResult FinaliceLaVenta(int idNuevaVenta, [FromBody] Venta nuevaVenta)
+        {
+            ElAdministrador.FinaliceLaVenta(idNuevaVenta, nuevaVenta);
+            return Ok();
+        }
 
         [HttpPut("ActualiceElTotalEnElIndexDeVentas/{id}")]
         public IActionResult ActualiceElTotalEnElIndexDeVentas(int id)

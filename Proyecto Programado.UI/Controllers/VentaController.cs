@@ -255,6 +255,8 @@ namespace Proyecto_Programado.UI.Controllers
             nuevaVenta.MontoDescuento = nuevoDetalle.MontoDescuento;
             nuevaVenta.Total = nuevaVenta.SubTotal - nuevoDetalle.MontoDescuento;
 
+
+
             var actualiceVentaUrl = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ActualiceLaVenta/{idNuevaVenta}";
 
             var actualiceVentaJson = JsonConvert.SerializeObject(nuevaVenta);
@@ -269,6 +271,8 @@ namespace Proyecto_Programado.UI.Controllers
             };
 
             var actualiceVentaResponse = await httpClient.SendAsync(actualiceVentarequest);
+
+
 
 
             string detaleJson = JsonConvert.SerializeObject(nuevoDetalle);
@@ -444,18 +448,18 @@ namespace Proyecto_Programado.UI.Controllers
                 } 
                 
 
-                var detallesDeLaVentaResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ObtengaLaListaDeInventarios/{id}");
-                if (detallesDeLaVentaResponse.IsSuccessStatusCode)
-                {
+                var detallesDeLaVentaResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ObtengaLosItemsDeUnaVenta/{id}");
                     var detallesDeLaVentaJson = await detallesDeLaVentaResponse.Content.ReadAsStringAsync();
                     detallesDeLaVenta = JsonConvert.DeserializeObject<List<VentaDetalles>>(detallesDeLaVentaJson);
-                }
+                
 
                 bool inventarioSuficiente = true;
 
                 foreach (var detalle in detallesDeLaVenta)
                 {
-                    var inventarioResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ObtengaElInventario/{detalle.Id_Inventario}");
+                    int idInventario = detalle.Id_Inventario;
+
+                    var inventarioResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ObtengaElInventario/{idInventario}");
                         var inventarioJson = await inventarioResponse.Content.ReadAsStringAsync();
                         var inventario = JsonConvert.DeserializeObject<Inventario>(inventarioJson);
                     
@@ -479,20 +483,35 @@ namespace Proyecto_Programado.UI.Controllers
                 {
                     foreach (var detalle in detallesDeLaVenta)
                     {
+                      
+                        var cantidadUrl = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ActualiceLaCantidadDeInventario/{detalle.Id_Inventario}/{detalle.Cantidad}";
 
-                        var inventarioResponse = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ActualiceLaCantidadDeInventario/{detalle.Id_Inventario}/{detalle.Cantidad}";
+                        var request = new HttpRequestMessage(HttpMethod.Put, cantidadUrl);
 
-                        var response = await httpClient.PutAsync(inventarioResponse, null);
+                        var actualiceElTotaldelIndex = await httpClient.SendAsync(request);
 
                     }
 
+                    int idNuevaVenta = id;
+
+                    laVenta.Id = id;
                     laVenta.TipoDePago = tipoDePago;
                     laVenta.Estado = EstadoVenta.Terminada;
 
 
-                    var ventaUrl = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ActualiceLaVenta/{id}/{laVenta}";
 
-                    var finalResponse = await httpClient.PutAsync(ventaUrl, null);
+                    var actualiceVentaUrl = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/FinaliceLaVenta/{idNuevaVenta}";
+
+                    var actualiceVentaJson = JsonConvert.SerializeObject(laVenta);
+                    var actualiceVentaBuffer = System.Text.Encoding.UTF8.GetBytes(actualiceVentaJson);
+                    var actualiceVentaByteContent = new ByteArrayContent(actualiceVentaBuffer);
+
+                    actualiceVentaByteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                    var actualiceVentaResponse = await httpClient.PutAsync(actualiceVentaUrl, actualiceVentaByteContent);
+
+
+
                 }
 
                 return RedirectToAction(nameof(Index));

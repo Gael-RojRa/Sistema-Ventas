@@ -104,6 +104,16 @@ namespace Proyecto_Programado.BL
             ventaOriginal.MontoDescuento = laVentaActualizada.MontoDescuento;
             ventaOriginal.PorcentajeDescuento = laVentaActualizada.PorcentajeDescuento;
 
+            ElContexto.Ventas.Update(ventaOriginal);
+            ElContexto.SaveChanges();
+        }
+
+        public void FinaliceLaVenta(int elId, Venta laVentaActualizada)
+        {
+            Venta ventaOriginal = ElContexto.Ventas.Find(elId);
+            ventaOriginal.TipoDePago = laVentaActualizada.TipoDePago;
+            ventaOriginal.Estado = laVentaActualizada.Estado;
+
             AperturaDeCaja laAperturaDeCaja = ElContexto.AperturasDeCaja.Find(laVentaActualizada.IdAperturaDeCaja);
 
             TipoDePago tipoDePago = laVentaActualizada.TipoDePago;

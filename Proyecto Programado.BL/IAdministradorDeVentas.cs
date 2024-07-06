@@ -17,6 +17,7 @@ namespace Proyecto_Programado.BL
         Inventario ObtengaElInventario(int elId);
 
         int AgregueLaVenta(Venta laNuevaVenta);
+
         int AgregueDetalleVenta(VentaDetalles elNuevoDetalleDeVenta);
 
         List<VentaDetalles> ObtengaLosItemsDeUnaVenta(int elIdVenta);
@@ -26,6 +27,8 @@ namespace Proyecto_Programado.BL
         decimal ObtengaElPrecioDelInventario(int elId);
 
         void ActualiceLaVenta(int elId, Venta laVentaActualizada);
+
+        public void FinaliceLaVenta(int elId, Venta laVentaActualizada);
 
         string ObtengaElNombreDeVenta(int elIdDeVenta);
 

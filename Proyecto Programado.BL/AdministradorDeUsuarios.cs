@@ -56,7 +56,7 @@ namespace Proyecto_Programado.BL
                 string elAsunto = $"Intento de inicio de sesión del usuario {elUsuario.Nombre} bloqueado.";
                 string elContenido = $"Le informamos que la cuenta del usuario {elUsuario.Nombre} se encuentra bloqueada por 10 minutos. Por favor ingrese el día {elUsuario.TiempoDesbloqueo?.ToString("dd/MM/yyyy")} a las {elUsuario.TiempoDesbloqueo?.ToString("HH:mm")}.";
 
-                //EnvieElCorreoElectronico(elUsuario.correoElectronico, elAsunto, elContenido);
+                EnvieElCorreoElectronico(elUsuario.correoElectronico, elAsunto, elContenido);
 
                 return false;
             }
@@ -75,7 +75,7 @@ namespace Proyecto_Programado.BL
                 string elAsunto = "Inicio de sesión del usuario " + elNombre;
                 string elCuerpo = "Usted inició sesión el día " + DateTime.Now.ToString("dd/MM/yyyy") + " a las " + DateTime.Now.ToString("HH:mm");
 
-                //EnvieElCorreoElectronico(elDestinatario, elAsunto, elCuerpo);
+                EnvieElCorreoElectronico(elDestinatario, elAsunto, elCuerpo);
 
                 return true;
             }
@@ -91,7 +91,7 @@ namespace Proyecto_Programado.BL
                     string elAsunto = $"Usuario Bloqueado.";
                     string elContenido = $"Le informamos que la cuenta del usuario {elUsuario.Nombre} se encuentra bloqueada por 10 minutos. Por favor ingrese el día {elUsuario.TiempoDesbloqueo?.ToString("dd/MM/yyyy")} a las {elUsuario.TiempoDesbloqueo?.ToString("HH:mm")}.";
 
-                    //EnvieElCorreoElectronico(elUsuario.correoElectronico, elAsunto, elContenido);
+                    EnvieElCorreoElectronico(elUsuario.correoElectronico, elAsunto, elContenido);
                 }
 
                 ElContexto.SaveChanges();

@@ -220,6 +220,7 @@ namespace Proyecto_Programado.UI.Controllers
         public async Task<IActionResult> GoogleResponse()
         {
 
+            var httpClient = new HttpClient();
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             if (!result.Succeeded)
@@ -237,16 +238,30 @@ namespace Proyecto_Programado.UI.Controllers
                 return BadRequest("Claim de Name no encontrado");
             }
 
-
-            var usuarioName = nameClaim.Value;
+            var nombre = nameClaim.Value;
             var usuarioEmail = emailClaim;
-            var usuarioExistente = ElAdministrador.ObtengaElUsuarioPorNombre(usuarioName);
+
+            var response = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/ObtengaElUsuarioPorNombre/{nombre}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return StatusCode((int)response.StatusCode, "Error al obtener el usuario");
+            }
+
+            var usuarioExistente = await response.Content.ReadFromJsonAsync<SolicitudRegistro>();
 
             if (usuarioExistente == null)
             {
-                ElAdministrador.CrearUsuario(usuarioName, usuarioEmail);
-                return RedirectToAction("SolicitudPendiente", "LoginRegistro");
 
+                var nuevoUsuario = new { usuario = nombre, correoElectronico = usuarioEmail };
+                var createResponse = await httpClient.PostAsJsonAsync("https://apicomerciovs.azurewebsites.net/ModuloLoginRegistro/CrearUsuario", nuevoUsuario);
+
+                if (!createResponse.IsSuccessStatusCode)
+                {
+                    return StatusCode((int)createResponse.StatusCode, "Error al crear el usuario");
+                }
+
+                return RedirectToAction("SolicitudPendiente", "LoginRegistro");
             }
             else
             {

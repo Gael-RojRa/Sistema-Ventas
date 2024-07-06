@@ -79,16 +79,12 @@ namespace Proyecto_Programado.SI.Controllers
 
             return inventario;
         }
+
         // GET: api/Ventas/Detalles/5
         [HttpGet("ObtengaLosItemsDeUnaVenta/{id}")]
         public ActionResult<List<VentaDetalles>> ObtengaLosItemsDeUnaVenta(int id)
         {
             var detalles = ElAdministrador.ObtengaLosItemsDeUnaVenta(id);
-
-            if (detalles == null || !detalles.Any())
-            {
-                return NotFound();
-            }
 
             return detalles;
         }

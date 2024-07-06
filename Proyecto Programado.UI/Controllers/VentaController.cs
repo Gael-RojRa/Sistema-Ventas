@@ -46,12 +46,11 @@ namespace Proyecto_Programado.UI.Controllers
             var httpClient = new HttpClient();
 
             // Obtener los items de una venta
-            var detallesResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloCatalogoDeInventarios/ObtengaLosItemsDeUnaVenta/{id}");
-            if (detallesResponse.IsSuccessStatusCode)
-            {
+            var detallesResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ObtengaLosItemsDeUnaVenta/{id}");
+
                 var detallesJson = await detallesResponse.Content.ReadAsStringAsync();
                 laListaDeDetalles = JsonConvert.DeserializeObject<List<VentaDetalles>>(detallesJson);
-            }
+            
 
             var inventarioTasks = laListaDeDetalles.Select(async detalle =>
             {
@@ -109,11 +108,10 @@ namespace Proyecto_Programado.UI.Controllers
             List<VentaDetalles> laListaDeDetalles = new List<VentaDetalles>();
 
             var vdetalleResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ObtengaLosItemsDeUnaVenta/{id}");
-            if (vdetalleResponse.IsSuccessStatusCode)
-            {
+
                 var vdetalleJson = await vdetalleResponse.Content.ReadAsStringAsync();
                     laListaDeDetalles = JsonConvert.DeserializeObject<List<VentaDetalles>>(vdetalleJson);
-            }
+            
 
                 var inventarioTasks = laListaDeDetalles.Select(async detalle =>
                 {
@@ -253,6 +251,7 @@ namespace Proyecto_Programado.UI.Controllers
                 Id_Venta = idNuevaVenta
             };
 
+            NombreCliente = laVenta.NombreCliente,
             nuevaVenta.SubTotal = nuevoDetalle.Monto;
             nuevaVenta.MontoDescuento = nuevoDetalle.MontoDescuento;
             nuevaVenta.Total = nuevaVenta.SubTotal - nuevoDetalle.MontoDescuento;

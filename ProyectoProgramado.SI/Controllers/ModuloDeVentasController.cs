@@ -128,7 +128,7 @@ namespace Proyecto_Programado.SI.Controllers
         }
 
 
-        [HttpPut("ActualiceElTotalEnElIndexDeVentas/{idNuevoDetalle}")]
+        [HttpPut("ActualiceElTotalEnElIndexDeVentas/{id}")]
         public IActionResult ActualiceElTotalEnElIndexDeVentas(int id)
         {
 

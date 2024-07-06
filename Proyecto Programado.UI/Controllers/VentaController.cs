@@ -378,7 +378,7 @@ namespace Proyecto_Programado.UI.Controllers
             ViewBag.IdVenta = laVenta.idVenta;
             
 
-            var requestUri = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ActualiceElTotalEnElIndexDeVentas/{idNuevoDetalle}";
+            var requestUri = $"https://localhost:7237/ModuloDeVentas/ActualiceElTotalEnElIndexDeVentas/{idNuevoDetalle}";
 
             var request = new HttpRequestMessage(HttpMethod.Put, requestUri);
 

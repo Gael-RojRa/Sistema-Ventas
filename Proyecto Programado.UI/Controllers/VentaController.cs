@@ -279,21 +279,21 @@ namespace Proyecto_Programado.UI.Controllers
 
             var httpClient = new HttpClient();
 
-            var inventariosResponse = await httpClient.GetAsync("https://apicomerciovs.azurewebsites.net/ObtengaLaListaDeInventarios");
+            var inventariosResponse = await httpClient.GetAsync("https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ObtengaLaListaDeInventarios");
             if (inventariosResponse.IsSuccessStatusCode)
             {
                 var inventariosJson = await inventariosResponse.Content.ReadAsStringAsync();
                 laListaDeInventarios = JsonConvert.DeserializeObject<List<Inventario>>(inventariosJson);
             }
 
-            var detallesResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ObtengaLosItemsDeUnaVenta/{idVenta}");
+            var detallesResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ObtengaLosItemsDeUnaVenta/{idVenta}");
             if (detallesResponse.IsSuccessStatusCode)
             {
                 var detallesJson = await detallesResponse.Content.ReadAsStringAsync();
                 listaDeInventariosYaAniadidos = JsonConvert.DeserializeObject<List<VentaDetalles>>(detallesJson);
             }
 
-            var nombreResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ObtengaElNombreDeVenta/{idVenta}");
+            var nombreResponse = await httpClient.GetAsync($"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ObtengaElNombreDeVenta/{idVenta}");
             if (nombreResponse.IsSuccessStatusCode)
             {
                 elNombre = await nombreResponse.Content.ReadAsStringAsync();
@@ -359,7 +359,7 @@ namespace Proyecto_Programado.UI.Controllers
             var detalleBuffer = System.Text.Encoding.UTF8.GetBytes(detaleJson);
             var detalleByteContent = new ByteArrayContent(detalleBuffer);
             detalleByteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            await httpClient.PostAsync("https://apicomerciovs.azurewebsites.net/ModuloDeVentas//AgregueDetalleVenta", detalleByteContent);
+            await httpClient.PostAsync("https://apicomerciovs.azurewebsites.net/ModuloDeVentas/AgregueDetalleVenta", detalleByteContent);
 
 
             ViewBag.IdVenta = laVenta.idVenta;
@@ -376,7 +376,7 @@ namespace Proyecto_Programado.UI.Controllers
         {
 
             var httpClient = new HttpClient();
-            var requestUri = $"https://apicomerciovs.azurewebsites.net/{idVenta}/{porcentajeDescuento}";
+            var requestUri = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/{idVenta}/{porcentajeDescuento}";
 
             var request = new HttpRequestMessage(HttpMethod.Put, requestUri);
 
@@ -491,7 +491,7 @@ namespace Proyecto_Programado.UI.Controllers
         public async Task<ActionResult> Delete(int id, int idVenta)
         {
             var httpClient = new HttpClient();
-            var requestUri = $"https://apicomerciovs.azurewebsites.net/ElimineLaVenta/{id}";
+            var requestUri = $"https://apicomerciovs.azurewebsites.net/ModuloDeVentas/ElimineLaVenta/{id}";
 
             var response = await httpClient.DeleteAsync(requestUri);
 
